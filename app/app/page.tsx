@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { supabase } from '@/supabaseClient';
+import { supabase } from '../../supabaseClient';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, 
   Title, Tooltip, Legend, Filler, ArcElement

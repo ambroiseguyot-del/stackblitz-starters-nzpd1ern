@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@supabase/auth-helpers-nextjs": "latest",
-    "@supabase/supabase-js": "latest",
+    "@supabase/auth-helpers-nextjs": "0.10.0",
+    "@supabase/supabase-js": "2.42.7",
     "next": "14.2.3",
-    "react": "^18",
-    "react-dom": "^18",
-    "lucide-react": "latest"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "lucide-react": "latest",
+    "chart.js": "latest",
+    "react-chartjs-2": "latest"
   },
   "devDependencies": {
     "postcss": "^8",
