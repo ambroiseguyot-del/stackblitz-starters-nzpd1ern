@@ -1,26 +1,183 @@
-{
-  "name": "nextjs",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@types/node": "20.6.2",
-    "@types/react": "18.2.22",
-    "@types/react-dom": "18.2.7",
-    "autoprefixer": "10.4.15",
-    "eslint": "8.49.0",
-    "eslint-config-next": "13.5.1",
-    "next": "13.5.1",
-    "postcss": "8.4.30",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "tailwindcss": "3.3.3",
-    "typescript": "5.2.2",
-    "@supabase/supabase-js": "latest"
-  }
+'use client';
+
+import { useEffect, useState } from 'react';
+import { supabase } from '../supabaseClient';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+// Enregistrement des composants pour le graphique
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
+
+export default function BabyBudgetPage() {
+  // --- ÉTATS (La mémoire de la page) ---
+  const [expenses, setExpenses] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+
+  // --- ASPIRATEURS DE DONNÉES (Fetch) ---
+  
+  // 1. Récupérer les dépenses
+  const fetchExpenses = async () => {
+    const { data, error } = await supabase
+      .from('expenses')
+      .select('*')
+      .order('date', { ascending: true }); // Ascending pour que le graphique aille de gauche à droite
+    if (!error) setExpenses(data || []);
+  };
+
+  // 2. Récupérer les profils (Enfants)
+  const fetchProfiles = async () => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*');
+    if (!error) setProfiles(data || []);
+  };
+
+  // Charger tout au démarrage
+  useEffect(() => {
+    fetchExpenses();
+    fetchProfiles();
+  }, []);
+
+  // --- LOGIQUE DU GRAPHIQUE ---
+  const chartData = {
+    labels: expenses.map(e => new Date(e.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })),
+    datasets: [
+      {
+        label: 'Dépenses (€)',
+        data: expenses.map(e => e.amount),
+        fill: true,
+        borderColor: '#0055A4',
+        backgroundColor: 'rgba(0, 85, 164, 0.1)',
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true } }
+  };
+
+  // --- CALCULS DES STATS ---
+  const totalAmount = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+  const transactionCount = expenses.length;
+
+  // --- ACTION : AJOUTER UNE DÉPENSE ---
+  const handleAddExpense = async (e) => {
+    e.preventDefault();
+    const label = (document.getElementById('inp-name') as HTMLInputElement).value;
+    const amount = (document.getElementById('inp-amount') as HTMLInputElement).value;
+    const child = (document.getElementById('inp-child') as HTMLSelectElement).value;
+    const date = (document.getElementById('inp-date') as HTMLInputElement).value;
+
+    const { error } = await supabase
+      .from('expenses')
+      .insert([{ child_name: child, label: label, amount: parseFloat(amount), date: date }]);
+
+    if (error) {
+      alert("Erreur : " + error.message);
+    } else {
+      (e.target as HTMLFormElement).reset();
+      fetchExpenses(); // Recharger le graphique et la liste
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-main)]">
+      {/* HEADER */}
+      <header className="h-[80px] bg-[var(--bg-card)] border-b-2 border-[var(--france-blue)] flex items-center sticky top-0 z-[1000] backdrop-blur-md">
+        <div className="container mx-auto px-5 flex justify-between items-center w-full">
+          <a href="#" className="logo font-bold text-[26px]">
+            Baby<span className="text-[var(--france-red)]">Budget</span> 🇫🇷
+          </a>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-5 py-8">
+        {/* STATS ROW */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+          <div className="card bg-[var(--bg-card)] p-6 rounded-xl border border-[var(--border)] shadow-sm text-center border-b-4 border-[var(--france-red)]">
+            <div className="text-xs text-gray-500 uppercase font-bold mb-1">Total Cloud</div>
+            <div className="text-3xl font-bold">{totalAmount.toFixed(2)} €</div>
+          </div>
+          <div className="card bg-[var(--bg-card)] p-6 rounded-xl border border-[var(--border)] shadow-sm text-center border-b-4 border-[var(--france-blue)]">
+            <div className="text-xs text-gray-500 uppercase font-bold mb-1">Transactions</div>
+            <div className="text-3xl font-bold">{transactionCount}</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            {/* GRAPHIQUE DYNAMIQUE */}
+            <div className="card bg-[var(--bg-card)] p-6 rounded-xl border border-[var(--border)] shadow-sm">
+              <h3 className="text-xl font-bold mb-4">Évolution des dépenses</h3>
+              <div className="h-[300px]">
+                {expenses.length > 0 ? (
+                  <Line data={chartData} options={chartOptions} />
+                ) : (
+                  <div className="h-full flex items-center justify-center text-gray-400 italic">Aucune donnée à afficher...</div>
+                )}
+              </div>
+            </div>
+
+            {/* FORMULAIRE */}
+            <div className="card bg-[var(--bg-card)] p-6 rounded-xl border border-[var(--border)] shadow-sm">
+              <h3 className="text-xl font-bold mb-4">Nouvelle dépense</h3>
+              <form onSubmit={handleAddExpense} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="text-xs font-bold text-gray-400">ENFANT</label>
+                  <select id="inp-child" className="w-full border p-3 rounded-lg bg-[var(--bg-input)]">
+                    {profiles.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+                  </select>
+                </div>
+                <input id="inp-name" className="border p-3 rounded-lg bg-[var(--bg-input)]" placeholder="Désignation" required />
+                <input id="inp-amount" className="border p-3 rounded-lg bg-[var(--bg-input)]" type="number" step="0.01" placeholder="Montant (€)" required />
+                <input id="inp-date" className="border p-3 rounded-lg bg-[var(--bg-input)]" type="date" className="md:col-span-2 border p-3 rounded-lg bg-[var(--bg-input)]" required />
+                <button type="submit" className="bg-[var(--france-red)] text-white p-3 rounded-lg font-bold md:col-span-2 hover:opacity-90">
+                  Ajouter au Cloud
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* SIDEBAR FAMILLE */}
+          <div className="sidebar">
+            <div className="card bg-[var(--bg-card)] p-6 rounded-xl border border-[var(--border)] shadow-sm sticky top-[110px]">
+              <h3 className="text-xl font-bold mb-4">👶 Famille</h3>
+              <div className="space-y-2">
+                {profiles.map(p => (
+                  <div key={p.id} className="flex justify-between items-center py-2 border-b border-[var(--border)]">
+                    <span className="font-medium">{p.name}</span>
+                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">Actif</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-gray-400 mt-4 italic text-center">Données synchronisées en temps réel</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
