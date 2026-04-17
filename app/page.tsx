@@ -7,19 +7,56 @@ import { motion } from 'framer-motion';
 
 export default function LandingPage() {
   return (
-    <div className="landing-container" style={{ fontFamily: 'sans-serif', color: '#1a1a1a', lineHeight: '1.6', overflowX: 'hidden' }}>
-      <Navbar />
+    <div className="landing-container" style={{ fontFamily: 'sans-serif', color: '#1a1a1a', lineHeight: '1.6', overflowX: 'hidden', position: 'relative' }}>
+      
+      {/* BACKGROUND ANIMATIONS */}
 
-      <div style={{
-        position: 'fixed',
-        top: '-200px',
-        left: '-200px',
-        width: '600px',
-        height: '600px',
-        background: 'radial-gradient(circle, rgba(0,112,243,0.15), transparent 70%)',
-        filter: 'blur(80px)',
-        zIndex: -1
-      }} />
+      {/* Gradient animé global */}
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: -3,
+          background: 'linear-gradient(270deg, #0070f3, #00c6ff, #0070f3)',
+          backgroundSize: '600% 600%',
+          animation: 'gradientMove 18s ease infinite',
+          opacity: 0.06
+        }}
+      />
+
+      {/* Blob 1 */}
+      <motion.div
+        animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'fixed',
+          top: '-150px',
+          left: '-150px',
+          width: '500px',
+          height: '500px',
+          background: 'radial-gradient(circle, rgba(0,112,243,0.25), transparent)',
+          filter: 'blur(120px)',
+          zIndex: -2
+        }}
+      />
+
+      {/* Blob 2 */}
+      <motion.div
+        animate={{ x: [0, -50, 0], y: [0, 40, 0] }}
+        transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'fixed',
+          bottom: '-150px',
+          right: '-150px',
+          width: '500px',
+          height: '500px',
+          background: 'radial-gradient(circle, rgba(0,198,255,0.25), transparent)',
+          filter: 'blur(120px)',
+          zIndex: -2
+        }}
+      />
+
+      <Navbar />
 
       <section style={{
         padding: '100px 20px',
@@ -113,6 +150,8 @@ export default function LandingPage() {
 
         </div>
       </section>
+
+      {/* RESTE DU CODE IDENTIQUE */}
 
       <section style={{ padding: '100px 20px', maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{
@@ -229,9 +268,20 @@ export default function LandingPage() {
 
       </section>
 
+      {/* KEYFRAMES GLOBAL */}
+      <style jsx global>{`
+        @keyframes gradientMove {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+
     </div>
   );
 }
+
+/* COMPONENTS inchangés */
 
 function FeatureCard({ icon, title, desc, delay = 0 }: any) {
   return (
@@ -263,6 +313,8 @@ function FeatureLine({ icon, text }: any) {
     </div>
   );
 }
+
+/* STYLES inchangés */
 
 const primaryBtn = {
   backgroundColor: '#0070f3',
