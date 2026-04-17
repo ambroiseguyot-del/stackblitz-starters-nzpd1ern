@@ -35,13 +35,13 @@ export default function Navbar() {
         {/* On affiche ces liens uniquement si l'utilisateur est connecté */}
         {user && (
           <>
-            <Link href="/app" style={{ textDecoration: 'none', color: '#666' }}>Dashboard</Link>
+            <Link href="/app" style={{ textDecoration: 'none', color: '#666' }}>🚀 Dashboard</Link>
             <Link href="/analyse" style={{ textDecoration: 'none', color: '#0070f3', fontWeight: 'bold' }}>📊 Analyse</Link>
           </>
         )}
         
         {!user ? (
-          <Link href="/login" style={{ textDecoration: 'none', color: '#666' }}>Connexion</Link>
+          <Link href="/login" style={{ textDecoration: 'none', color: '#666' }}>🔓 Connexion</Link>
         ) : (
           <button 
             onClick={() => supabase.auth.signOut().then(() => router.push('/'))}
