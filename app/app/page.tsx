@@ -102,7 +102,6 @@ export default function UltimateBabyBudget() {
 
   const totalAmount = useMemo(() => filteredExpenses.reduce((acc, curr) => acc + curr.amount, 0), [filteredExpenses]);
 
-  // PROJECTION
   const projection = useMemo(() => {
     if (viewScope !== 'month') return null;
     const today = new Date();
@@ -113,7 +112,6 @@ export default function UltimateBabyBudget() {
     return (totalAmount / daysPassed) * daysInMonth;
   }, [totalAmount, currentDate, viewScope]);
 
-  // COMPARATIF M-1
   const chartDataPoints = useMemo(() => {
     const map: Record<string, number> = {};
     const mapPrev: Record<string, number> = {};
@@ -128,7 +126,8 @@ export default function UltimateBabyBudget() {
         const d = new Date(e.date);
         return d.getMonth() === prevDate.getMonth() && d.getFullYear() === prevDate.getFullYear();
       }).forEach(e => {
-        mapPrev[new Date(e.date).getDate().toString()] = (mapPrev[new Date(e.date).getDate().toString()] || 0) + e.amount;
+        const dKey = new Date(e.date).getDate().toString();
+        mapPrev[dKey] = (mapPrev[dKey] || 0) + e.amount;
       });
     }
     return { current: map, previous: mapPrev };
@@ -186,8 +185,13 @@ export default function UltimateBabyBudget() {
 
   const deleteExpense = async (id: string) => {
     try {
-      await supabase.from('expenses').delete().eq('id', id);
-      fetchData();
+      // Suppression optimiste pour une UI réactive
+      setExpenses(prev => prev.filter(e => e.id !== id));
+      const { error } = await supabase.from('expenses').delete().eq('id', id);
+      if (error) {
+          fetchData(); // On remet les données si erreur
+          throw error;
+      }
       setPendingDeleteId(null);
       showToast("Dépense supprimée");
     } catch (err: any) { showToast(err.message, 'error'); }
@@ -214,7 +218,8 @@ export default function UltimateBabyBudget() {
 
   const deleteProfile = async (id: string) => {
     try {
-      await supabase.from('profiles').delete().eq('id', id);
+      const { error } = await supabase.from('profiles').delete().eq('id', id);
+      if (error) throw error;
       setPendingDeleteProfileId(null);
       fetchData();
       showToast("Profil supprimé");
@@ -244,11 +249,19 @@ export default function UltimateBabyBudget() {
       <main className="container mx-auto px-5 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div className="flex items-center gap-4 bg-[var(--bg-card)] p-4 rounded-3xl border border-[var(--border)] shadow-lg">
-            <button onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - (viewScope === 'month' ? 1 : 12))))} className="p-2">❮</button>
+            <button onClick={() => {
+                const d = new Date(currentDate);
+                d.setMonth(d.getMonth() - (viewScope === 'month' ? 1 : 12));
+                setCurrentDate(d);
+            }} className="p-2">❮</button>
             <span className="flex-1 text-center font-black uppercase tracking-tighter">
               {viewScope === 'month' ? currentDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : `Année ${currentDate.getFullYear()}`}
             </span>
-            <button onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + (viewScope === 'month' ? 1 : 12))))} className="p-2">❯</button>
+            <button onClick={() => {
+                const d = new Date(currentDate);
+                d.setMonth(d.getMonth() + (viewScope === 'month' ? 1 : 12));
+                setCurrentDate(d);
+            }} className="p-2">❯</button>
           </div>
           <div className="bg-[var(--bg-card)] p-4 rounded-3xl border border-[var(--border)] flex items-center px-6">
             <span className="mr-4 opacity-50">🔍</span>
@@ -370,7 +383,8 @@ export default function UltimateBabyBudget() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="font-bold text-[var(--france-blue)]">{formatEuro(exp.amount)}</div>
-                      <button onClick={() => deleteExpense(exp.id)} className="opacity-0 group-hover:opacity-100 text-red-500 transition-opacity">✕</button>
+                      {/* FIX : Appel explicite à deleteExpense avec l'ID */}
+                      <button onClick={() => deleteExpense(exp.id)} className="opacity-0 group-hover:opacity-100 text-red-500 transition-opacity p-2">✕</button>
                     </div>
                   </div>
                 ))}
