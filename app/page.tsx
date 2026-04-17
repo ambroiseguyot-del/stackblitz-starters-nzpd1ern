@@ -1,13 +1,15 @@
+'use client';
+
 import Navbar from '../components/Navbar';
 import Link from 'next/link';
 import { Baby, TrendingDown, ShieldCheck, Zap, PieChart } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function LandingPage() {
   return (
     <div className="landing-container" style={{ fontFamily: 'sans-serif', color: '#1a1a1a', lineHeight: '1.6', overflowX: 'hidden' }}>
       <Navbar />
 
-      {/* BACKGROUND GLOBAL */}
       <div style={{
         position: 'fixed',
         top: '-200px',
@@ -19,75 +21,99 @@ export default function LandingPage() {
         zIndex: -1
       }} />
 
-      {/* SECTION HERO */}
       <section style={{
         padding: '100px 20px',
         textAlign: 'center',
         background: 'linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%)'
       }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '10px',
-            backgroundColor: '#e0edff',
-            color: '#0070f3',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            marginBottom: '20px'
-          }}>
-            <Baby size={18} /> L'allié des nouveaux parents
-          </div>
 
-          <h1 style={{
-            fontSize: '3.5rem',
-            fontWeight: '800',
-            letterSpacing: '-1px',
-            marginBottom: '20px',
-            lineHeight: '1.1'
-          }}>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px',
+              backgroundColor: '#e0edff',
+              color: '#0070f3',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              marginBottom: '20px'
+            }}
+          >
+            <Baby size={18} /> L'allié des nouveaux parents
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: 'easeOut', delay: 0.1 }}
+            style={{
+              fontSize: '3.5rem',
+              fontWeight: '800',
+              letterSpacing: '-1px',
+              marginBottom: '20px',
+              lineHeight: '1.1'
+            }}
+          >
             Bébé arrive, <br />
             <span style={{ color: '#0070f3' }}>gardez le contrôle du budget.</span>
-          </h1>
+          </motion.h1>
 
-          <p style={{
-            fontSize: '1.25rem',
-            color: '#666',
-            marginBottom: '40px',
-            maxWidth: '600px',
-            margin: '0 auto 40px'
-          }}>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: 'easeOut', delay: 0.2 }}
+            style={{
+              fontSize: '1.25rem',
+              color: '#666',
+              marginBottom: '40px',
+              maxWidth: '600px',
+              margin: '0 auto 40px'
+            }}
+          >
             Visualisez chaque dépense, anticipez les coûts et évitez les mauvaises surprises.
-          </p>
+          </motion.p>
 
-          <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/signup" style={primaryBtn}>
-              Commencer gratuitement
-            </Link>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: 'easeOut', delay: 0.3 }}
+            style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}
+          >
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <Link href="/signup" style={primaryBtn}>
+                Commencer gratuitement
+              </Link>
+            </motion.div>
+          </motion.div>
 
-          {/* PREVIEW DASHBOARD */}
-          <div style={{
-            marginTop: '60px',
-            borderRadius: '20px',
-            overflow: 'hidden',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-            border: '1px solid #eee'
-          }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.45 }}
+            style={{
+              marginTop: '60px',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+              border: '1px solid #eee'
+            }}
+          >
             <img
               src="/dashboard-preview.png"
               alt="preview"
               style={{ width: '100%', display: 'block' }}
             />
-          </div>
+          </motion.div>
 
         </div>
       </section>
 
-      {/* SECTION STORYTELLING */}
       <section style={{ padding: '100px 20px', maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{
           display: 'grid',
@@ -95,12 +121,16 @@ export default function LandingPage() {
           gap: '50px',
           alignItems: 'center'
         }}>
-          
-          <div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
             <h2 style={{ fontSize: '2.2rem', marginBottom: '20px' }}>
               Un budget qui explose… sans prévenir
             </h2>
-
             <p style={{ color: '#444', fontSize: '1.1rem' }}>
               Un bébé coûte en moyenne <strong>600€ par mois</strong> la première année.
               <br /><br />
@@ -108,65 +138,94 @@ export default function LandingPage() {
               <br /><br />
               <strong>BabyBudget</strong> vous donne une vision claire et instantanée.
             </p>
-          </div>
+          </motion.div>
 
-          <div style={{
-            background: 'linear-gradient(180deg, #ffffff, #f8f9fa)',
-            padding: '40px',
-            borderRadius: '24px',
-            border: '1px solid #eee',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.05)'
-          }}>
-            
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
+            style={{
+              background: 'linear-gradient(180deg, #ffffff, #f8f9fa)',
+              padding: '40px',
+              borderRadius: '24px',
+              border: '1px solid #eee',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.05)'
+            }}
+          >
             <FeatureLine icon={<TrendingDown color="#0070f3" />} text="Anticipez les pics de dépenses" />
             <FeatureLine icon={<ShieldCheck color="#0070f3" />} text="Sécurisez votre budget" />
             <FeatureLine icon={<PieChart color="#0070f3" />} text="Repérez les gaspillages" />
+          </motion.div>
 
-          </div>
         </div>
       </section>
 
-      {/* SECTION FEATURES */}
       <section style={{ padding: '100px 20px', backgroundColor: '#fafafa' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
-          
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '60px' }}>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            style={{ fontSize: '2.5rem', marginBottom: '60px' }}
+          >
             Pensé pour les parents modernes
-          </h2>
+          </motion.h2>
 
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: '30px'
           }}>
-            
-            <FeatureCard icon={<Zap color="#0070f3" />} title="Ultra rapide" desc="Ajoutez une dépense en 3 secondes." />
-            <FeatureCard icon={<PieChart color="#0070f3" />} title="Visuel" desc="Comprenez tout en un coup d'œil." />
-            <FeatureCard icon={<Baby color="#0070f3" />} title="Multi-enfants" desc="Un budget par enfant." />
-
+            <FeatureCard icon={<Zap color="#0070f3" />} title="Ultra rapide" desc="Ajoutez une dépense en 3 secondes." delay={0} />
+            <FeatureCard icon={<PieChart color="#0070f3" />} title="Visuel" desc="Comprenez tout en un coup d'œil." delay={0.1} />
+            <FeatureCard icon={<Baby color="#0070f3" />} title="Multi-enfants" desc="Un budget par enfant." delay={0.2} />
           </div>
 
         </div>
       </section>
 
-      {/* CTA FINAL */}
       <section style={{
         padding: '120px 20px',
         textAlign: 'center',
         background: 'linear-gradient(180deg, #ffffff, #f0f7ff)'
       }}>
-        
-        <h2 style={{ fontSize: '2.4rem', marginBottom: '20px' }}>
-          Reprenez le contrôle dès aujourd’hui
-        </h2>
 
-        <p style={{ color: '#666', marginBottom: '40px' }}>
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          style={{ fontSize: '2.4rem', marginBottom: '20px' }}
+        >
+          Reprenez le contrôle dès aujourd'hui
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45, ease: 'easeOut', delay: 0.1 }}
+          style={{ color: '#666', marginBottom: '40px' }}
+        >
           Gratuit. Sans engagement. Résultats immédiats.
-        </p>
+        </motion.p>
 
-        <Link href="/signup" style={secondaryBtn}>
-          Créer mon compte
-        </Link>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45, ease: 'easeOut', delay: 0.2 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          style={{ display: 'inline-block' }}
+        >
+          <Link href="/signup" style={secondaryBtn}>
+            Créer mon compte
+          </Link>
+        </motion.div>
 
       </section>
 
@@ -174,15 +233,20 @@ export default function LandingPage() {
   );
 }
 
-/* COMPONENTS INLINE SAFE */
-
-function FeatureCard({ icon, title, desc }: any) {
+function FeatureCard({ icon, title, desc, delay = 0 }: any) {
   return (
-    <div style={featureCardStyle}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, ease: 'easeOut', delay }}
+      whileHover={{ scale: 1.03, boxShadow: '0 16px 40px rgba(0,0,0,0.1)' }}
+      style={featureCardStyle}
+    >
       <div style={iconBoxStyle}>{icon}</div>
       <h3>{title}</h3>
       <p>{desc}</p>
-    </div>
+    </motion.div>
   );
 }
 
@@ -200,8 +264,6 @@ function FeatureLine({ icon, text }: any) {
   );
 }
 
-/* STYLES */
-
 const primaryBtn = {
   backgroundColor: '#0070f3',
   color: 'white',
@@ -211,7 +273,8 @@ const primaryBtn = {
   textDecoration: 'none',
   fontWeight: 'bold',
   boxShadow: '0 4px 14px rgba(0,118,255,0.39)',
-  transition: '0.2s'
+  transition: '0.2s',
+  display: 'inline-block'
 };
 
 const secondaryBtn = {
@@ -221,7 +284,8 @@ const secondaryBtn = {
   borderRadius: '12px',
   fontSize: '1.2rem',
   textDecoration: 'none',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
+  display: 'inline-block'
 };
 
 const featureCardStyle = {
@@ -231,7 +295,7 @@ const featureCardStyle = {
   boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
   textAlign: 'left' as const,
   border: '1px solid #eee',
-  transition: 'transform 0.2s ease'
+  cursor: 'default'
 };
 
 const iconBoxStyle = {
