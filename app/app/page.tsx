@@ -30,25 +30,31 @@ interface Profile {
 }
 
 // --- CONSTANTES ---
+// Ajout de nouvelles catégories
 const categoryIcons: { [key: string]: string } = {
-  "Couches": "🧷", "Lait": "🍼", "Santé": "🩺", "Soins": "🧼", "Vêtements": "👕", "Autre": "📦"
+  "Couches": "🧷", "Lait": "🍼", "Santé": "🩺", "Soins": "🧼", "Vêtements": "👕", 
+  "Jouets": "🧸", "École": "📚", "Loisirs": "🎨", "Équipement": "🛒", "Autre": "📦"
 };
 
-const categoryColors = ['#002395', '#ED2939', '#5C7CFA', '#FF6B6B', '#F1F5F9', '#2D364D'];
+const categoryColors = [
+  '#002395', '#ED2939', '#5C7CFA', '#FF6B6B', '#F1F5F9', 
+  '#2D364D', '#10B981', '#F59E0B', '#6366F1', '#EC4899'
+];
 
 const formatEuro = (amount: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
 
 const getTodayISO = () => new Date().toISOString().split('T')[0];
 
-// --- COMPOSANT PRINCIPAL ---
 export default function UltimateBabyBudget() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [pendingDeleteProfileId, setPendingDeleteProfileId] = useState<string | null>(null);
 
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [viewScope, setViewScope] = useState<'month' | 'year'>('month'); // Filtre vue annuelle
   const [filterChild, setFilterChild] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDark, setIsDark] = useState(false);
@@ -61,7 +67,6 @@ export default function UltimateBabyBudget() {
     setTimeout(() => setToast(null), 3000);
   }, []);
 
-  // --- FIX : fetchData stable avec useCallback ---
   const fetchData = useCallback(async () => {
     try {
       const [{ data: exp, error: errExp }, { data: prof, error: errProf }] = await Promise.all([
@@ -78,35 +83,38 @@ export default function UltimateBabyBudget() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // --- NAVIGATION MOIS : FIX mutation ---
-  const goToPrevMonth = useCallback(() => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
-  }, []);
+  const goToPrev = useCallback(() => {
+    setCurrentDate(prev => {
+      return viewScope === 'month' 
+        ? new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+        : new Date(prev.getFullYear() - 1, 0, 1);
+    });
+  }, [viewScope]);
 
-  const goToNextMonth = useCallback(() => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
-  }, []);
+  const goToNext = useCallback(() => {
+    setCurrentDate(prev => {
+      return viewScope === 'month' 
+        ? new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+        : new Date(prev.getFullYear() + 1, 0, 1);
+    });
+  }, [viewScope]);
 
-  // --- FILTRAGE ---
+  // --- FILTRAGE MODIFIÉ POUR VUE ANNUELLE ---
   const filteredExpenses = useMemo(() => {
     return expenses.filter(e => {
       const d = new Date(e.date);
-      const monthMatch = d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+      const dateMatch = viewScope === 'month' 
+        ? (d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear())
+        : (d.getFullYear() === currentDate.getFullYear());
+      
       const childMatch = filterChild === 'all' || e.child_name === filterChild;
       const searchMatch = e.label.toLowerCase().includes(searchQuery.toLowerCase());
-      return monthMatch && childMatch && searchMatch;
+      return dateMatch && childMatch && searchMatch;
     });
-  }, [expenses, currentDate, filterChild, searchQuery]);
+  }, [expenses, currentDate, filterChild, searchQuery, viewScope]);
 
   const totalAmount = useMemo(() =>
     filteredExpenses.reduce((acc, curr) => acc + curr.amount, 0), [filteredExpenses]);
-
-  const daysInMonth = useMemo(() =>
-    new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate(),
-    [currentDate]);
-
-  const avgPerDay = useMemo(() =>
-    totalAmount / daysInMonth, [totalAmount, daysInMonth]);
 
   // --- GRAPHIQUES ---
   const categoryTotals = useMemo(() => {
@@ -117,81 +125,84 @@ export default function UltimateBabyBudget() {
     return totals;
   }, [filteredExpenses]);
 
-  // FIX : agréger par jour pour éviter les doublons sur l'axe X
-  const dailyTotals = useMemo(() => {
-    const map: Record<number, number> = {};
+  // Agrégation par jour ou par mois selon la vue
+  const chartDataPoints = useMemo(() => {
+    const map: Record<string, number> = {};
     filteredExpenses.forEach(e => {
-      const day = new Date(e.date).getDate();
-      map[day] = (map[day] || 0) + e.amount;
+      const d = new Date(e.date);
+      const key = viewScope === 'month' ? d.getDate().toString() : (d.getMonth() + 1).toString();
+      map[key] = (map[key] || 0) + e.amount;
     });
     return Object.entries(map)
-      .map(([day, amount]) => ({ day: Number(day), amount }))
-      .sort((a, b) => a.day - b.day);
-  }, [filteredExpenses]);
+      .map(([label, amount]) => ({ label: Number(label), amount }))
+      .sort((a, b) => a.label - b.label);
+  }, [filteredExpenses, viewScope]);
 
-  // FIX : mémoïser lineData et donutData
+  const lineData = useMemo(() => ({
+    labels: chartDataPoints.map(d => viewScope === 'month' ? d.label : new Date(2000, d.label - 1).toLocaleDateString('fr-FR', {month: 'short'})),
+    datasets: [{
+      label: 'Dépenses (€)',
+      data: chartDataPoints.map(d => d.amount),
+      fill: true,
+      borderColor: isDark ? '#5C7CFA' : '#002395',
+      backgroundColor: isDark ? 'rgba(92, 124, 250, 0.1)' : 'rgba(0, 35, 149, 0.05)',
+      tension: 0.4,
+      pointRadius: 5,
+    }]
+  }), [chartDataPoints, isDark, viewScope]);
+
   const donutData = useMemo(() => ({
     labels: Object.keys(categoryTotals),
     datasets: [{
       data: Object.values(categoryTotals),
       backgroundColor: categoryColors,
       borderWidth: 0,
-      hoverOffset: 15
     }]
   }), [categoryTotals]);
 
-  const lineData = useMemo(() => ({
-    labels: dailyTotals.map(d => d.day),
-    datasets: [{
-      label: 'Dépenses (€)',
-      data: dailyTotals.map(d => d.amount),
-      fill: true,
-      borderColor: isDark ? '#5C7CFA' : '#002395',
-      backgroundColor: isDark ? 'rgba(92, 124, 250, 0.1)' : 'rgba(0, 35, 149, 0.05)',
-      tension: 0.4,
-      pointRadius: 5,
-      pointHoverRadius: 8,
-      pointHitRadius: 30,
-    }]
-  }), [dailyTotals, isDark]);
-
-  const lineOptions = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: isDark ? '#1F2633' : '#FFF',
-        titleColor: isDark ? '#FFF' : '#000',
-        bodyColor: isDark ? '#94A3B8' : '#64748B',
-        borderColor: isDark ? '#2D364D' : '#E2E8F0',
-        borderWidth: 1,
-        padding: 12,
-        displayColors: false,
-        callbacks: {
-          label: (context: any) => `Montant : ${formatEuro(context.parsed.y)}`
-        }
-      }
-    },
-    scales: {
-      y: {
-        ticks: { color: isDark ? '#94A3B8' : '#64748B' },
-        grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }
-      },
-      x: {
-        ticks: { color: isDark ? '#94A3B8' : '#64748B' },
-        grid: { display: false }
-      }
+  // --- ACTIONS PROFILS ---
+  const addProfile = async () => {
+    if (!newProfileName.trim()) return;
+    try {
+      const { error } = await supabase.from('profiles').insert([{ name: newProfileName }]);
+      if (error) throw error;
+      setNewProfileName('');
+      fetchData();
+      showToast(`Profil ${newProfileName} créé !`);
+    } catch (err: any) {
+      showToast(err.message, 'error');
     }
-  }), [isDark]);
+  };
 
-  // --- ACTIONS ---
+  const deleteProfile = async (id: string) => {
+    try {
+      const { error } = await supabase.from('profiles').delete().eq('id', id);
+      if (error) throw error;
+      setPendingDeleteProfileId(null);
+      fetchData();
+      showToast("Profil retiré");
+    } catch (err: any) {
+      showToast(err.message, 'error');
+    }
+  };
+
+  const deleteExpense = async (id: string) => {
+    try {
+      const { error } = await supabase.from('expenses').delete().eq('id', id);
+      if (error) throw error;
+      setPendingDeleteId(null);
+      fetchData();
+      showToast("Dépense supprimée");
+    } catch (err: any) {
+      showToast(err.message, 'error');
+    }
+  };
+
   const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
     const amount = parseFloat(formData.get('amount') as string);
-
     if (amount <= 0 || isNaN(amount)) return showToast("Montant invalide", "error");
 
     setIsLoading(true);
@@ -206,17 +217,11 @@ export default function UltimateBabyBudget() {
       }]).select();
 
       if (error) throw error;
-
       if (inserted && inserted[0]) {
         setLastAddedId(inserted[0].id);
         setTimeout(() => setLastAddedId(null), 2000);
       }
-
       form.reset();
-      // Remettre la date à aujourd'hui après reset
-      const dateInput = form.querySelector<HTMLInputElement>('input[name="date"]');
-      if (dateInput) dateInput.value = getTodayISO();
-
       fetchData();
       showToast("Dépense synchronisée !");
     } catch (err: any) {
@@ -226,33 +231,6 @@ export default function UltimateBabyBudget() {
     }
   };
 
-  // FIX : suppression sans confirm() bloquant
-  const deleteExpense = async (id: string) => {
-    try {
-      const { error } = await supabase.from('expenses').delete().eq('id', id);
-      if (error) throw error;
-      setPendingDeleteId(null);
-      fetchData();
-      showToast("Dépense supprimée");
-    } catch (err: any) {
-      showToast(err.message, 'error');
-    }
-  };
-
-  const addProfile = async () => {
-    if (!newProfileName.trim()) return;
-    try {
-      const { error } = await supabase.from('profiles').insert([{ name: newProfileName }]);
-      if (error) throw error;
-      setNewProfileName('');
-      fetchData();
-      showToast(`Profil ${newProfileName} créé !`);
-    } catch (err: any) {
-      showToast(err.message, 'error');
-    }
-  };
-
-  // FIX : dark mode via data-theme (pas de style injection dynamique)
   const theme = isDark ? 'dark' : 'light';
 
   return (
@@ -268,115 +246,78 @@ export default function UltimateBabyBudget() {
         '--text-muted': isDark ? '#94A3B8' : '#64748B',
       } as React.CSSProperties}
     >
-      <style jsx global>{`
-        .highlight-new { animation: pulseSuccess 2s ease-out; }
-        @keyframes pulseSuccess {
-          0% { background-color: rgba(92, 124, 250, 0.2); transform: scale(1.02); }
-          100% { background-color: transparent; transform: scale(1); }
-        }
-        .toast-enter { animation: toastIn 0.25s ease-out forwards; }
-        @keyframes toastIn {
-          from { opacity: 0; transform: translate(-50%, 16px); }
-          to   { opacity: 1; transform: translate(-50%, 0); }
-        }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-      `}</style>
-
-      {/* TOAST — FIX : fade+slide au lieu d'animate-bounce */}
-      {toast && (
-        <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[2000] px-8 py-4 rounded-2xl shadow-2xl font-bold toast-enter ${toast.type === 'error' ? 'bg-red-500' : 'bg-[var(--france-blue)]'} text-white`}>
-          {toast.msg}
-        </div>
-      )}
-
-      {/* HEADER */}
       <header className="h-20 bg-[var(--bg-card)] border-b-2 border-[var(--france-blue)] flex items-center sticky top-0 z-50">
         <div className="container mx-auto px-5 flex justify-between items-center w-full">
           <h1 className="text-2xl font-semibold italic">BabyBudget <span className="text-[var(--france-red)]">Executive</span></h1>
-          <button
-            onClick={() => setIsDark(!isDark)}
-            className="p-3 border border-[var(--border)] rounded-2xl bg-[var(--bg-input)] shadow-sm active:scale-90 transition-transform"
-          >
-            {isDark ? '☀️ Light' : '🌙 Dark'}
-          </button>
+          <div className="flex gap-4">
+             {/* Toggle Vue Annuelle / Mensuelle */}
+             <div className="flex bg-[var(--bg-input)] p-1 rounded-xl border border-[var(--border)]">
+              <button 
+                onClick={() => setViewScope('month')}
+                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${viewScope === 'month' ? 'bg-[var(--france-blue)] text-white' : 'opacity-50'}`}
+              >Mois</button>
+              <button 
+                onClick={() => setViewScope('year')}
+                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${viewScope === 'year' ? 'bg-[var(--france-blue)] text-white' : 'opacity-50'}`}
+              >Année</button>
+            </div>
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className="p-3 border border-[var(--border)] rounded-2xl bg-[var(--bg-input)] shadow-sm active:scale-90 transition-transform text-xs font-bold"
+            >
+              {isDark ? '☀️' : '🌙'}
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="container mx-auto px-5 py-8">
-
-        {/* BARRE NAVIGATION MOIS + RECHERCHE */}
+        
+        {/* NAVIGATION PERIODE */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div className="flex items-center gap-4 bg-[var(--bg-card)] p-4 rounded-3xl border border-[var(--border)] shadow-lg">
-            <button onClick={goToPrevMonth} className="p-2 hover:bg-[var(--bg-input)] rounded-full transition-colors">❮</button>
+            <button onClick={goToPrev} className="p-2 hover:bg-[var(--bg-input)] rounded-full transition-colors">❮</button>
             <span className="flex-1 text-center font-black uppercase tracking-tighter">
-              {currentDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+              {viewScope === 'month' 
+                ? currentDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+                : `Année ${currentDate.getFullYear()}`}
             </span>
-            <button onClick={goToNextMonth} className="p-2 hover:bg-[var(--bg-input)] rounded-full transition-colors">❯</button>
+            <button onClick={goToNext} className="p-2 hover:bg-[var(--bg-input)] rounded-full transition-colors">❯</button>
           </div>
           <div className="bg-[var(--bg-card)] p-4 rounded-3xl border border-[var(--border)] shadow-lg flex items-center px-6 focus-within:border-[var(--france-blue)] transition-colors">
             <span className="text-xl mr-4 opacity-50">🔍</span>
             <input
               className="bg-transparent w-full outline-none font-bold placeholder:opacity-30"
-              placeholder="Rechercher une dépense..."
+              placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
 
-        {/* FILTRE PAR ENFANT — feature existante maintenant exposée dans l'UI */}
-        {profiles.length > 0 && (
-          <div className="flex gap-2 overflow-x-auto mb-6 pb-1 scrollbar-hide">
-            <button
-              onClick={() => setFilterChild('all')}
-              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${filterChild === 'all' ? 'bg-[var(--france-blue)] text-white' : 'bg-[var(--bg-card)] border border-[var(--border)]'}`}
-            >
-              Tous les enfants
+        {/* FILTRES ENFANTS */}
+        <div className="flex gap-2 overflow-x-auto mb-6 pb-1 scrollbar-hide">
+          <button onClick={() => setFilterChild('all')} className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${filterChild === 'all' ? 'bg-[var(--france-blue)] text-white' : 'bg-[var(--bg-card)] border border-[var(--border)]'}`}>
+            Tous les enfants
+          </button>
+          {profiles.map(p => (
+            <button key={p.id} onClick={() => setFilterChild(p.name)} className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${filterChild === p.name ? 'bg-[var(--france-blue)] text-white' : 'bg-[var(--bg-card)] border border-[var(--border)]'}`}>
+              {p.name}
             </button>
-            {profiles.map(p => (
-              <button
-                key={p.id}
-                onClick={() => setFilterChild(p.name)}
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${filterChild === p.name ? 'bg-[var(--france-blue)] text-white' : 'bg-[var(--bg-card)] border border-[var(--border)]'}`}
-              >
-                {p.name}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* STAT CARDS — totalAmount maintenant affiché en évidence */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-[var(--bg-card)] p-4 rounded-2xl border border-[var(--border)] shadow-sm">
-            <p className="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-wider mb-1">Total du mois</p>
-            <p className="text-2xl font-black text-[var(--france-blue)]">{formatEuro(totalAmount)}</p>
-          </div>
-          <div className="bg-[var(--bg-card)] p-4 rounded-2xl border border-[var(--border)] shadow-sm">
-            <p className="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-wider mb-1">Dépenses</p>
-            <p className="text-2xl font-black">{filteredExpenses.length}</p>
-          </div>
-          <div className="bg-[var(--bg-card)] p-4 rounded-2xl border border-[var(--border)] shadow-sm">
-            <p className="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-wider mb-1">Moy. / jour</p>
-            <p className="text-2xl font-black text-[var(--france-red)]">{formatEuro(avgPerDay)}</p>
-          </div>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-
             {/* GRAPHIQUES */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)] shadow-lg hover:shadow-xl transition-shadow">
-                <h3 className="text-lg mb-6 tracking-tight opacity-70">📈 Évolution du mois</h3>
-                <div style={{ height: '220px' }}>
-                  <Line data={lineData} options={lineOptions} />
-                </div>
+              <div className="bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)]">
+                <h3 className="text-lg mb-6 opacity-70">📈 {viewScope === 'month' ? 'Évolution Jours' : 'Évolution Mois'}</h3>
+                <div style={{ height: '220px' }}><Line data={lineData} options={{ responsive: true, maintainAspectRatio: false }} /></div>
               </div>
-              <div className="bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)] shadow-lg hover:shadow-xl transition-shadow">
-                <h3 className="text-lg mb-6 tracking-tight opacity-70">🍰 Répartition</h3>
-                <div style={{ height: '220px' }}>
-                  <Doughnut data={donutData} options={{ responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } }} />
-                </div>
+              <div className="bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)]">
+                <h3 className="text-lg mb-6 opacity-70">🍰 Répartition</h3>
+                <div style={{ height: '220px' }}><Doughnut data={donutData} options={{ responsive: true, maintainAspectRatio: false, cutout: '75%' }} /></div>
               </div>
             </div>
 
@@ -384,46 +325,23 @@ export default function UltimateBabyBudget() {
             <div className="bg-[var(--bg-card)] p-10 rounded-[40px] border border-[var(--border)] shadow-2xl">
               <h3 className="text-xl mb-8 flex items-center gap-3">✨ Nouvelle Entrée</h3>
               <form onSubmit={handleAddExpense} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <select name="child" className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none focus:border-[var(--france-blue)] transition-colors">
+                <select name="child" className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none">
                   {profiles.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
                 </select>
-                <select name="category" className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none focus:border-[var(--france-blue)] transition-colors">
+                <select name="category" className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none">
                   {Object.keys(categoryIcons).map(cat => (
                     <option key={cat} value={cat}>{categoryIcons[cat]} {cat}</option>
                   ))}
                 </select>
-                <input
-                  name="label"
-                  required
-                  className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none focus:border-[var(--france-blue)] transition-colors"
-                  placeholder="Désignation"
-                />
-                <input
-                  name="amount"
-                  type="number"
-                  step="0.01"
-                  required
-                  className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none focus:border-[var(--france-blue)] transition-colors"
-                  placeholder="Montant (€)"
-                />
-                {/* FIX : date par défaut à aujourd'hui */}
-                <input
-                  name="date"
-                  type="date"
-                  required
-                  defaultValue={getTodayISO()}
-                  className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none focus:border-[var(--france-blue)] transition-colors"
-                />
+                <input name="label" required className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none" placeholder="Désignation" />
+                <input name="amount" type="number" step="0.01" required className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none" placeholder="Montant (€)" />
+                <input name="date" type="date" required defaultValue={getTodayISO()} className="bg-[var(--bg-input)] p-4 rounded-2xl border border-[var(--border)] outline-none" />
                 <div className="flex items-center gap-3 px-2">
-                  <input type="checkbox" name="recurring" id="rec" className="w-5 h-5 accent-[var(--france-blue)] cursor-pointer" />
-                  <label htmlFor="rec" className="text-sm font-bold opacity-50 cursor-pointer">Dépense récurrente</label>
+                  <input type="checkbox" name="recurring" id="rec" className="w-5 h-5 accent-[var(--france-blue)]" />
+                  <label htmlFor="rec" className="text-sm font-bold opacity-50">Dépense récurrente</label>
                 </div>
-                <button
-                  type="submit"
-                  disabled={isLoading || profiles.length === 0}
-                  className={`md:col-span-2 text-white font-black py-5 rounded-2xl shadow-xl transition-all transform active:scale-95 ${isLoading || profiles.length === 0 ? 'bg-gray-400 grayscale' : 'bg-[var(--france-red)] hover:brightness-110'}`}
-                >
-                  {isLoading ? 'SYNCHRONISATION...' : profiles.length === 0 ? "AJOUTEZ UN ENFANT D'ABORD" : 'AJOUTER AU CLOUD'}
+                <button type="submit" disabled={isLoading || profiles.length === 0} className={`md:col-span-2 text-white font-black py-5 rounded-2xl shadow-xl transition-all ${isLoading || profiles.length === 0 ? 'bg-gray-400' : 'bg-[var(--france-red)] hover:brightness-110'}`}>
+                  {isLoading ? 'CHARGEMENT...' : 'AJOUTER AU CLOUD'}
                 </button>
               </form>
             </div>
@@ -431,111 +349,60 @@ export default function UltimateBabyBudget() {
 
           {/* SIDEBAR */}
           <aside className="space-y-8">
-
-            {/* GESTION FAMILLE */}
             <div className="bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)] shadow-lg">
               <h3 className="text-xl mb-6">👶 Ma Famille</h3>
               <div className="space-y-3 mb-6">
-                {profiles.length === 0 ? (
-                  <div className="p-6 border-2 border-dashed border-[var(--border)] rounded-2xl text-center">
-                    <p className="text-xs font-bold opacity-40">Aucun enfant enregistré</p>
-                  </div>
-                ) : (
-                  profiles.map(p => (
-                    <div
-                      key={p.id}
-                      className="flex justify-between items-center p-4 bg-[var(--bg-input)] rounded-2xl border border-transparent hover:border-[var(--france-blue)] transition-all font-bold"
-                    >
-                      {p.name}
-                      <span className="text-[9px] bg-[var(--france-blue)] text-white px-2 py-1 rounded-full uppercase tracking-widest">Actif</span>
+                {profiles.map(p => (
+                  <div key={p.id} className="flex justify-between items-center p-4 bg-[var(--bg-input)] rounded-2xl border border-transparent hover:border-[var(--france-blue)] transition-all">
+                    <span className="font-bold">{p.name}</span>
+                    <div className="flex items-center gap-2">
+                      {pendingDeleteProfileId === p.id ? (
+                        <div className="flex gap-1 animate-pulse">
+                          <button onClick={() => deleteProfile(p.id)} className="text-[9px] bg-red-500 text-white px-2 py-1 rounded-md">Confirmer</button>
+                          <button onClick={() => setPendingDeleteProfileId(null)} className="text-[9px] bg-gray-500 text-white px-2 py-1 rounded-md">Annuler</button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setPendingDeleteProfileId(p.id)} className="text-gray-400 hover:text-red-500 text-xs">Retirer</button>
+                      )}
                     </div>
-                  ))
-                )}
+                  </div>
+                ))}
               </div>
               <div className="flex gap-2">
-                <input
-                  className="bg-[var(--bg-input)] p-4 rounded-xl border border-[var(--border)] text-sm w-full outline-none focus:border-[var(--france-blue)]"
-                  placeholder="Prénom..."
-                  value={newProfileName}
-                  onChange={(e) => setNewProfileName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && addProfile()}
-                />
-                <button
-                  onClick={addProfile}
-                  className="bg-[var(--france-blue)] text-white px-5 rounded-xl font-bold hover:brightness-110 active:scale-90 transition-all"
-                >
-                  +
-                </button>
+                <input className="bg-[var(--bg-input)] p-4 rounded-xl border border-[var(--border)] text-sm w-full outline-none" placeholder="Prénom..." value={newProfileName} onChange={(e) => setNewProfileName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addProfile()} />
+                <button onClick={addProfile} className="bg-[var(--france-blue)] text-white px-5 rounded-xl font-bold">+</button>
               </div>
             </div>
 
-            {/* HISTORIQUE */}
             <div className="space-y-4">
-              <h3 className="text-lg px-2 flex justify-between items-center">
-                Historique
-                <span className="text-xs bg-[var(--bg-input)] px-2 py-1 rounded-lg opacity-50">{filteredExpenses.length}</span>
-              </h3>
-
-              <div className="max-h-[500px] overflow-y-auto pr-2 space-y-4 scrollbar-hide">
-                {filteredExpenses.length === 0 ? (
-                  <div className="bg-[var(--bg-card)] p-12 rounded-[32px] border border-[var(--border)] text-center opacity-40">
-                    <div className="text-4xl mb-4">💤</div>
-                    <p className="text-xs font-black uppercase">Aucune dépense trouvée</p>
-                  </div>
-                ) : (
-                  filteredExpenses.slice().reverse().map(exp => (
-                    <div
-                      key={exp.id}
-                      className={`flex justify-between items-center p-5 bg-[var(--bg-card)] rounded-[24px] border border-[var(--border)] shadow-sm hover:translate-x-2 hover:border-[var(--france-blue)] transition-all group ${lastAddedId === exp.id ? 'highlight-new' : ''}`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="text-2xl bg-[var(--bg-input)] w-12 h-12 flex items-center justify-center rounded-xl shadow-inner group-hover:scale-110 transition-transform">
-                          {categoryIcons[exp.category] || "📦"}
-                        </div>
-                        <div>
-                          <div className="font-bold text-sm leading-tight">{exp.label}</div>
-                          <div className="text-[9px] text-[var(--text-muted)] font-black uppercase tracking-wider">
-                            {exp.child_name} • {new Date(exp.date).getDate()} {currentDate.toLocaleDateString('fr-FR', { month: 'short' })}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="font-bold text-[var(--france-blue)]">{formatEuro(exp.amount)}</div>
-
-                        {/* FIX : confirmation inline sans confirm() bloquant */}
-                        {pendingDeleteId === exp.id ? (
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => deleteExpense(exp.id)}
-                              className="text-[10px] text-white bg-[var(--france-red)] px-2 py-1 rounded-lg font-bold"
-                            >
-                              Oui
-                            </button>
-                            <button
-                              onClick={() => setPendingDeleteId(null)}
-                              className="text-[10px] px-2 py-1 rounded-lg border border-[var(--border)] font-bold"
-                            >
-                              Non
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setPendingDeleteId(exp.id)}
-                            className="opacity-0 group-hover:opacity-100 text-[var(--france-red)] font-bold transition-all p-2 hover:bg-red-500/10 rounded-lg"
-                          >
-                            ✕
-                          </button>
-                        )}
+              <h3 className="text-lg px-2 flex justify-between items-center">Historique <span>{formatEuro(totalAmount)}</span></h3>
+              <div className="max-h-[500px] overflow-y-auto pr-2 space-y-3 scrollbar-hide">
+                {filteredExpenses.slice().reverse().map(exp => (
+                  <div key={exp.id} className="flex justify-between items-center p-4 bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] shadow-sm group">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{categoryIcons[exp.category] || "📦"}</span>
+                      <div>
+                        <div className="font-bold text-sm leading-none mb-1">{exp.label}</div>
+                        <div className="text-[10px] opacity-50 uppercase font-black">{exp.child_name} • {new Date(exp.date).toLocaleDateString()}</div>
                       </div>
                     </div>
-                  ))
-                )}
+                    <div className="flex items-center gap-3">
+                      <div className="font-bold text-[var(--france-blue)]">{formatEuro(exp.amount)}</div>
+                      <button onClick={() => deleteExpense(exp.id)} className="opacity-0 group-hover:opacity-100 text-red-500 font-bold">✕</button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </aside>
         </div>
       </main>
+      
+      {toast && (
+        <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[2000] px-8 py-4 rounded-2xl shadow-2xl font-bold transition-all ${toast.type === 'error' ? 'bg-red-500' : 'bg-[var(--france-blue)]'} text-white`}>
+          {toast.msg}
+        </div>
+      )}
     </div>
   );
 }
