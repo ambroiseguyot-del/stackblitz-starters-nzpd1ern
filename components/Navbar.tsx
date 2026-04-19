@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient'; // Chemin corrigé vers la racine
+import { supabase } from '../supabaseClient'; 
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
@@ -26,8 +26,8 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem 2rem', alignItems: 'center', backgroundColor: 'white' }}>
-      <Link href="/app" style={{ fontWeight: 'bold', fontSize: '1.5rem', textDecoration: 'none', color: '#1a1a1a italic' }}>
+    <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem 2rem', alignItems: 'center', backgroundColor: 'white', borderBottom: '1px solid #eee' }}>
+      <Link href="/app" style={{ fontWeight: 'bold', fontSize: '1.5rem', textDecoration: 'none', color: '#1a1a1a' }}>
         BabyBudget <span style={{ color: 'red' }}>Executive</span>
       </Link>
 
@@ -36,7 +36,9 @@ export default function Navbar() {
         {user && (
           <>
             <Link href="/app" style={{ textDecoration: 'none', color: '#666' }}>🚀 Dashboard</Link>
-            <Link href="/analyse" style={{ textDecoration: 'none', color: '#666', fontWeight: 'bold' }}>📊 Analyse</Link>
+            <Link href="/analyse" style={{ textDecoration: 'none', color: '#666' }}>📊 Analyse</Link>
+            {/* Nouveau lien ajouté ici */}
+            <Link href="/comparaison" style={{ textDecoration: 'none', color: '#666' }}>🇫🇷 Comparaison</Link>
           </>
         )}
         
