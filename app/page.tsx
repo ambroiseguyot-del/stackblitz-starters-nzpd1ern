@@ -1,6 +1,6 @@
 'use client';
 
-import Navbar from '../components/Navbar';
+// L'import Navbar a été supprimé car il est géré par layout.tsx
 import Link from 'next/link';
 import { Baby, TrendingDown, ShieldCheck, Zap, PieChart } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -56,10 +56,10 @@ export default function LandingPage() {
         }}
       />
 
-      <Navbar />
+      {/* Navbar supprimée d'ici (elle est dans le layout désormais) */}
 
       <section style={{
-        padding: '100px 20px',
+        padding: '120px 20px 100px', // Augmentation du padding top pour laisser de la place à la Navbar fixe
         textAlign: 'center',
         background: 'linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%)'
       }}>
@@ -150,8 +150,6 @@ export default function LandingPage() {
 
         </div>
       </section>
-
-      {/* RESTE DU CODE IDENTIQUE */}
 
       <section style={{ padding: '100px 20px', maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{
@@ -268,7 +266,6 @@ export default function LandingPage() {
 
       </section>
 
-      {/* KEYFRAMES GLOBAL */}
       <style jsx global>{`
         @keyframes gradientMove {
           0% { background-position: 0% 50%; }
@@ -280,8 +277,6 @@ export default function LandingPage() {
     </div>
   );
 }
-
-/* COMPONENTS inchangés */
 
 function FeatureCard({ icon, title, desc, delay = 0 }: any) {
   return (
@@ -314,8 +309,6 @@ function FeatureLine({ icon, text }: any) {
   );
 }
 
-/* STYLES inchangés */
-
 const primaryBtn = {
   backgroundColor: '#0070f3',
   color: 'white',
@@ -323,7 +316,7 @@ const primaryBtn = {
   borderRadius: '12px',
   fontSize: '1.1rem',
   textDecoration: 'none',
-  fontWeight: 'bold',
+  fontWeight: 'bold' as const,
   boxShadow: '0 4px 14px rgba(0,118,255,0.39)',
   transition: '0.2s',
   display: 'inline-block'
@@ -336,7 +329,7 @@ const secondaryBtn = {
   borderRadius: '12px',
   fontSize: '1.2rem',
   textDecoration: 'none',
-  fontWeight: 'bold',
+  fontWeight: 'bold' as const,
   display: 'inline-block'
 };
 

@@ -36,7 +36,7 @@ export default function Navbar() {
         {user && (
           <>
             <Link href="/app" style={{ textDecoration: 'none', color: '#666' }}>🚀 Dashboard</Link>
-            <Link href="/analyse" style={{ textDecoration: 'none', color: '#0070f3', fontWeight: 'bold' }}>📊 Analyse</Link>
+            <Link href="/analyse" style={{ textDecoration: 'none', color: '#666', fontWeight: 'bold' }}>📊 Analyse</Link>
           </>
         )}
         
