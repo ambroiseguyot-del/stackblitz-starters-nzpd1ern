@@ -736,7 +736,7 @@ export default function ComparaisonNationale() {
                           )}
                         />
                         <Tooltip
-                          formatter={(value: number, name: any) => [
+                          formatter={(value: any, name: any) => [
                             `Score ${value}/100`,
                             name,
                           ]}
