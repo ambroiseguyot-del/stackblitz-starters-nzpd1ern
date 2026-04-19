@@ -688,7 +688,7 @@ export default function ComparaisonNationale() {
                           ))}
                         </Pie>
                         <Tooltip
-                          formatter={(value: any) => [fmt(Number(value)), ""]}
+                          formatter={(value: any, name: any) => [fmt(Number(value)), ""]}
                         />
                         <Legend
                           formatter={(value) => (
@@ -736,7 +736,7 @@ export default function ComparaisonNationale() {
                           )}
                         />
                         <Tooltip
-                          formatter={(value: any, name: string) => [
+                          formatter={(value: number, name: any) => [
                             `Score ${value}/100`,
                             name,
                           ]}
