@@ -83,20 +83,18 @@ const nationalData: Record<AgeSlice, NationalSlice> = {
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
-  // Clés en minuscules sans accents (après normalize dans le hook)
   couches: "Couches",
   alimentation: "Alimentation",
   sante: "Santé",
+  soins: "Soins",
+  lait: "Lait",
   vetements: "Vêtements",
   vetement: "Vêtements",
   equipement: "Équipement",
   education: "Éducation",
+  ecole: "École",
   loisirs: "Loisirs",
   jouets: "Jouets",
-  ecole: "École",
-  soins: "Soins",
-  lait: "Lait",
-  sante: "Santé",
   autre: "Autre",
   autres: "Autres",
 };
