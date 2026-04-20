@@ -34,8 +34,8 @@ type AgeSlice = "0-1" | "1-3" | "3-6";
 
 interface Expense {
   amount: number;
-  category: string | null;
-  created_at: string | null;
+  category: string;    // normalisé en minuscules sans accents
+  created_at: string | null; // mapped depuis "date" dans l'app principale
 }
 
 interface NationalSlice {
@@ -83,13 +83,21 @@ const nationalData: Record<AgeSlice, NationalSlice> = {
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
+  // Clés en minuscules sans accents (après normalize dans le hook)
   couches: "Couches",
   alimentation: "Alimentation",
   sante: "Santé",
   vetements: "Vêtements",
+  vetement: "Vêtements",
   equipement: "Équipement",
   education: "Éducation",
   loisirs: "Loisirs",
+  jouets: "Jouets",
+  ecole: "École",
+  soins: "Soins",
+  lait: "Lait",
+  sante: "Santé",
+  autre: "Autre",
   autres: "Autres",
 };
 
@@ -114,16 +122,18 @@ const fmt = (n: number) =>
 
 const fmtPct = (n: number) => (n >= 0 ? "+" : "") + n.toFixed(1) + "%";
 
-function filterCurrentMonth(expenses: Expense[]): Expense[] {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth();
+function filterByMonth(expenses: Expense[], year: number, month: number): Expense[] {
   return expenses.filter((e) => {
     if (!e.created_at) return false;
-    const d = new Date(e.created_at);
-    return d.getFullYear() === y && d.getMonth() === m;
+    // Parse "YYYY-MM-DD" sans décalage timezone (même logique que l'app principale)
+    const parts = e.created_at.split("T")[0].split("-").map(Number);
+    const y = parts[0];
+    const m = parts[1] - 1; // month est 0-indexé
+    return y === year && m === month;
   });
 }
+
+const MONTHS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
 function generateInsights(
   userTotal: number,
@@ -192,24 +202,28 @@ function useExpenses() {
     setLoading(true);
     setWarning(null);
     try {
-      // SELECT * pour ne pas supposer les noms de colonnes
+      // SELECT * — on lit toutes les colonnes sans hypothèse sur les noms
       const { data, error: err } = await supabase
         .from("expenses")
         .select("*")
-        .limit(500);
+        .limit(1000);
 
       if (err) {
         console.error("[Comparaison] Supabase error:", err);
         setWarning(`[${err.code}] ${err.message}`);
         setExpenses([]);
       } else {
-        if (data && data.length > 0) {
-          console.log("[Comparaison] Colonnes disponibles:", Object.keys(data[0]));
-        }
         const normalized: Expense[] = (data || []).map((row: any) => ({
-          amount:     Number(row.amount     ?? row.montant   ?? row.total  ?? 0),
-          category:   row.category   ?? row.categorie ?? row.type    ?? null,
-          created_at: row.created_at  ?? row.date      ?? row.createdAt ?? null,
+          amount: Number(row.amount ?? row.montant ?? row.total ?? 0),
+          // Normalise la catégorie en minuscules pour matcher nationalData
+          // "Couches" → "couches", "Alimentation" → "alimentation", etc.
+          category: (row.category ?? row.categorie ?? row.type ?? "autres")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[̀-ͯ]/g, "") // retire les accents pour comparaison
+            .trim(),
+          // Lit "date" en priorité (nom utilisé dans ton app principale)
+          created_at: row.date ?? row.created_at ?? row.createdAt ?? null,
         }));
         setExpenses(normalized);
       }
@@ -223,7 +237,6 @@ function useExpenses() {
 
   useEffect(() => {
     fetchData();
-    // Re-fetch automatique si la session change (reconnexion, refresh token)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
       fetchData();
     });
@@ -358,13 +371,49 @@ export default function ComparaisonNationale() {
   const [ageSlice, setAgeSlice] = useState<AgeSlice>("0-1");
   const [selectedCategory, setSelectedCategory] = useState<string>("toutes");
 
+  // Navigation mois par mois (comme l'app principale)
+  const now = new Date();
+  const [selectedDate, setSelectedDate] = useState({ year: now.getFullYear(), month: now.getMonth() });
+
+  const goPrev = () => setSelectedDate(d => {
+    if (d.month === 0) return { year: d.year - 1, month: 11 };
+    return { year: d.year, month: d.month - 1 };
+  });
+  const goNext = () => setSelectedDate(d => {
+    if (d.month === 11) return { year: d.year + 1, month: 0 };
+    return { year: d.year, month: d.month + 1 };
+  });
+  const isCurrentMonth = selectedDate.year === now.getFullYear() && selectedDate.month === now.getMonth();
+
   const national = nationalData[ageSlice];
   const allCategories = useMemo(() => ["toutes", ...Object.keys(national.categories)], [national]);
-  const monthlyExpenses = useMemo(() => filterCurrentMonth(expenses), [expenses]);
+  const monthlyExpenses = useMemo(
+    () => filterByMonth(expenses, selectedDate.year, selectedDate.month),
+    [expenses, selectedDate]
+  );
 
   const userByCategory = useMemo<Record<string, number>>(() => {
     return monthlyExpenses.reduce((acc, e) => {
-      const cat = (e.category || "autres").toLowerCase().trim();
+      // La catégorie est déjà normalisée (minuscules, sans accents) par le hook
+      // On mappe les catégories de l'app principale vers nationalData :
+      // "Couches" → "couches", "Lait" → "alimentation", "Soins" → "sante", etc.
+      const rawCat = e.category || "autres";
+      const CATEGORY_MAP: Record<string, string> = {
+        couches: "couches",
+        lait: "alimentation",
+        sante: "sante",
+        soins: "sante",
+        vetements: "vetements",
+        jouets: "equipement",
+        ecole: "education",
+        loisirs: "loisirs",
+        equipement: "equipement",
+        education: "education",
+        alimentation: "alimentation",
+        autre: "autres",
+        autres: "autres",
+      };
+      const cat = CATEGORY_MAP[rawCat] ?? rawCat;
       acc[cat] = (acc[cat] ?? 0) + (e.amount || 0);
       return acc;
     }, {} as Record<string, number>);
@@ -423,11 +472,35 @@ export default function ComparaisonNationale() {
 
       {/* HEADER */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-20 bg-white/90 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-0.5">Budget Bébé</p>
             <h1 className="text-xl font-extrabold text-gray-900 leading-none">Comparaison Nationale</h1>
           </div>
+
+          {/* ── NAVIGATEUR MOIS ── */}
+          <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-2xl px-3 py-2">
+            <button
+              onClick={goPrev}
+              className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm transition-all text-gray-500 font-bold cursor-pointer"
+              aria-label="Mois précédent"
+            >❮</button>
+            <div className="text-center min-w-[140px]">
+              <p className="text-sm font-extrabold text-gray-900 capitalize">
+                {MONTHS_FR[selectedDate.month]} {selectedDate.year}
+              </p>
+              {isCurrentMonth && (
+                <p className="text-xs text-indigo-500 font-semibold leading-none mt-0.5">Mois en cours</p>
+              )}
+            </div>
+            <button
+              onClick={goNext}
+              disabled={isCurrentMonth}
+              className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm transition-all text-gray-500 font-bold cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Mois suivant"
+            >❯</button>
+          </div>
+
           <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-100">
             🇫🇷 Données INSEE · CAF · DREES
           </span>
@@ -510,8 +583,8 @@ export default function ComparaisonNationale() {
                   label="Vos dépenses / mois"
                   value={fmt(userFiltered)}
                   sub={monthlyExpenses.length === 0
-                    ? "Aucune donnée ce mois-ci"
-                    : `${monthlyExpenses.length} opération${monthlyExpenses.length > 1 ? "s" : ""} ce mois`}
+                    ? `Aucune dépense — ${MONTHS_FR[selectedDate.month]} ${selectedDate.year}`
+                    : `${monthlyExpenses.length} opération${monthlyExpenses.length > 1 ? "s" : ""} · ${MONTHS_FR[selectedDate.month]}`}
                   accent
                 />
                 <KPICard
@@ -544,12 +617,14 @@ export default function ComparaisonNationale() {
                 <span className="text-3xl">📭</span>
                 <div>
                   <p className="font-semibold text-slate-700">
-                    {warning ? "Vos dépenses ne sont pas disponibles pour l'instant" : "Aucune dépense enregistrée ce mois-ci"}
+                    {warning
+                      ? "Vos dépenses ne sont pas disponibles pour l'instant"
+                      : `Aucune dépense en ${MONTHS_FR[selectedDate.month]} ${selectedDate.year}`}
                   </p>
                   <p className="text-sm text-slate-500 mt-1">
                     {warning
                       ? "La comparaison nationale ci-dessous reste entièrement fonctionnelle."
-                      : "Ajoutez des dépenses pour une analyse personnalisée en temps réel."}
+                      : "Naviguez vers un autre mois ou ajoutez des dépenses pour ce mois."}
                   </p>
                 </div>
               </div>
