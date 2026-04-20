@@ -759,8 +759,8 @@ export default function ComparaisonNationale() {
                           )}
                         />
                         <Tooltip
-                          formatter={(value: number | string, name: string) => [
-                            `Score ${typeof value === "number" ? value : parseFloat(String(value)) || 0}/100`,
+                          formatter={(value: any, name: any) => [
+                            `Score ${Number(value) || 0}/100`,
                             name,
                           ]}
                         />
