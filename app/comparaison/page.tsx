@@ -192,30 +192,26 @@ function useExpenses() {
     setLoading(true);
     setWarning(null);
     try {
-      // Récupère la session hydratée par le middleware via cookie
-      const { data: { session } } = await supabase.auth.getSession();
-
-      // Requête avec filtre user_id si session disponible
-      // Sans session : requête anon (nécessite RLS désactivé)
-      let query = supabase
+      // SELECT * pour ne pas supposer les noms de colonnes
+      const { data, error: err } = await supabase
         .from("expenses")
-        .select("amount, category, created_at")
+        .select("*")
         .limit(500);
-
-      const { data, error: err } = await query;
 
       if (err) {
         console.error("[Comparaison] Supabase error:", err);
-        const hint =
-          err.code === "42501" ? "RLS bloque l'accès — vérifier les policies" :
-          err.code === "42P01" ? "Table 'expenses' introuvable" :
-          err.code === "42703" ? "Colonne manquante dans expenses (user_id ?)" :
-          err.code === "PGRST301" ? "Session expirée — reconnectez-vous" :
-          err.message;
-        setWarning(`Données indisponibles : ${hint}`);
+        setWarning(`[${err.code}] ${err.message}`);
         setExpenses([]);
       } else {
-        setExpenses((data as Expense[]) || []);
+        if (data && data.length > 0) {
+          console.log("[Comparaison] Colonnes disponibles:", Object.keys(data[0]));
+        }
+        const normalized: Expense[] = (data || []).map((row: any) => ({
+          amount:     Number(row.amount     ?? row.montant   ?? row.total  ?? 0),
+          category:   row.category   ?? row.categorie ?? row.type    ?? null,
+          created_at: row.created_at  ?? row.date      ?? row.createdAt ?? null,
+        }));
+        setExpenses(normalized);
       }
     } catch (e: any) {
       console.error("[Comparaison] Exception:", e);
