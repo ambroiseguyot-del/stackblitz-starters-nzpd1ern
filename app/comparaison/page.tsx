@@ -202,10 +202,6 @@ function useExpenses() {
         .select("amount, category, created_at")
         .limit(500);
 
-      if (session?.user?.id) {
-        query = query.eq("user_id", session.user.id);
-      }
-
       const { data, error: err } = await query;
 
       if (err) {
