@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../supabaseClient";
 import {
   BarChart,
   Bar,
