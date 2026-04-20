@@ -82,7 +82,6 @@ const nationalData: Record<AgeSlice, NationalSlice> = {
   },
 };
 
-// Labels lisibles pour les catégories
 const CATEGORY_LABELS: Record<string, string> = {
   couches: "Couches",
   alimentation: "Alimentation",
@@ -94,22 +93,12 @@ const CATEGORY_LABELS: Record<string, string> = {
   autres: "Autres",
 };
 
-// Palette de couleurs cohérente
 const PALETTE = {
-  user: "#6366F1",       // indigo vif — couleur "vous"
-  national: "#E2E8F0",   // gris clair — couleur "nationale"
+  user: "#6366F1",
+  national: "#E2E8F0",
   nationalLine: "#94A3B8",
-  green: "#10B981",
-  red: "#F43F5E",
-  amber: "#F59E0B",
-  bg: "#F9FAFB",
-  card: "#FFFFFF",
-  border: "#E5E7EB",
-  text: "#111827",
-  muted: "#6B7280",
 };
 
-// Palette pie chart
 const PIE_COLORS = ["#6366F1", "#8B5CF6", "#A78BFA", "#C4B5FD", "#DDD6FE", "#EDE9FE"];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -117,12 +106,14 @@ const PIE_COLORS = ["#6366F1", "#8B5CF6", "#A78BFA", "#C4B5FD", "#DDD6FE", "#EDE
 // ─────────────────────────────────────────────────────────────────────────────
 
 const fmt = (n: number) =>
-  new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(n);
 
-const fmtPct = (n: number) =>
-  (n >= 0 ? "+" : "") + n.toFixed(1) + "%";
+const fmtPct = (n: number) => (n >= 0 ? "+" : "") + n.toFixed(1) + "%";
 
-/** Filtre les dépenses sur le mois courant */
 function filterCurrentMonth(expenses: Expense[]): Expense[] {
   const now = new Date();
   const y = now.getFullYear();
@@ -134,7 +125,6 @@ function filterCurrentMonth(expenses: Expense[]): Expense[] {
   });
 }
 
-/** Génère des insights dynamiques basés sur les données */
 function generateInsights(
   userTotal: number,
   nationalTotal: number,
@@ -147,87 +137,114 @@ function generateInsights(
   const diff = ((userTotal - nationalTotal) / nationalTotal) * 100;
   const absDiff = Math.abs(diff);
 
-  // Insight 1 : positionnement global
   if (diff > 15) {
-    insights.push(`Vous dépensez ${absDiff.toFixed(0)}% de plus que la moyenne nationale pour cette tranche d'âge.`);
+    insights.push(
+      `Vous dépensez ${absDiff.toFixed(0)}% de plus que la moyenne nationale pour cette tranche d'âge.`
+    );
   } else if (diff < -15) {
-    insights.push(`Bravo ! Vous dépensez ${absDiff.toFixed(0)}% de moins que la moyenne nationale — vous faites partie des parents les plus économes.`);
+    insights.push(
+      `Bravo ! Vous dépensez ${absDiff.toFixed(0)}% de moins que la moyenne nationale — vous faites partie des parents les plus économes.`
+    );
   } else {
-    insights.push(`Vos dépenses sont proches de la moyenne nationale (écart de ${absDiff.toFixed(0)}%).`);
+    insights.push(
+      `Vos dépenses sont proches de la moyenne nationale (écart de ${absDiff.toFixed(0)}%).`
+    );
   }
 
-  // Insight 2 : poste principal utilisateur
   const topUserCat = Object.entries(userByCategory).sort((a, b) => b[1] - a[1])[0];
   if (topUserCat) {
     const label = CATEGORY_LABELS[topUserCat[0]] || topUserCat[0];
-    insights.push(`Votre poste de dépense principal est "${label}" (${fmt(topUserCat[1])}/mois).`);
+    insights.push(`Votre poste principal est "${label}" (${fmt(topUserCat[1])}/mois).`);
   }
 
-  // Insight 3 : catégorie la plus éloignée de la moyenne
   const gaps = Object.entries(nationalCategories).map(([cat, natVal]) => {
     const userVal = userByCategory[cat] ?? 0;
     const gap = natVal > 0 ? ((userVal - natVal) / natVal) * 100 : 0;
-    return { cat, gap, userVal, natVal };
+    return { cat, gap };
   });
-
   const maxOverspend = gaps.sort((a, b) => b.gap - a.gap)[0];
   if (maxOverspend && maxOverspend.gap > 20) {
     const label = CATEGORY_LABELS[maxOverspend.cat] || maxOverspend.cat;
-    insights.push(`Attention : votre poste "${label}" dépasse la moyenne de ${maxOverspend.gap.toFixed(0)}% — une piste d'optimisation possible.`);
+    insights.push(
+      `Attention : "${label}" dépasse la moyenne de ${maxOverspend.gap.toFixed(0)}% — une piste d'optimisation.`
+    );
   }
 
-  // Insight 4 : percentile approximatif (hypothèse : distribution normale ±25%)
-  const percentile = diff < 0 ? Math.min(95, 50 + Math.abs(diff)) : Math.max(5, 50 - diff);
+  const percentile =
+    diff < 0 ? Math.min(95, 50 + Math.abs(diff)) : Math.max(5, 50 - diff);
   insights.push(
-    `Vous êtes plus économe que ${percentile.toFixed(0)}% des parents sur cette tranche d'âge (estimation statistique).`
+    `Vous êtes plus économe que ${percentile.toFixed(0)}% des parents sur cette tranche d'âge (estimation).`
   );
 
   return insights;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// HOOK DONNÉES
+// HOOK — attend la session auth avant de fetcher
 // ─────────────────────────────────────────────────────────────────────────────
 
 function useExpenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
-  // "warning" = données indisponibles mais page fonctionnelle avec données nationales seules
   const [warning, setWarning] = useState<string | null>(null);
 
-  const fetch = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setWarning(null);
     try {
-      const { data, error: err } = await supabase
+      // Récupère la session hydratée par le middleware via cookie
+      const { data: { session } } = await supabase.auth.getSession();
+
+      // Requête avec filtre user_id si session disponible
+      // Sans session : requête anon (nécessite RLS désactivé)
+      let query = supabase
         .from("expenses")
-        .select("amount, category, created_at");
+        .select("amount, category, created_at")
+        .limit(500);
+
+      if (session?.user?.id) {
+        query = query.eq("user_id", session.user.id);
+      }
+
+      const { data, error: err } = await query;
+
       if (err) {
-        // On log l'erreur pour debug mais on ne bloque PAS la page
-        console.warn("[ComparaisonNationale] Supabase fetch error:", err.message, err.code);
-        setWarning("Vos données personnelles sont temporairement indisponibles. La comparaison nationale reste accessible.");
+        console.error("[Comparaison] Supabase error:", err);
+        const hint =
+          err.code === "42501" ? "RLS bloque l'accès — vérifier les policies" :
+          err.code === "42P01" ? "Table 'expenses' introuvable" :
+          err.code === "42703" ? "Colonne manquante dans expenses (user_id ?)" :
+          err.code === "PGRST301" ? "Session expirée — reconnectez-vous" :
+          err.message;
+        setWarning(`Données indisponibles : ${hint}`);
         setExpenses([]);
       } else {
         setExpenses((data as Expense[]) || []);
       }
-    } catch (e) {
-      console.warn("[ComparaisonNationale] Network error:", e);
-      setWarning("Connexion impossible. La comparaison nationale reste accessible sans vos données.");
+    } catch (e: any) {
+      console.error("[Comparaison] Exception:", e);
+      setWarning(`Erreur réseau : ${e?.message ?? String(e)}`);
       setExpenses([]);
     }
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetch(); }, [fetch]);
+  useEffect(() => {
+    fetchData();
+    // Re-fetch automatique si la session change (reconnexion, refresh token)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      fetchData();
+    });
+    return () => subscription.unsubscribe();
+  }, [fetchData]);
 
-  return { expenses, loading, warning, refetch: fetch };
+  return { expenses, loading, warning, refetch: fetchData };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SOUS-COMPOSANTS
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Tooltip personnalisé Recharts */
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
@@ -242,27 +259,14 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-/** Carte KPI principale */
 const KPICard = ({
-  label,
-  value,
-  sub,
-  accent,
-  icon,
+  label, value, sub, accent, icon,
 }: {
-  label: string;
-  value: string;
-  sub?: React.ReactNode;
-  accent?: boolean;
-  icon: string;
+  label: string; value: string; sub?: React.ReactNode; accent?: boolean; icon: string;
 }) => (
-  <div
-    className={`rounded-2xl border p-5 flex flex-col gap-3 transition-shadow hover:shadow-md ${
-      accent
-        ? "bg-indigo-50 border-indigo-200"
-        : "bg-white border-gray-100"
-    }`}
-  >
+  <div className={`rounded-2xl border p-5 flex flex-col gap-3 transition-shadow hover:shadow-md ${
+    accent ? "bg-indigo-50 border-indigo-200" : "bg-white border-gray-100"
+  }`}>
     <div className="flex items-center gap-2">
       <span className="text-2xl">{icon}</span>
       <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">{label}</span>
@@ -274,37 +278,28 @@ const KPICard = ({
   </div>
 );
 
-/** Badge de différence coloré */
 const DiffBadge = ({ diff }: { diff: number }) => {
   const isGood = diff <= 0;
   return (
-    <span
-      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold ${
-        isGood ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
-      }`}
-    >
+    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold ${
+      isGood ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+    }`}>
       {isGood ? "▼" : "▲"} {fmtPct(diff)}
       <span className="font-normal opacity-70">vs moyenne</span>
     </span>
   );
 };
 
-/** Barre de progression comparaison */
 const ComparisonBar = ({
-  label,
-  userVal,
-  nationalVal,
+  label, userVal, nationalVal,
 }: {
-  label: string;
-  userVal: number;
-  nationalVal: number;
+  label: string; userVal: number; nationalVal: number;
 }) => {
   const max = Math.max(userVal, nationalVal, 1);
   const userPct = (userVal / max) * 100;
   const natPct = (nationalVal / max) * 100;
   const diff = nationalVal > 0 ? ((userVal - nationalVal) / nationalVal) * 100 : 0;
   const isOver = diff > 0;
-
   return (
     <div className="py-2">
       <div className="flex items-center justify-between mb-1.5">
@@ -322,26 +317,17 @@ const ComparisonBar = ({
         </div>
       </div>
       <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
-        {/* Barre nationale */}
-        <div
-          className="absolute top-0 left-0 h-full rounded-full bg-gray-300"
-          style={{ width: `${natPct}%` }}
-        />
-        {/* Barre utilisateur */}
-        <div
-          className="absolute top-0 left-0 h-full rounded-full"
-          style={{
-            width: `${userPct}%`,
-            background: isOver ? "#F43F5E" : "#6366F1",
-            opacity: 0.85,
-          }}
-        />
+        <div className="absolute top-0 left-0 h-full rounded-full bg-gray-300" style={{ width: `${natPct}%` }} />
+        <div className="absolute top-0 left-0 h-full rounded-full" style={{
+          width: `${userPct}%`,
+          background: isOver ? "#F43F5E" : "#6366F1",
+          opacity: 0.85,
+        }} />
       </div>
     </div>
   );
 };
 
-/** Carte insight */
 const InsightCard = ({ text, index }: { text: string; index: number }) => {
   const icons = ["💡", "📊", "⚡", "🎯"];
   const colors = [
@@ -358,16 +344,7 @@ const InsightCard = ({ text, index }: { text: string; index: number }) => {
   );
 };
 
-/** Bouton filtre pill */
-const FilterPill = ({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) => (
+const FilterPill = ({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) => (
   <button
     onClick={onClick}
     className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all duration-150 cursor-pointer ${
@@ -389,19 +366,10 @@ export default function ComparaisonNationale() {
   const [ageSlice, setAgeSlice] = useState<AgeSlice>("0-1");
   const [selectedCategory, setSelectedCategory] = useState<string>("toutes");
 
-  // Données nationales pour la tranche sélectionnée
   const national = nationalData[ageSlice];
-
-  // Toutes les catégories disponibles (nationales + utilisateur)
-  const allCategories = useMemo(
-    () => ["toutes", ...Object.keys(national.categories)],
-    [national]
-  );
-
-  // Dépenses du mois courant
+  const allCategories = useMemo(() => ["toutes", ...Object.keys(national.categories)], [national]);
   const monthlyExpenses = useMemo(() => filterCurrentMonth(expenses), [expenses]);
 
-  // Agrégation utilisateur par catégorie (memoïsée)
   const userByCategory = useMemo<Record<string, number>>(() => {
     return monthlyExpenses.reduce((acc, e) => {
       const cat = (e.category || "autres").toLowerCase().trim();
@@ -410,35 +378,25 @@ export default function ComparaisonNationale() {
     }, {} as Record<string, number>);
   }, [monthlyExpenses]);
 
-  // Total utilisateur
-  const userTotal = useMemo(
-    () => Object.values(userByCategory).reduce((s, v) => s + v, 0),
-    [userByCategory]
+  const userTotal = useMemo(() => Object.values(userByCategory).reduce((s, v) => s + v, 0), [userByCategory]);
+
+  const userFiltered = useMemo(() =>
+    selectedCategory === "toutes" ? userTotal : (userByCategory[selectedCategory] ?? 0),
+    [selectedCategory, userByCategory, userTotal]
   );
 
-  // Total filtré par catégorie
-  const userFiltered = useMemo(() => {
-    if (selectedCategory === "toutes") return userTotal;
-    return userByCategory[selectedCategory] ?? 0;
-  }, [selectedCategory, userByCategory, userTotal]);
+  const nationalFiltered = useMemo(() =>
+    selectedCategory === "toutes" ? national.total : (national.categories[selectedCategory] ?? 0),
+    [selectedCategory, national]
+  );
 
-  const nationalFiltered = useMemo(() => {
-    if (selectedCategory === "toutes") return national.total;
-    return national.categories[selectedCategory] ?? 0;
-  }, [selectedCategory, national]);
+  const diff = useMemo(() =>
+    nationalFiltered === 0 ? 0 : ((userFiltered - nationalFiltered) / nationalFiltered) * 100,
+    [userFiltered, nationalFiltered]
+  );
 
-  // Différence en %
-  const diff = useMemo(() => {
-    if (nationalFiltered === 0) return 0;
-    return ((userFiltered - nationalFiltered) / nationalFiltered) * 100;
-  }, [userFiltered, nationalFiltered]);
-
-  // Données bar chart (user vs national par catégorie)
   const barData = useMemo(() => {
-    const cats =
-      selectedCategory === "toutes"
-        ? Object.keys(national.categories)
-        : [selectedCategory];
+    const cats = selectedCategory === "toutes" ? Object.keys(national.categories) : [selectedCategory];
     return cats.map((cat) => ({
       name: CATEGORY_LABELS[cat] || cat,
       Vous: userByCategory[cat] ?? 0,
@@ -446,7 +404,6 @@ export default function ComparaisonNationale() {
     }));
   }, [national, userByCategory, selectedCategory]);
 
-  // Données pie chart (répartition nationale)
   const pieData = useMemo(() =>
     Object.entries(national.categories).map(([cat, val]) => ({
       name: CATEGORY_LABELS[cat] || cat,
@@ -455,38 +412,29 @@ export default function ComparaisonNationale() {
     [national]
   );
 
-  // Données radar (user vs national normalisées sur 100)
   const radarData = useMemo(() => {
-    const cats = Object.keys(national.categories);
     const natMax = Math.max(...Object.values(national.categories));
-    return cats.map((cat) => ({
+    return Object.keys(national.categories).map((cat) => ({
       subject: CATEGORY_LABELS[cat] || cat,
       Vous: Math.round(((userByCategory[cat] ?? 0) / natMax) * 100),
       Nationale: Math.round(((national.categories[cat] ?? 0) / natMax) * 100),
     }));
   }, [national, userByCategory]);
 
-  // Insights automatiques
-  const insights = useMemo(
-    () => generateInsights(userTotal, national.total, userByCategory, national.categories),
+  const insights = useMemo(() =>
+    generateInsights(userTotal, national.total, userByCategory, national.categories),
     [userTotal, national, userByCategory]
   );
-
-  // ─── RENDER ────────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* ── HEADER ── */}
-      <div className="bg-white border-b border-gray-100 sticky top-0 z-20 backdrop-blur-sm bg-white/90">
+      {/* HEADER */}
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-20 bg-white/90 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-0.5">
-              Budget Bébé
-            </p>
-            <h1 className="text-xl font-extrabold text-gray-900 leading-none">
-              Comparaison Nationale
-            </h1>
+            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-0.5">Budget Bébé</p>
+            <h1 className="text-xl font-extrabold text-gray-900 leading-none">Comparaison Nationale</h1>
           </div>
           <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-100">
             🇫🇷 Données INSEE · CAF · DREES
@@ -496,15 +444,11 @@ export default function ComparaisonNationale() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
 
-        {/* ── FILTRES ── */}
+        {/* FILTRES */}
         <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
           <div className="flex flex-wrap gap-6 items-start">
-
-            {/* Filtre âge */}
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                Tranche d'âge de l'enfant
-              </p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Tranche d'âge de l'enfant</p>
               <div className="flex gap-2 flex-wrap">
                 {(["0-1", "1-3", "3-6"] as AgeSlice[]).map((slice) => (
                   <FilterPill
@@ -516,14 +460,9 @@ export default function ComparaisonNationale() {
                 ))}
               </div>
             </div>
-
             <div className="w-px bg-gray-100 self-stretch hidden sm:block" />
-
-            {/* Filtre catégorie */}
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                Catégorie
-              </p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Catégorie</p>
               <div className="flex gap-2 flex-wrap">
                 {allCategories.map((cat) => (
                   <FilterPill
@@ -538,7 +477,7 @@ export default function ComparaisonNationale() {
           </div>
         </section>
 
-        {/* ── ÉTAT LOADING ── */}
+        {/* LOADING */}
         {loading && (
           <div className="flex items-center justify-center gap-3 py-20 text-gray-400">
             <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
@@ -549,14 +488,14 @@ export default function ComparaisonNationale() {
           </div>
         )}
 
-        {/* ── BANDEAU AVERTISSEMENT (non-bloquant) ── */}
+        {/* WARNING non-bloquant */}
         {!loading && warning && (
           <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
             <span className="text-amber-500 text-lg flex-shrink-0 mt-0.5">⚠️</span>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-amber-800 font-medium">{warning}</p>
               <p className="text-xs text-amber-600 mt-0.5">
-                Vérifiez que vous êtes bien connecté·e, ou que la table <code className="bg-amber-100 px-1 rounded">expenses</code> est accessible.
+                La comparaison nationale reste fonctionnelle. Vos dépenses apparaîtront à 0 € jusqu'à la résolution.
               </p>
             </div>
             <button
@@ -568,21 +507,19 @@ export default function ComparaisonNationale() {
           </div>
         )}
 
-        {/* ── CONTENU PRINCIPAL — toujours affiché après loading ── */}
+        {/* CONTENU PRINCIPAL — toujours visible après loading */}
         {!loading && (
           <>
-            {/* ── BLOC COMPARAISON PRINCIPALE ── */}
+            {/* KPI */}
             <section>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <KPICard
                   icon="👤"
                   label="Vos dépenses / mois"
                   value={fmt(userFiltered)}
-                  sub={
-                    monthlyExpenses.length === 0
-                      ? "Aucune donnée ce mois-ci"
-                      : `${monthlyExpenses.length} opération${monthlyExpenses.length > 1 ? "s" : ""} ce mois`
-                  }
+                  sub={monthlyExpenses.length === 0
+                    ? "Aucune donnée ce mois-ci"
+                    : `${monthlyExpenses.length} opération${monthlyExpenses.length > 1 ? "s" : ""} ce mois`}
                   accent
                 />
                 <KPICard
@@ -594,45 +531,39 @@ export default function ComparaisonNationale() {
                 <div className="rounded-2xl border border-gray-100 bg-white p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">📈</span>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                      Votre écart
-                    </span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">Votre écart</span>
                   </div>
                   <p className={`text-3xl font-extrabold leading-none ${diff <= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                     {fmtPct(diff)}
                   </p>
-                  <div>
-                    <DiffBadge diff={diff} />
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <DiffBadge diff={diff} />
+                  <p className="text-xs text-gray-400">
                     {diff <= 0
-                      ? `Vous économisez ${fmt(Math.abs(userFiltered - nationalFiltered))} de plus que la moyenne`
+                      ? `Vous économisez ${fmt(Math.abs(userFiltered - nationalFiltered))} vs la moyenne`
                       : `Vous dépensez ${fmt(Math.abs(userFiltered - nationalFiltered))} de plus que la moyenne`}
                   </p>
                 </div>
               </div>
             </section>
 
-            {/* ── NO DATA STATE ── */}
+            {/* NO DATA */}
             {monthlyExpenses.length === 0 && (
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex items-center gap-4">
                 <span className="text-3xl">📭</span>
                 <div>
                   <p className="font-semibold text-slate-700">
-                    {warning
-                      ? "Vos dépenses ne sont pas disponibles pour l'instant"
-                      : "Aucune dépense enregistrée ce mois-ci"}
+                    {warning ? "Vos dépenses ne sont pas disponibles pour l'instant" : "Aucune dépense enregistrée ce mois-ci"}
                   </p>
                   <p className="text-sm text-slate-500 mt-1">
                     {warning
-                      ? "La comparaison nationale ci-dessous reste entièrement fonctionnelle — vos dépenses apparaîtront à 0 €."
-                      : "La comparaison nationale est affichée. Ajoutez des dépenses pour une analyse personnalisée en temps réel."}
+                      ? "La comparaison nationale ci-dessous reste entièrement fonctionnelle."
+                      : "Ajoutez des dépenses pour une analyse personnalisée en temps réel."}
                   </p>
                 </div>
               </div>
             )}
 
-            {/* ── INSIGHTS ── */}
+            {/* INSIGHTS */}
             {insights.length > 0 && (
               <section>
                 <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
@@ -640,23 +571,19 @@ export default function ComparaisonNationale() {
                   Insights automatiques
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {insights.map((text, i) => (
-                    <InsightCard key={i} text={text} index={i} />
-                  ))}
+                  {insights.map((text, i) => <InsightCard key={i} text={text} index={i} />)}
                 </div>
               </section>
             )}
 
-            {/* ── GRAPHIQUES ── */}
+            {/* GRAPHIQUES */}
             <section>
               <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-1.5 h-5 rounded-full bg-indigo-500 inline-block" />
                 Analyse graphique
               </h2>
-
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                {/* Bar chart : user vs national par catégorie */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
                   <p className="text-sm font-bold text-gray-800 mb-4">
                     Vous vs Moyenne nationale {selectedCategory !== "toutes" ? `— ${CATEGORY_LABELS[selectedCategory] || selectedCategory}` : "(par catégorie)"}
@@ -665,25 +592,10 @@ export default function ComparaisonNationale() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={barData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }} barGap={4}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                        <XAxis
-                          dataKey="name"
-                          tick={{ fontSize: 11, fill: "#9CA3AF" }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis
-                          tickFormatter={(v) => fmt(v)}
-                          tick={{ fontSize: 10, fill: "#9CA3AF" }}
-                          axisLine={false}
-                          tickLine={false}
-                          width={64}
-                        />
+                        <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
+                        <YAxis tickFormatter={(v) => fmt(v)} tick={{ fontSize: 10, fill: "#9CA3AF" }} axisLine={false} tickLine={false} width={64} />
                         <Tooltip content={<CustomTooltip />} cursor={{ fill: "#F9FAFB" }} />
-                        <Legend
-                          formatter={(value) => (
-                            <span className="text-xs text-gray-600 font-medium">{value}</span>
-                          )}
-                        />
+                        <Legend formatter={(value) => <span className="text-xs text-gray-600 font-medium">{value}</span>} />
                         <Bar dataKey="Vous" fill={PALETTE.user} radius={[6, 6, 0, 0]} maxBarSize={40} />
                         <Bar dataKey="Nationale" fill={PALETTE.national} stroke={PALETTE.nationalLine} strokeWidth={1} radius={[6, 6, 0, 0]} maxBarSize={40} />
                       </BarChart>
@@ -691,7 +603,6 @@ export default function ComparaisonNationale() {
                   </div>
                 </div>
 
-                {/* Pie chart : répartition nationale */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
                   <p className="text-sm font-bold text-gray-800 mb-4">
                     Répartition nationale — {ageSlice} an{ageSlice === "0-1" ? "" : "s"}
@@ -699,71 +610,30 @@ export default function ComparaisonNationale() {
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
-                        <Pie
-                          data={pieData}
-                          dataKey="value"
-                          innerRadius="42%"
-                          outerRadius="70%"
-                          paddingAngle={3}
-                        >
-                          {pieData.map((_, i) => (
-                            <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                          ))}
+                        <Pie data={pieData} dataKey="value" innerRadius="42%" outerRadius="70%" paddingAngle={3}>
+                          {pieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                         </Pie>
-                        <Tooltip
-                          formatter={(value: any) => [fmt(Number(value) || 0), ""]}
-                        />
-                        <Legend
-                          formatter={(value) => (
-                            <span className="text-xs text-gray-600">{value}</span>
-                          )}
-                        />
+                        <Tooltip formatter={(value: any) => [fmt(Number(value) || 0), ""]} />
+                        <Legend formatter={(value) => <span className="text-xs text-gray-600">{value}</span>} />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
 
-                {/* Radar : comparaison multi-catégories */}
                 <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm lg:col-span-2">
-                  <p className="text-sm font-bold text-gray-800 mb-1">
-                    Profil de dépenses — Radar comparatif
-                  </p>
+                  <p className="text-sm font-bold text-gray-800 mb-1">Profil de dépenses — Radar comparatif</p>
                   <p className="text-xs text-gray-400 mb-4">
-                    Normalisé par rapport au maximum de la catégorie nationale. 100 = équivalent à la moyenne nationale maximale.
+                    Normalisé par rapport au maximum national. 100 = équivalent à la catégorie nationale la plus élevée.
                   </p>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart data={radarData}>
                         <PolarGrid stroke="#E5E7EB" />
-                        <PolarAngleAxis
-                          dataKey="subject"
-                          tick={{ fontSize: 11, fill: "#6B7280" }}
-                        />
-                        <Radar
-                          name="Nationale"
-                          dataKey="Nationale"
-                          stroke={PALETTE.nationalLine}
-                          fill={PALETTE.national}
-                          fillOpacity={0.5}
-                        />
-                        <Radar
-                          name="Vous"
-                          dataKey="Vous"
-                          stroke={PALETTE.user}
-                          fill={PALETTE.user}
-                          fillOpacity={0.3}
-                        />
-                        <Legend
-                          formatter={(value) => (
-                            <span className="text-xs text-gray-600 font-medium">{value}</span>
-                          )}
-                        />
-                        <Tooltip
-                          formatter={(value: any, name: any) => [
-                            `Score ${Number(value) || 0}/100`,
-                            name,
-                          ]}
-                        />
+                        <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "#6B7280" }} />
+                        <Radar name="Nationale" dataKey="Nationale" stroke={PALETTE.nationalLine} fill={PALETTE.national} fillOpacity={0.5} />
+                        <Radar name="Vous" dataKey="Vous" stroke={PALETTE.user} fill={PALETTE.user} fillOpacity={0.3} />
+                        <Legend formatter={(value) => <span className="text-xs text-gray-600 font-medium">{value}</span>} />
+                        <Tooltip formatter={(value: any, name: any) => [`Score ${Number(value) || 0}/100`, String(name)]} />
                       </RadarChart>
                     </ResponsiveContainer>
                   </div>
@@ -771,7 +641,7 @@ export default function ComparaisonNationale() {
               </div>
             </section>
 
-            {/* ── DÉTAIL PAR CATÉGORIE ── */}
+            {/* DÉTAIL PAR CATÉGORIE */}
             {selectedCategory === "toutes" && (
               <section className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
                 <h2 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -805,7 +675,7 @@ export default function ComparaisonNationale() {
               </section>
             )}
 
-            {/* ── FOOTER CRÉDIBILITÉ ── */}
+            {/* FOOTER */}
             <footer className="text-center py-4">
               <p className="text-xs text-gray-400 leading-relaxed max-w-lg mx-auto">
                 📄 Données indicatives basées sur des moyennes nationales (INSEE, CAF, DREES).
