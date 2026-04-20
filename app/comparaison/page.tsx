@@ -711,7 +711,10 @@ export default function ComparaisonNationale() {
                           ))}
                         </Pie>
                         <Tooltip
-                          formatter={(value: number) => [fmt(value), ""]}
+                          formatter={(value: number | string) => [
+                            fmt(typeof value === "number" ? value : parseFloat(String(value)) || 0),
+                            "",
+                          ]}
                         />
                         <Legend
                           formatter={(value) => (
@@ -759,8 +762,8 @@ export default function ComparaisonNationale() {
                           )}
                         />
                         <Tooltip
-                          formatter={(value: number, name: string) => [
-                            `Score ${value}/100`,
+                          formatter={(value: number | string, name: string) => [
+                            `Score ${typeof value === "number" ? value : parseFloat(String(value)) || 0}/100`,
                             name,
                           ]}
                         />
