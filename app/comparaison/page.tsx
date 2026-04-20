@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { supabase } from "@/supabaseClient";
+import { supabase } from "../../supabaseClient";
 import {
   BarChart,
   Bar,
@@ -192,25 +192,35 @@ function generateInsights(
 function useExpenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // "warning" = données indisponibles mais page fonctionnelle avec données nationales seules
+  const [warning, setWarning] = useState<string | null>(null);
 
   const fetch = useCallback(async () => {
     setLoading(true);
-    setError(null);
-    const { data, error: err } = await supabase
-      .from("expenses")
-      .select("amount, category, created_at");
-    if (err) {
-      setError("Impossible de charger vos données. Réessayez.");
-    } else {
-      setExpenses((data as Expense[]) || []);
+    setWarning(null);
+    try {
+      const { data, error: err } = await supabase
+        .from("expenses")
+        .select("amount, category, created_at");
+      if (err) {
+        // On log l'erreur pour debug mais on ne bloque PAS la page
+        console.warn("[ComparaisonNationale] Supabase fetch error:", err.message, err.code);
+        setWarning("Vos données personnelles sont temporairement indisponibles. La comparaison nationale reste accessible.");
+        setExpenses([]);
+      } else {
+        setExpenses((data as Expense[]) || []);
+      }
+    } catch (e) {
+      console.warn("[ComparaisonNationale] Network error:", e);
+      setWarning("Connexion impossible. La comparaison nationale reste accessible sans vos données.");
+      setExpenses([]);
     }
     setLoading(false);
   }, []);
 
   useEffect(() => { fetch(); }, [fetch]);
 
-  return { expenses, loading, error, refetch: fetch };
+  return { expenses, loading, warning, refetch: fetch };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -375,7 +385,7 @@ const FilterPill = ({
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function ComparaisonNationale() {
-  const { expenses, loading, error, refetch } = useExpenses();
+  const { expenses, loading, warning, refetch } = useExpenses();
   const [ageSlice, setAgeSlice] = useState<AgeSlice>("0-1");
   const [selectedCategory, setSelectedCategory] = useState<string>("toutes");
 
@@ -528,7 +538,7 @@ export default function ComparaisonNationale() {
           </div>
         </section>
 
-        {/* ── ÉTATS LOADING / ERROR ── */}
+        {/* ── ÉTAT LOADING ── */}
         {loading && (
           <div className="flex items-center justify-center gap-3 py-20 text-gray-400">
             <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
@@ -539,20 +549,27 @@ export default function ComparaisonNationale() {
           </div>
         )}
 
-        {!loading && error && (
-          <div className="flex flex-col items-center gap-4 py-16 text-center">
-            <span className="text-4xl">⚠️</span>
-            <p className="text-gray-700 font-semibold">{error}</p>
+        {/* ── BANDEAU AVERTISSEMENT (non-bloquant) ── */}
+        {!loading && warning && (
+          <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+            <span className="text-amber-500 text-lg flex-shrink-0 mt-0.5">⚠️</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-amber-800 font-medium">{warning}</p>
+              <p className="text-xs text-amber-600 mt-0.5">
+                Vérifiez que vous êtes bien connecté·e, ou que la table <code className="bg-amber-100 px-1 rounded">expenses</code> est accessible.
+              </p>
+            </div>
             <button
               onClick={refetch}
-              className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition-colors cursor-pointer"
+              className="flex-shrink-0 text-xs font-semibold text-amber-700 underline underline-offset-2 hover:text-amber-900 cursor-pointer"
             >
               Réessayer
             </button>
           </div>
         )}
 
-        {!loading && !error && (
+        {/* ── CONTENU PRINCIPAL — toujours affiché après loading ── */}
+        {!loading && (
           <>
             {/* ── BLOC COMPARAISON PRINCIPALE ── */}
             <section>
@@ -598,12 +615,18 @@ export default function ComparaisonNationale() {
 
             {/* ── NO DATA STATE ── */}
             {monthlyExpenses.length === 0 && (
-              <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 flex items-center gap-4">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex items-center gap-4">
                 <span className="text-3xl">📭</span>
                 <div>
-                  <p className="font-semibold text-amber-900">Aucune dépense enregistrée ce mois-ci</p>
-                  <p className="text-sm text-amber-700 mt-1">
-                    La comparaison nationale est affichée avec vos données historiques. Ajoutez des dépenses pour une analyse en temps réel.
+                  <p className="font-semibold text-slate-700">
+                    {warning
+                      ? "Vos dépenses ne sont pas disponibles pour l'instant"
+                      : "Aucune dépense enregistrée ce mois-ci"}
+                  </p>
+                  <p className="text-sm text-slate-500 mt-1">
+                    {warning
+                      ? "La comparaison nationale ci-dessous reste entièrement fonctionnelle — vos dépenses apparaîtront à 0 €."
+                      : "La comparaison nationale est affichée. Ajoutez des dépenses pour une analyse personnalisée en temps réel."}
                   </p>
                 </div>
               </div>
@@ -688,7 +711,7 @@ export default function ComparaisonNationale() {
                           ))}
                         </Pie>
                         <Tooltip
-                          formatter={(value: any, name: any) => [fmt(Number(value)), ""]}
+                          formatter={(value: number) => [fmt(value), ""]}
                         />
                         <Legend
                           formatter={(value) => (
@@ -736,7 +759,7 @@ export default function ComparaisonNationale() {
                           )}
                         />
                         <Tooltip
-                          formatter={(value: any, name: any) => [
+                          formatter={(value: number, name: string) => [
                             `Score ${value}/100`,
                             name,
                           ]}
