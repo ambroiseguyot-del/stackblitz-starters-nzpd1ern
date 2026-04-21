@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTheme } from '../context/ThemeContext';
+import ProfilePanel from './ProfilePanel';
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
@@ -11,6 +13,8 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { isDark, toggleTheme } = useTheme();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -149,6 +153,15 @@ export default function Navbar() {
         }
         .nb-btn-login:hover { background: #1E293B; }
 
+        .nb-toggle {
+          width: 34px; height: 34px; border-radius: 10px;
+          border: 1px solid #E2E8F0; background: white;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; font-size: 16px; transition: background 0.15s;
+          flex-shrink: 0;
+        }
+        .nb-toggle:hover { background: #F8FAFC; }
+
         .nb-btn-signup {
           padding: 8px 18px; border-radius: 10px;
           border: 1px solid #E2E8F0; background: white;
@@ -193,6 +206,26 @@ export default function Navbar() {
         @media (min-width: 769px) {
           .nb-mobile { display: none !important; }
         }
+
+        /* Dark mode global */
+        :root.dark body { background: #0B0E14; color: #F1F5F9; }
+        :root.dark .nb.scrolled { background: rgba(22,27,38,0.92); box-shadow: 0 1px 0 rgba(255,255,255,0.06); }
+        :root.dark .nb-logo { color: #F1F5F9; }
+        :root.dark .nb-logo-icon { background: #1F2633; }
+        :root.dark .nb-link { color: #94A3B8; }
+        :root.dark .nb-link:hover { background: #1F2633; color: #F1F5F9; }
+        :root.dark .nb-link.active { background: #1E2D4A; color: #60A5FA; }
+        :root.dark .nb-user-pill { background: #161B26; border-color: #2D364D; color: #94A3B8; }
+        :root.dark .nb-avatar { background: #2D364D; }
+        :root.dark .nb-btn-signout { background: #161B26; border-color: #2D364D; color: #94A3B8; }
+        :root.dark .nb-btn-signout:hover { background: #2D1B1B; color: #F87171; border-color: #7F1D1D; }
+        :root.dark .nb-btn-signup { background: #161B26; border-color: #2D364D; color: #CBD5E1; }
+        :root.dark .nb-btn-login { background: #3B82F6; }
+        :root.dark .nb-mobile { background: #161B26; border-color: #2D364D; }
+        :root.dark .nb-mobile-sep { background: #2D364D; }
+        :root.dark .nb-mobile-email { color: #475569; }
+        :root.dark .nb-toggle { background: #1F2633; border-color: #2D364D; color: #94A3B8; }
+        :root.dark .nb-toggle:hover { background: #2D364D; }
       `}</style>
 
       <nav className={`nb ${scrolled ? 'scrolled' : 'top'}`} role="navigation" aria-label="Navigation principale">
@@ -226,12 +259,18 @@ export default function Navbar() {
             {user ? (
               <>
                 {/* Pill email utilisateur */}
-                <div className="nb-user-pill">
+                <button
+                  className="nb-user-pill"
+                  onClick={() => setProfileOpen(true)}
+                  aria-label="Ouvrir le profil"
+                  style={{ cursor: "pointer", border: "1px solid #E2E8F0", background: "white" }}
+                >
                   <div className="nb-avatar">
                     {user.email?.[0]?.toUpperCase() ?? '?'}
                   </div>
                   <span>{user.email?.split('@')[0]}</span>
-                </div>
+                  <span style={{ fontSize: 10, color: "#94A3B8", marginLeft: 2 }}>▾</span>
+                </button>
 
                 {/* Déconnexion */}
                 <button className="nb-btn-signout" onClick={handleSignOut}>
@@ -244,6 +283,16 @@ export default function Navbar() {
                 <Link href="/signup" className="nb-btn-login">Commencer</Link>
               </>
             )}
+
+            {/* Toggle dark mode */}
+            <button
+              className="nb-toggle"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+              title={isDark ? 'Mode clair' : 'Mode sombre'}
+            >
+              {isDark ? '☀️' : '🌙'}
+            </button>
 
             {/* Burger mobile */}
             {user && (
@@ -291,6 +340,11 @@ export default function Navbar() {
 
       {/* Spacer pour compenser la navbar fixed */}
       <div style={{ height: 64 }} />
+
+      {/* Panel profil */}
+      {profileOpen && (
+        <ProfilePanel open={profileOpen} onClose={() => setProfileOpen(false)} />
+      )}
     </>
   );
 }
