@@ -40,7 +40,7 @@ const categoryColors = ['#002395', '#ED2939', '#5C7CFA', '#FF6B6B', '#2D364D', '
 const formatEuro = (amount: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
 
-// FIX: Protection timezone — évite le décalage d'un jour selon le fuseau
+// Protection timezone — évite le décalage d'un jour selon le fuseau
 const parseDateLocal = (dateStr: string): Date => {
   const [year, month, day] = dateStr.split('-').map(Number);
   return new Date(year, month - 1, day);
@@ -48,7 +48,29 @@ const parseDateLocal = (dateStr: string): Date => {
 
 const getTodayISO = () => new Date().toISOString().split('T')[0];
 
-// ─── SOUS-COMPOSANT : Modale de confirmation ─────────────────────────────────
+// ─── Hook dark mode — lit la classe sur <html> posée par la Navbar ───────────
+function useGlobalDark(): boolean {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    // Lecture initiale
+    setIsDark(document.documentElement.classList.contains('dark'));
+
+    // Observer les changements de classe sur <html>
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  return isDark;
+}
+
+// ─── SOUS-COMPOSANT : Modale de confirmation ──────────────────────────────────
 interface ConfirmModalProps {
   message: string;
   onConfirm: () => void;
@@ -188,6 +210,9 @@ function EmptyChartOverlay({ label }: { label: string }) {
 
 // ─── COMPOSANT PRINCIPAL ──────────────────────────────────────────────────────
 export default function UltimateBabyBudget() {
+  // ← Dark mode branché sur la Navbar via MutationObserver
+  const isDark = useGlobalDark();
+
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [monthlyBudget, setMonthlyBudget] = useState<number>(0);
@@ -196,21 +221,17 @@ export default function UltimateBabyBudget() {
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [tempBudget, setTempBudget] = useState('');
 
-  // Modale de confirmation (suppression)
   const [confirmModal, setConfirmModal] = useState<{ message: string; onConfirm: () => void } | null>(null);
-  // Modale d'édition
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewScope, setViewScope] = useState<'month' | 'year'>('month');
   const [filterChild, setFilterChild] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
   const [newProfileName, setNewProfileName] = useState('');
 
-  // FIX: showToast stable via ref — rompt la chaîne de dépendances fragile
   const showToastRef = useRef<(msg: string, type?: 'success' | 'error') => void>(() => {});
   const showToast = useCallback((msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -236,7 +257,7 @@ export default function UltimateBabyBudget() {
 
   const filteredExpenses = useMemo(() => {
     return expenses.filter(e => {
-      const d = parseDateLocal(e.date); // FIX: timezone safe
+      const d = parseDateLocal(e.date);
       const dateMatch = viewScope === 'month'
         ? (d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear())
         : (d.getFullYear() === currentDate.getFullYear());
@@ -251,7 +272,6 @@ export default function UltimateBabyBudget() {
     [filteredExpenses]
   );
 
-  // FIX: mémoïsé — évite le slice().reverse() à chaque render
   const reversedFilteredExpenses = useMemo(() =>
     filteredExpenses.slice().reverse(),
     [filteredExpenses]
@@ -289,7 +309,6 @@ export default function UltimateBabyBudget() {
     };
   }, [filteredExpenses, viewScope, isDark]);
 
-  // FIX: Doughnut mémoïsé + empty state propre
   const doughnutData = useMemo(() => {
     const values = Object.keys(categoryIcons).map(cat =>
       filteredExpenses.filter(e => e.category === cat).reduce((acc, c) => acc + c.amount, 0)
@@ -314,7 +333,6 @@ export default function UltimateBabyBudget() {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
-    // FIX: Validation montant avant insert
     const parsedAmount = parseFloat(formData.get('amount') as string);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       showToast("Montant invalide", 'error');
@@ -338,7 +356,6 @@ export default function UltimateBabyBudget() {
     } catch (err: any) { showToast(err.message, 'error'); } finally { setIsLoading(false); }
   };
 
-  // NOUVEAU : Édition d'une dépense existante
   const handleEditExpense = async (updated: Partial<Expense>) => {
     if (!editingExpense) return;
     try {
@@ -353,14 +370,13 @@ export default function UltimateBabyBudget() {
     } catch (err: any) { showToast(err.message, 'error'); }
   };
 
-  // NOUVEAU : Duplication rapide d'une dépense (utile pour les récurrentes)
   const handleDuplicateExpense = async (exp: Expense) => {
     try {
       const { data, error } = await supabase.from('expenses').insert([{
         child_name: exp.child_name,
         label: exp.label,
         amount: exp.amount,
-        date: getTodayISO(), // duplique à la date du jour
+        date: getTodayISO(),
         category: exp.category,
         is_recurring: exp.is_recurring,
       }]).select();
@@ -372,7 +388,6 @@ export default function UltimateBabyBudget() {
   };
 
   const deleteExpense = async (id: string, label: string) => {
-    // FIX: modale stylée à la place du confirm() natif
     setConfirmModal({
       message: `Supprimer "${label}" ?`,
       onConfirm: async () => {
@@ -425,7 +440,6 @@ export default function UltimateBabyBudget() {
 
   const currentEffectiveBudget = viewScope === 'month' ? monthlyBudget : monthlyBudget * 12;
   const budgetIsDefined = currentEffectiveBudget > 0;
-  // FIX: guard explicite — plus de division par 0 silencieuse
   const percentUsed = budgetIsDefined ? Math.min((totalAmount / currentEffectiveBudget) * 100, 100) : 0;
   const remaining = currentEffectiveBudget - totalAmount;
 
@@ -444,7 +458,7 @@ export default function UltimateBabyBudget() {
     >
       <main className="container mx-auto px-5 py-8 max-w-7xl">
 
-        {/* ── BARRE D'OUTILS ─────────────────────────────────────────────── */}
+        {/* ── BARRE D'OUTILS — bouton dark mode supprimé, géré par la Navbar ── */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
             <span className="text-3xl select-none">👶</span>
@@ -453,21 +467,15 @@ export default function UltimateBabyBudget() {
               <p className="text-[10px] font-bold uppercase opacity-40 tracking-widest mt-0.5">Suivi des dépenses</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex bg-[var(--bg-card)] p-1 rounded-xl border border-[var(--border)] shadow-sm">
-              <button onClick={() => setViewScope('month')}
-                className={`px-4 py-1.5 text-[10px] font-black rounded-lg transition-all ${viewScope === 'month' ? 'bg-[var(--france-blue)] text-white shadow-md' : 'opacity-40 hover:opacity-100'}`}>
-                MOIS
-              </button>
-              <button onClick={() => setViewScope('year')}
-                className={`px-4 py-1.5 text-[10px] font-black rounded-lg transition-all ${viewScope === 'year' ? 'bg-[var(--france-blue)] text-white shadow-md' : 'opacity-40 hover:opacity-100'}`}>
-                ANNÉE
-              </button>
-            </div>
-            <button onClick={() => setIsDark(!isDark)}
-              className="p-3 border border-[var(--border)] rounded-2xl bg-[var(--bg-card)] shadow-sm hover:scale-105 transition-transform"
-              aria-label="Basculer le thème">
-              {isDark ? '☀️' : '🌙'}
+          {/* Seul le sélecteur mois/année reste ici */}
+          <div className="flex bg-[var(--bg-card)] p-1 rounded-xl border border-[var(--border)] shadow-sm">
+            <button onClick={() => setViewScope('month')}
+              className={`px-4 py-1.5 text-[10px] font-black rounded-lg transition-all ${viewScope === 'month' ? 'bg-[var(--france-blue)] text-white shadow-md' : 'opacity-40 hover:opacity-100'}`}>
+              MOIS
+            </button>
+            <button onClick={() => setViewScope('year')}
+              className={`px-4 py-1.5 text-[10px] font-black rounded-lg transition-all ${viewScope === 'year' ? 'bg-[var(--france-blue)] text-white shadow-md' : 'opacity-40 hover:opacity-100'}`}>
+              ANNÉE
             </button>
           </div>
         </div>
@@ -505,7 +513,7 @@ export default function UltimateBabyBudget() {
           </div>
         </div>
 
-        {/* ── FILTRE PAR ENFANT (exposé visuellement — state existait, UI manquait) ── */}
+        {/* ── FILTRE PAR ENFANT ────────────────────────────────────────────── */}
         {profiles.length >= 1 && (
           <div className="flex items-center gap-2 mb-6 flex-wrap">
             <span className="text-[10px] font-black uppercase opacity-40 mr-1 tracking-wider select-none">Enfant :</span>
@@ -619,7 +627,6 @@ export default function UltimateBabyBudget() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
 
-            {/* Graphiques */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-[var(--bg-card)] p-6 rounded-[32px] border border-[var(--border)] shadow-sm" style={{ height: 280 }}>
                 <h3 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
@@ -694,7 +701,7 @@ export default function UltimateBabyBudget() {
                   {isLoading
                     ? '⏳ Synchronisation...'
                     : profiles.length === 0
-                      ? 'Ajoutez un enfant d\'abord'
+                      ? "Ajoutez un enfant d'abord"
                       : '☁️ Ajouter au cloud'}
                 </button>
               </form>
@@ -703,8 +710,6 @@ export default function UltimateBabyBudget() {
 
           {/* ── SIDEBAR ─────────────────────────────────────────────────────── */}
           <aside className="space-y-6">
-
-            {/* Ma Famille */}
             <div className="bg-[var(--bg-card)] p-6 rounded-[32px] border border-[var(--border)] shadow-sm">
               <h3 className="text-base font-black mb-5">👶 Ma Famille</h3>
               <div className="space-y-2 mb-5">
@@ -739,20 +744,15 @@ export default function UltimateBabyBudget() {
               </div>
             </div>
 
-            {/* Historique */}
             <div className="space-y-3">
               <div className="flex justify-between items-center px-1">
                 <h3 className="text-base font-black">Historique</h3>
                 <span className="text-sm font-black text-[var(--france-blue)]">{formatEuro(totalAmount)}</span>
               </div>
-
               <div className="max-h-[520px] overflow-y-auto space-y-2 pr-1 scrollbar-hide">
                 {reversedFilteredExpenses.map(exp => (
-                  // ── CARTE DÉPENSE avec actions édition / duplication / suppression ──
                   <div key={exp.id}
                     className={`bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] group transition-all duration-200 hover:border-[var(--france-blue)] hover:shadow-sm ${lastAddedId === exp.id ? 'highlight-new' : ''}`}>
-
-                    {/* Ligne principale */}
                     <div className="flex justify-between items-center p-4">
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="text-xl flex-shrink-0" aria-hidden="true">
@@ -762,9 +762,7 @@ export default function UltimateBabyBudget() {
                           <div className="font-bold text-sm leading-none mb-1 flex items-center gap-1.5 flex-wrap">
                             <span className="truncate">{exp.label}</span>
                             {exp.is_recurring && (
-                              <span className="text-[9px] font-black opacity-40 bg-[var(--bg-input)] px-1.5 py-0.5 rounded-full flex-shrink-0">
-                                🔁
-                              </span>
+                              <span className="text-[9px] font-black opacity-40 bg-[var(--bg-input)] px-1.5 py-0.5 rounded-full flex-shrink-0">🔁</span>
                             )}
                           </div>
                           <div className="text-[9px] uppercase font-black" style={{ color: 'var(--text-muted)' }}>
@@ -776,27 +774,19 @@ export default function UltimateBabyBudget() {
                         {formatEuro(exp.amount)}
                       </div>
                     </div>
-
-                    {/* Actions au hover — Modifier / Dupliquer / Supprimer */}
                     <div className="overflow-hidden max-h-0 group-hover:max-h-12 transition-all duration-200 ease-out">
                       <div className="flex border-t border-[var(--border)] divide-x divide-[var(--border)]">
-                        {/* NOUVEAU : Édition */}
-                        <button
-                          onClick={() => setEditingExpense(exp)}
+                        <button onClick={() => setEditingExpense(exp)}
                           className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-[var(--france-blue)] transition-all flex items-center justify-center gap-1"
                           aria-label={`Modifier ${exp.label}`}>
                           ✏️ Modifier
                         </button>
-                        {/* NOUVEAU : Duplication (rapide pour récurrentes) */}
-                        <button
-                          onClick={() => handleDuplicateExpense(exp)}
+                        <button onClick={() => handleDuplicateExpense(exp)}
                           className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-emerald-500 transition-all flex items-center justify-center gap-1"
                           aria-label={`Dupliquer ${exp.label}`}>
                           📋 Dupliquer
                         </button>
-                        {/* Suppression */}
-                        <button
-                          onClick={() => deleteExpense(exp.id, exp.label)}
+                        <button onClick={() => deleteExpense(exp.id, exp.label)}
                           className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-[var(--france-red)] transition-all flex items-center justify-center gap-1"
                           aria-label={`Supprimer ${exp.label}`}>
                           🗑 Supprimer
@@ -805,7 +795,6 @@ export default function UltimateBabyBudget() {
                     </div>
                   </div>
                 ))}
-
                 {filteredExpenses.length === 0 && (
                   <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
                     <div className="text-5xl mb-3 opacity-50">📭</div>
@@ -819,7 +808,6 @@ export default function UltimateBabyBudget() {
         </div>
       </main>
 
-      {/* ── MODALE DE CONFIRMATION ─────────────────────────────────────────── */}
       {confirmModal && (
         <ConfirmModal
           message={confirmModal.message}
@@ -828,7 +816,6 @@ export default function UltimateBabyBudget() {
         />
       )}
 
-      {/* ── MODALE D'ÉDITION ──────────────────────────────────────────────── */}
       {editingExpense && (
         <EditModal
           expense={editingExpense}
@@ -838,7 +825,6 @@ export default function UltimateBabyBudget() {
         />
       )}
 
-      {/* ── TOAST ──────────────────────────────────────────────────────────── */}
       {toast && (
         <div
           className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[2000] px-8 py-4 rounded-2xl shadow-2xl font-black text-sm text-white ${toast.type === 'error' ? 'bg-[var(--france-red)]' : 'bg-[var(--france-blue)]'}`}
@@ -850,30 +836,22 @@ export default function UltimateBabyBudget() {
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
         .highlight-new { animation: pulseSuccess 2s ease-out; }
         @keyframes pulseSuccess {
           0%   { background-color: rgba(92, 124, 250, 0.18); transform: scale(1.02); }
           100% { background-color: transparent; transform: scale(1); }
         }
-
-        @keyframes fadein {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
+        @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
         .animate-fadein { animation: fadein 0.15s ease-out; }
-
         @keyframes slideup {
           from { opacity: 0; transform: translateY(20px) scale(0.97); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
         }
         .animate-slideup { animation: slideup 0.2s ease-out; }
-
         @keyframes slideToast {
           from { opacity: 0; transform: translateX(-50%) translateY(8px); }
           to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
-
         .sr-only {
           position: absolute; width: 1px; height: 1px;
           padding: 0; margin: -1px; overflow: hidden;
