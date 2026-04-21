@@ -267,12 +267,23 @@ export default function LandingPage() {
           >
             Ce que les études disent vraiment
           </motion.p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 40, textAlign: 'center' }}>
+          <style>{`
+            .stats-grid {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 40px 24px;
+              text-align: center;
+            }
+            @media (min-width: 768px) {
+              .stats-grid { grid-template-columns: repeat(4, 1fr); }
+            }
+          `}</style>
+          <div className="stats-grid">
             {[
-              { value: 700, suffix: '€/mois', label: 'Coût moyen 1re année', source: 'INSEE 2023' },
-              { value: 10000, suffix: '€', label: 'Budget total 1re année', source: 'CAF.fr' },
-              { value: 40, suffix: '%', label: 'De parents dépassent leur budget', source: 'CREDOC 2022' },
-              { value: 3, suffix: 'e mois', label: 'Où le budget dérape souvent', source: 'Observatoire CAF' },
+              { value: 700, suffix: ' €/mois', label: 'Coût moyen 1re année', source: 'INSEE 2023' },
+              { value: 10000, suffix: ' €', label: 'Budget total 1re année', source: 'CAF.fr' },
+              { value: 40, suffix: '%', label: 'Parents dépassent leur budget', source: 'CREDOC 2022' },
+              { value: 3, suffix: 'e mois', label: 'Quand le budget dérape', source: 'Observatoire CAF' },
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -281,10 +292,10 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
-                <p style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 800, fontFamily: 'Syne, sans-serif', color: '#60A5FA', margin: '0 0 8px', letterSpacing: '-1px' }}>
+                <p style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: 'Syne, sans-serif', color: '#60A5FA', margin: '0 0 8px', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
                   <Counter to={stat.value} suffix={stat.suffix} />
                 </p>
-                <p style={{ fontSize: '0.9rem', color: '#CBD5E1', margin: '0 0 4px', fontWeight: 500 }}>{stat.label}</p>
+                <p style={{ fontSize: '0.85rem', color: '#CBD5E1', margin: '0 0 4px', fontWeight: 500, lineHeight: 1.4 }}>{stat.label}</p>
                 <p style={{ fontSize: 11, color: '#475569', margin: 0 }}>{stat.source}</p>
               </motion.div>
             ))}
