@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useRouter, usePathname } from 'next/navigation';
-import { useTheme } from '../context/ThemeContext';
 import ProfilePanel from './ProfilePanel';
 
 export default function Navbar() {
@@ -13,7 +12,23 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { isDark, toggleTheme } = useTheme();
+  const [isDark, setIsDark] = useState(false);
+  const toggleTheme = () => {
+    setIsDark(prev => {
+      const next = !prev;
+      document.documentElement.classList.toggle('dark', next);
+      localStorage.setItem('bb-theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
+  // Charge la préférence sauvegardée
+  useEffect(() => {
+    const saved = localStorage.getItem('bb-theme');
+    if (saved === 'dark') {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
   const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
