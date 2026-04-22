@@ -175,15 +175,42 @@ export default function ProfilePanel({ open, onClose }: Props) {
     }
   };
 
-  // Supprimer le compte
+  // Supprimer le compte — appelle l'Edge Function Supabase
   const handleDeleteAccount = async () => {
     if (deleteConfirm !== user?.email) {
       showToast("Email incorrect", "error"); return;
     }
     setLoading(true);
-    // Suppression via signOut (la vraie suppression nécessite une Edge Function côté serveur)
-    await supabase.auth.signOut();
-    router.push("/");
+    try {
+      // Récupère le token de session pour autoriser l'Edge Function
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { showToast("Session expirée, reconnectez-vous", "error"); return; }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/delete-user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const result = await res.json();
+      if (!res.ok || result.error) {
+        showToast(result.error ?? "Erreur lors de la suppression", "error");
+        return;
+      }
+
+      // Succès — déconnecte et redirige
+      await supabase.auth.signOut();
+      router.push("/");
+    } catch (e: any) {
+      showToast(e?.message ?? "Erreur réseau", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const tabs: { id: Tab; label: string; icon: string }[] = [
