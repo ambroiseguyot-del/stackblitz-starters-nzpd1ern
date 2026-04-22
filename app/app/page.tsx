@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { supabase } from '../../supabaseClient';
 import Onboarding from '../../components/Onboarding';
+import CategoryManager, { DEFAULT_CATEGORIES } from '../../components/CategoryManager';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
   Title, Tooltip, Legend, Filler, ArcElement
@@ -36,10 +37,7 @@ type SortKey = 'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc';
 
 // ─── CONSTANTES ──────────────────────────────────────────────────────────────
 
-const categoryIcons: { [key: string]: string } = {
-  "Couches": "🧷", "Lait": "🍼", "Santé": "🩺", "Soins": "🧼", "Vêtements": "👕",
-  "Jouets": "🧸", "École": "📚", "Loisirs": "🎨", "Équipement": "🛒", "Autre": "📦"
-};
+// categoryIcons est maintenant dynamique — géré via le state categories
 
 const categoryColors = ['#002395', '#ED2939', '#5C7CFA', '#FF6B6B', '#2D364D', '#10B981', '#F59E0B', '#6366F1', '#EC4899'];
 
@@ -264,6 +262,12 @@ function EmptyChartOverlay({ label }: { label: string }) {
 
 export default function UltimateBabyBudget() {
   const isDark = useGlobalDark();
+
+  // Catégories dynamiques — défauts + personnalisées
+  const [categories, setCategories] = useState<{ name: string; icon: string }[]>(DEFAULT_CATEGORIES);
+  const categoryIcons = useMemo(() => {
+    return Object.fromEntries(categories.map(c => [c.name, c.icon]));
+  }, [categories]);
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);

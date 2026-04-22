@@ -26,7 +26,7 @@ export default function CGU() {
 
       <Section title="1. Présentation du service">
         <p>BabyBudget est une application web gratuite de suivi de budget familial destinée aux parents souhaitant suivre les dépenses liées à leur(s) enfant(s).</p>
-        <p>L'application est accessible à l'adresse <strong>https://stackblitz-starters-nzpd1ern.vercel.app</strong> et développée à titre personnel.</p>
+        <p>L'application est accessible à l'adresse <strong>https://www.babybudget.fr</strong> et développée à titre personnel.</p>
       </Section>
 
       <Section title="2. Accès au service">
