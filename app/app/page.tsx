@@ -152,10 +152,11 @@ function ConfirmModal({ message, onConfirm, onCancel }: ConfirmModalProps) {
 interface EditModalProps {
   expense: Expense;
   profiles: Profile[];
+  categoryIcons: { [key: string]: string };
   onSave: (updated: Partial<Expense>) => Promise<void>;
   onCancel: () => void;
 }
-function EditModal({ expense, profiles, onSave, onCancel }: EditModalProps) {
+function EditModal({ expense, profiles, categoryIcons, onSave, onCancel }: EditModalProps) {
   const [form, setForm] = useState({
     child_name: expense.child_name,
     label: expense.label,
@@ -1000,6 +1001,7 @@ export default function UltimateBabyBudget() {
         <EditModal
           expense={editingExpense}
           profiles={profiles}
+          categoryIcons={categoryIcons}
           onSave={handleEditExpense}
           onCancel={() => setEditingExpense(null)}
         />
