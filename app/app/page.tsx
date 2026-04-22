@@ -24,6 +24,7 @@ interface Expense {
   date: string;
   category: string;
   is_recurring: boolean;
+  recurring_day: number | null;
 }
 
 interface Profile {
@@ -450,13 +451,19 @@ export default function UltimateBabyBudget() {
     if (isNaN(parsedAmount) || parsedAmount <= 0) { showToast("Montant invalide", 'error'); return; }
     setIsLoading(true);
     try {
+      const isRecurring = formData.get('recurring') === 'on';
+      const recurringDay = isRecurring
+        ? parseInt(formData.get('recurring_day') as string) || new Date().getDate()
+        : null;
+
       const { data, error } = await supabase.from('expenses').insert([{
         child_name: formData.get('child'),
         label: formData.get('label'),
         amount: parsedAmount,
         date: formData.get('date'),
         category: formData.get('category'),
-        is_recurring: formData.get('recurring') === 'on'
+        is_recurring: isRecurring,
+        recurring_day: recurringDay,
       }]).select();
       if (error) throw error;
       if (data) setLastAddedId(data[0].id);
@@ -489,6 +496,24 @@ export default function UltimateBabyBudget() {
       fetchData();
       showToast(`"${exp.label}" dupliqué ✓`);
     } catch (err: any) { showToast(err.message, 'error'); }
+  };
+
+  const handleStopRecurring = async (id: string, label: string) => {
+    setConfirmModal({
+      message: `Arrêter la récurrence de "${label}" ? La dépense existante est conservée.`,
+      onConfirm: async () => {
+        setConfirmModal(null);
+        try {
+          const { error } = await supabase
+            .from('expenses')
+            .update({ is_recurring: false, recurring_day: null })
+            .eq('id', id);
+          if (error) throw error;
+          fetchData();
+          showToast(`Récurrence de "${label}" arrêtée ✓`);
+        } catch (err: any) { showToast(err.message, 'error'); }
+      }
+    });
   };
 
   const deleteExpense = async (id: string, label: string) => {
