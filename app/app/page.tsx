@@ -535,7 +535,10 @@ export default function UltimateBabyBudget() {
     const val = parseFloat(tempBudget);
     if (isNaN(val) || val < 0) { showToast("Budget invalide", 'error'); return; }
     try {
-      await supabase.from('settings').upsert({ key: 'monthly_budget', value: tempBudget });
+      await supabase.from('settings').upsert(
+        { key: 'monthly_budget', value: tempBudget },
+        { onConflict: 'key,user_id' }
+      );
       setMonthlyBudget(val);
       setIsEditingBudget(false);
       showToast("Budget mis à jour ✓");
