@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { supabase } from '../../supabaseClient';
+import Onboarding from '../../components/Onboarding';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
   Title, Tooltip, Legend, Filler, ArcElement
@@ -268,6 +269,7 @@ export default function UltimateBabyBudget() {
   const [monthlyBudget, setMonthlyBudget] = useState<number>(0);
   const [isInitialLoading, setIsInitialLoading] = useState(true); // skeleton au premier chargement
   const [dataError, setDataError] = useState<string | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
@@ -333,6 +335,15 @@ export default function UltimateBabyBudget() {
       if (isFirst) setIsInitialLoading(false);
     }
   }, []);
+
+  // Affiche l'onboarding si c'est un nouvel utilisateur (0 profil ET 0 dépense)
+  useEffect(() => {
+    if (!isInitialLoading && !dataError) {
+      if (profiles.length === 0 && expenses.length === 0) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [isInitialLoading, dataError, profiles.length, expenses.length]);
 
   useEffect(() => { fetchData(true); }, [fetchData]);
 
@@ -934,6 +945,16 @@ export default function UltimateBabyBudget() {
           </>
         )}
       </main>
+
+      {/* ── ONBOARDING — nouvel utilisateur ── */}
+      {showOnboarding && (
+        <Onboarding
+          onComplete={() => {
+            setShowOnboarding(false);
+            fetchData(false);
+          }}
+        />
+      )}
 
       {confirmModal && (
         <ConfirmModal
