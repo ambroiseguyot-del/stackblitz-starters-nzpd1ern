@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 
 interface Props {
   onComplete: () => void;
@@ -42,7 +42,10 @@ export default function Onboarding({ onComplete }: Props) {
     try {
       const { error: err } = await supabase
         .from("settings")
-        .upsert({ key: "monthly_budget", value: budget });
+        .upsert(
+          { key: "monthly_budget", value: budget },
+          { onConflict: "key" }
+        );
       if (err) throw err;
       setBudgetSaved(true);
     } catch (e: any) {
