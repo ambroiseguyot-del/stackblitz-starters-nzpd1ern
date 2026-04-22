@@ -116,12 +116,12 @@ export default function CategoryManager({ onCategoriesChange }: CategoryManagerP
         .cm-btn {
           display: inline-flex; align-items: center; gap: 6px;
           padding: 8px 14px; border-radius: 12px;
-          border: 1.5px dashed var(--border);
-          background: transparent; color: var(--text-muted);
+          border: 1.5px dashed #DDE3F5;
+          background: transparent; color: #94A3B8;
           font-size: 12px; font-weight: 700; font-family: inherit;
           cursor: pointer; transition: all 0.15s;
         }
-        .cm-btn:hover { border-color: var(--france-blue); color: var(--france-blue); }
+        .cm-btn:hover { border-color: #002395; color: #002395; }
 
         .cm-modal-overlay {
           position: fixed; inset: 0; z-index: 4000;

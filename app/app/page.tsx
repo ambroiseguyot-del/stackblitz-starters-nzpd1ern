@@ -852,6 +852,9 @@ export default function UltimateBabyBudget() {
                       <input type="checkbox" name="recurring" id="rec" className="w-5 h-5 accent-[var(--france-blue)]" />
                       <label htmlFor="rec" className="text-sm font-bold opacity-40">Récurrente 🔁</label>
                     </div>
+                    <div className="md:col-span-2">
+                      <CategoryManager onCategoriesChange={setCategories} />
+                    </div>
                     <button type="submit" disabled={isLoading || profiles.length === 0}
                       className="md:col-span-2 bg-[var(--france-red)] text-white font-black py-5 rounded-2xl hover:brightness-110 shadow-lg transition-all active:scale-95 disabled:opacity-40 text-sm tracking-wider uppercase">
                       {isLoading ? '⏳ Synchronisation...' : profiles.length === 0 ? "Ajoutez un enfant d'abord" : '☁️ Ajouter au cloud'}
