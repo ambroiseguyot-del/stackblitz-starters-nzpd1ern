@@ -14,6 +14,7 @@ ChartJS.register(
 );
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
+
 interface Expense {
   id: string;
   child_name: string;
@@ -29,7 +30,10 @@ interface Profile {
   name: string;
 }
 
+type SortKey = 'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc';
+
 // ─── CONSTANTES ──────────────────────────────────────────────────────────────
+
 const categoryIcons: { [key: string]: string } = {
   "Couches": "🧷", "Lait": "🍼", "Santé": "🩺", "Soins": "🧼", "Vêtements": "👕",
   "Jouets": "🧸", "École": "📚", "Loisirs": "🎨", "Équipement": "🛒", "Autre": "📦"
@@ -48,29 +52,75 @@ const parseDateLocal = (dateStr: string): Date => {
 
 const getTodayISO = () => new Date().toISOString().split('T')[0];
 
-// ─── Hook dark mode — lit la classe sur <html> posée par la Navbar ───────────
+// ─── Hook dark mode — observe la classe sur <html> posée par la Navbar ────────
+
 function useGlobalDark(): boolean {
   const [isDark, setIsDark] = useState(false);
-
   useEffect(() => {
-    // Lecture initiale
     setIsDark(document.documentElement.classList.contains('dark'));
-
-    // Observer les changements de classe sur <html>
     const observer = new MutationObserver(() => {
       setIsDark(document.documentElement.classList.contains('dark'));
     });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
   }, []);
-
   return isDark;
 }
 
+// ─── Export CSV ───────────────────────────────────────────────────────────────
+
+function exportToCSV(expenses: Expense[], filename: string) {
+  const headers = ['Date', 'Enfant', 'Catégorie', 'Désignation', 'Montant (€)', 'Récurrente'];
+  const rows = expenses.map(e => [
+    e.date,
+    e.child_name,
+    e.category,
+    `"${e.label.replace(/"/g, '""')}"`,
+    e.amount.toFixed(2).replace('.', ','),
+    e.is_recurring ? 'Oui' : 'Non',
+  ]);
+  const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+function Skeleton({ className = '' }: { className?: string }) {
+  return (
+    <div className={`animate-pulse rounded-2xl bg-[var(--border)] opacity-60 ${className}`} />
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Skeleton className="md:col-span-2 h-40" />
+        <Skeleton className="h-40" />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <Skeleton className="h-64" />
+            <Skeleton className="h-64" />
+          </div>
+          <Skeleton className="h-48" />
+        </div>
+        <div className="space-y-4">
+          <Skeleton className="h-48" />
+          {[1,2,3,4].map(i => <Skeleton key={i} className="h-16" />)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── SOUS-COMPOSANT : Modale de confirmation ──────────────────────────────────
+
 interface ConfirmModalProps {
   message: string;
   onConfirm: () => void;
@@ -98,6 +148,7 @@ function ConfirmModal({ message, onConfirm, onCancel }: ConfirmModalProps) {
 }
 
 // ─── SOUS-COMPOSANT : Modale d'édition ───────────────────────────────────────
+
 interface EditModalProps {
   expense: Expense;
   profiles: Profile[];
@@ -138,9 +189,7 @@ function EditModal({ expense, profiles, onSave, onCancel }: EditModalProps) {
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-black">✏️ Modifier la dépense</h3>
           <button onClick={onCancel}
-            className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[var(--bg-input)] transition-colors text-lg opacity-50 hover:opacity-100">
-            ✕
-          </button>
+            className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[var(--bg-input)] transition-colors text-lg opacity-50 hover:opacity-100">✕</button>
         </div>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
@@ -199,6 +248,7 @@ function EditModal({ expense, profiles, onSave, onCancel }: EditModalProps) {
 }
 
 // ─── SOUS-COMPOSANT : Empty state graphiques ──────────────────────────────────
+
 function EmptyChartOverlay({ label }: { label: string }) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center opacity-25 pointer-events-none">
@@ -209,13 +259,15 @@ function EmptyChartOverlay({ label }: { label: string }) {
 }
 
 // ─── COMPOSANT PRINCIPAL ──────────────────────────────────────────────────────
+
 export default function UltimateBabyBudget() {
-  // ← Dark mode branché sur la Navbar via MutationObserver
   const isDark = useGlobalDark();
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [monthlyBudget, setMonthlyBudget] = useState<number>(0);
+  const [isInitialLoading, setIsInitialLoading] = useState(true); // skeleton au premier chargement
+  const [dataError, setDataError] = useState<string | null>(null);
 
   const [lastAddedId, setLastAddedId] = useState<string | null>(null);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
@@ -228,6 +280,7 @@ export default function UltimateBabyBudget() {
   const [viewScope, setViewScope] = useState<'month' | 'year'>('month');
   const [filterChild, setFilterChild] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortKey, setSortKey] = useState<SortKey>('date_desc');
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
   const [newProfileName, setNewProfileName] = useState('');
@@ -239,21 +292,51 @@ export default function UltimateBabyBudget() {
   }, []);
   showToastRef.current = showToast;
 
-  const fetchData = useCallback(async () => {
+  // ── Fetch avec filtre user_id côté client (sécurité en plus du RLS) ──────────
+  const fetchData = useCallback(async (isFirst = false) => {
     try {
-      const [expRes, profRes, settRes] = await Promise.all([
-        supabase.from('expenses').select('*').order('date', { ascending: true }),
-        supabase.from('profiles').select('*').order('name', { ascending: true }),
-        supabase.from('settings').select('*').eq('key', 'monthly_budget').maybeSingle()
-      ]);
-      if (expRes.error || profRes.error) throw new Error("Erreur de synchronisation");
+      setDataError(null);
+      const { data: { session } } = await supabase.auth.getSession();
+      const uid = session?.user?.id;
+
+      // Construit les requêtes — filtre user_id si disponible
+      const expQuery = uid
+        ? supabase.from('expenses').select('*').eq('user_id', uid).order('date', { ascending: true })
+        : supabase.from('expenses').select('*').order('date', { ascending: true });
+
+      const profQuery = uid
+        ? supabase.from('profiles').select('*').eq('user_id', uid).order('name', { ascending: true })
+        : supabase.from('profiles').select('*').order('name', { ascending: true });
+
+      const settQuery = uid
+        ? supabase.from('settings').select('*').eq('key', 'monthly_budget').eq('user_id', uid).maybeSingle()
+        : supabase.from('settings').select('*').eq('key', 'monthly_budget').maybeSingle();
+
+      const [expRes, profRes, settRes] = await Promise.all([expQuery, profQuery, settQuery]);
+
+      if (expRes.error) {
+        // Distingue erreur d'accès (RLS) vs vraie erreur réseau
+        const msg = expRes.error.code === '42501'
+          ? 'Accès refusé — vérifiez votre connexion'
+          : expRes.error.message;
+        setDataError(msg);
+        return;
+      }
+      if (profRes.error) throw new Error(profRes.error.message);
+
       setExpenses((expRes.data as Expense[]) || []);
       setProfiles((profRes.data as Profile[]) || []);
       if (settRes.data) setMonthlyBudget(parseFloat(settRes.data.value));
-    } catch (error: any) { showToastRef.current(error.message, 'error'); }
+    } catch (error: any) {
+      showToastRef.current(error.message, 'error');
+    } finally {
+      if (isFirst) setIsInitialLoading(false);
+    }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { fetchData(true); }, [fetchData]);
+
+  // ── Calculs filtrés ───────────────────────────────────────────────────────────
 
   const filteredExpenses = useMemo(() => {
     return expenses.filter(e => {
@@ -272,10 +355,35 @@ export default function UltimateBabyBudget() {
     [filteredExpenses]
   );
 
-  const reversedFilteredExpenses = useMemo(() =>
-    filteredExpenses.slice().reverse(),
-    [filteredExpenses]
-  );
+  // Comparaison mois précédent
+  const prevMonthTotal = useMemo(() => {
+    if (viewScope !== 'month') return null;
+    const prev = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    return expenses
+      .filter(e => {
+        const d = parseDateLocal(e.date);
+        return d.getMonth() === prev.getMonth() && d.getFullYear() === prev.getFullYear()
+          && (filterChild === 'all' || e.child_name === filterChild);
+      })
+      .reduce((acc, e) => acc + e.amount, 0);
+  }, [expenses, currentDate, viewScope, filterChild]);
+
+  const prevMonthDiff = useMemo(() => {
+    if (prevMonthTotal === null || prevMonthTotal === 0) return null;
+    return ((totalAmount - prevMonthTotal) / prevMonthTotal) * 100;
+  }, [totalAmount, prevMonthTotal]);
+
+  // Tri de l'historique
+  const sortedFilteredExpenses = useMemo(() => {
+    const arr = filteredExpenses.slice();
+    switch (sortKey) {
+      case 'date_desc': return arr.reverse();
+      case 'date_asc':  return arr;
+      case 'amount_desc': return arr.sort((a, b) => b.amount - a.amount);
+      case 'amount_asc':  return arr.sort((a, b) => a.amount - b.amount);
+      default: return arr.reverse();
+    }
+  }, [filteredExpenses, sortKey]);
 
   const projection = useMemo(() => {
     if (viewScope !== 'month' || totalAmount === 0) return totalAmount;
@@ -302,9 +410,7 @@ export default function UltimateBabyBudget() {
         data: labels.map(i => dataPoints[i.toString()] || 0),
         borderColor: isDark ? '#5C7CFA' : '#002395',
         backgroundColor: isDark ? 'rgba(92, 124, 250, 0.1)' : 'rgba(0, 35, 149, 0.05)',
-        tension: 0.4,
-        fill: true,
-        pointRadius: 2
+        tension: 0.4, fill: true, pointRadius: 2
       }]
     };
   }, [filteredExpenses, viewScope, isDark]);
@@ -318,26 +424,19 @@ export default function UltimateBabyBudget() {
       isEmpty,
       data: {
         labels: Object.keys(categoryIcons),
-        datasets: [{
-          data: isEmpty ? [1] : values,
-          backgroundColor: isEmpty ? ['#E2E8F0'] : categoryColors,
-          borderWidth: 0
-        }]
+        datasets: [{ data: isEmpty ? [1] : values, backgroundColor: isEmpty ? ['#E2E8F0'] : categoryColors, borderWidth: 0 }]
       }
     };
   }, [filteredExpenses]);
 
-  // ── HANDLERS ────────────────────────────────────────────────────────────────
+  // ── Handlers ─────────────────────────────────────────────────────────────────
 
   const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
     const parsedAmount = parseFloat(formData.get('amount') as string);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      showToast("Montant invalide", 'error');
-      return;
-    }
+    if (isNaN(parsedAmount) || parsedAmount <= 0) { showToast("Montant invalide", 'error'); return; }
     setIsLoading(true);
     try {
       const { data, error } = await supabase.from('expenses').insert([{
@@ -353,16 +452,14 @@ export default function UltimateBabyBudget() {
       form.reset();
       fetchData();
       showToast("Dépense enregistrée ✓");
-    } catch (err: any) { showToast(err.message, 'error'); } finally { setIsLoading(false); }
+    } catch (err: any) { showToast(err.message, 'error'); }
+    finally { setIsLoading(false); }
   };
 
   const handleEditExpense = async (updated: Partial<Expense>) => {
     if (!editingExpense) return;
     try {
-      const { error } = await supabase
-        .from('expenses')
-        .update(updated)
-        .eq('id', editingExpense.id);
+      const { error } = await supabase.from('expenses').update(updated).eq('id', editingExpense.id);
       if (error) throw error;
       setEditingExpense(null);
       fetchData();
@@ -373,12 +470,8 @@ export default function UltimateBabyBudget() {
   const handleDuplicateExpense = async (exp: Expense) => {
     try {
       const { data, error } = await supabase.from('expenses').insert([{
-        child_name: exp.child_name,
-        label: exp.label,
-        amount: exp.amount,
-        date: getTodayISO(),
-        category: exp.category,
-        is_recurring: exp.is_recurring,
+        child_name: exp.child_name, label: exp.label, amount: exp.amount,
+        date: getTodayISO(), category: exp.category, is_recurring: exp.is_recurring,
       }]).select();
       if (error) throw error;
       if (data) setLastAddedId(data[0].id);
@@ -438,27 +531,38 @@ export default function UltimateBabyBudget() {
     });
   };
 
+  const handleExportCSV = () => {
+    const now = currentDate;
+    const label = viewScope === 'month'
+      ? `${now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}`
+      : `${now.getFullYear()}`;
+    const child = filterChild !== 'all' ? `-${filterChild}` : '';
+    exportToCSV(filteredExpenses, `babybudget-${label}${child}.csv`);
+    showToast(`Export CSV : ${filteredExpenses.length} dépenses ✓`);
+  };
+
   const currentEffectiveBudget = viewScope === 'month' ? monthlyBudget : monthlyBudget * 12;
   const budgetIsDefined = currentEffectiveBudget > 0;
   const percentUsed = budgetIsDefined ? Math.min((totalAmount / currentEffectiveBudget) * 100, 100) : 0;
   const remaining = currentEffectiveBudget - totalAmount;
 
-  // ── RENDER ──────────────────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────────
+
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-[#0B0E14] text-[#F1F5F9]' : 'bg-[#F0F4FF] text-[#0F172A]'}`}
       style={{
         '--france-blue': isDark ? '#5C7CFA' : '#002395',
-        '--france-red': isDark ? '#FF6B6B' : '#ED2939',
-        '--bg-card': isDark ? '#161B26' : '#FFFFFF',
-        '--bg-input': isDark ? '#1F2633' : '#EEF2FF',
-        '--border': isDark ? '#2D364D' : '#DDE3F5',
-        '--text-muted': isDark ? 'rgba(241,245,249,0.45)' : 'rgba(15,23,42,0.4)',
+        '--france-red':  isDark ? '#FF6B6B' : '#ED2939',
+        '--bg-card':     isDark ? '#161B26' : '#FFFFFF',
+        '--bg-input':    isDark ? '#1F2633' : '#EEF2FF',
+        '--border':      isDark ? '#2D364D' : '#DDE3F5',
+        '--text-muted':  isDark ? 'rgba(241,245,249,0.45)' : 'rgba(15,23,42,0.4)',
       } as React.CSSProperties}
     >
       <main className="container mx-auto px-5 py-8 max-w-7xl">
 
-        {/* ── BARRE D'OUTILS — bouton dark mode supprimé, géré par la Navbar ── */}
+        {/* ── BARRE D'OUTILS ── */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
             <span className="text-3xl select-none">👶</span>
@@ -467,7 +571,6 @@ export default function UltimateBabyBudget() {
               <p className="text-[10px] font-bold uppercase opacity-40 tracking-widest mt-0.5">Suivi des dépenses</p>
             </div>
           </div>
-          {/* Seul le sélecteur mois/année reste ici */}
           <div className="flex bg-[var(--bg-card)] p-1 rounded-xl border border-[var(--border)] shadow-sm">
             <button onClick={() => setViewScope('month')}
               className={`px-4 py-1.5 text-[10px] font-black rounded-lg transition-all ${viewScope === 'month' ? 'bg-[var(--france-blue)] text-white shadow-md' : 'opacity-40 hover:opacity-100'}`}>
@@ -480,7 +583,7 @@ export default function UltimateBabyBudget() {
           </div>
         </div>
 
-        {/* ── NAVIGATION DATE & SEARCH ────────────────────────────────────── */}
+        {/* ── NAVIGATION DATE & SEARCH ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div className="flex items-center gap-4 bg-[var(--bg-card)] p-4 rounded-3xl border border-[var(--border)] shadow-sm">
             <button
@@ -513,299 +616,323 @@ export default function UltimateBabyBudget() {
           </div>
         </div>
 
-        {/* ── FILTRE PAR ENFANT ────────────────────────────────────────────── */}
+        {/* ── FILTRE PAR ENFANT ── */}
         {profiles.length >= 1 && (
           <div className="flex items-center gap-2 mb-6 flex-wrap">
             <span className="text-[10px] font-black uppercase opacity-40 mr-1 tracking-wider select-none">Enfant :</span>
-            <button
-              onClick={() => setFilterChild('all')}
-              className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all ${
-                filterChild === 'all'
-                  ? 'bg-[var(--france-blue)] text-white border-[var(--france-blue)] shadow-md'
-                  : 'bg-[var(--bg-card)] border-[var(--border)] opacity-50 hover:opacity-100 hover:border-[var(--france-blue)]'
-              }`}>
+            <button onClick={() => setFilterChild('all')}
+              className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all ${filterChild === 'all' ? 'bg-[var(--france-blue)] text-white border-[var(--france-blue)] shadow-md' : 'bg-[var(--bg-card)] border-[var(--border)] opacity-50 hover:opacity-100 hover:border-[var(--france-blue)]'}`}>
               Tous
             </button>
             {profiles.map(p => (
-              <button key={p.id}
-                onClick={() => setFilterChild(filterChild === p.name ? 'all' : p.name)}
-                className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all flex items-center gap-1.5 ${
-                  filterChild === p.name
-                    ? 'bg-[var(--france-blue)] text-white border-[var(--france-blue)] shadow-md'
-                    : 'bg-[var(--bg-card)] border-[var(--border)] opacity-50 hover:opacity-100 hover:border-[var(--france-blue)]'
-                }`}>
+              <button key={p.id} onClick={() => setFilterChild(filterChild === p.name ? 'all' : p.name)}
+                className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all flex items-center gap-1.5 ${filterChild === p.name ? 'bg-[var(--france-blue)] text-white border-[var(--france-blue)] shadow-md' : 'bg-[var(--bg-card)] border-[var(--border)] opacity-50 hover:opacity-100 hover:border-[var(--france-blue)]'}`}>
                 <span>👶</span>{p.name}
               </button>
             ))}
           </div>
         )}
 
-        {/* ── BUDGET & PROJECTION ─────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="md:col-span-2 bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)] shadow-sm">
-            <div className="flex justify-between items-end mb-5">
-              <div>
-                <h3 className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>
-                  Budget {viewScope === 'month' ? 'Mensuel' : 'Annuel'}
-                </h3>
-                {isEditingBudget ? (
-                  <div className="flex gap-2 items-center">
-                    <label htmlFor="budget-input" className="sr-only">Modifier le budget</label>
-                    <input id="budget-input" type="number"
-                      className="bg-[var(--bg-input)] border-2 border-[var(--france-blue)] rounded-xl px-3 py-2 text-xl font-black w-28 outline-none"
-                      value={tempBudget} autoFocus
-                      onChange={(e) => setTempBudget(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && updateBudget()} />
-                    <button onClick={updateBudget}
-                      className="bg-[var(--france-blue)] text-white px-4 py-2 rounded-xl text-xs font-black hover:brightness-110 transition-all">
-                      OK
-                    </button>
-                    <button onClick={() => setIsEditingBudget(false)}
-                      className="opacity-30 hover:opacity-70 text-xs font-bold px-2 transition-opacity">✕</button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl font-black">
-                      {budgetIsDefined
-                        ? formatEuro(currentEffectiveBudget)
-                        : <span className="text-base opacity-30">Budget non défini</span>}
-                    </span>
-                    <button
-                      onClick={() => { setTempBudget(monthlyBudget.toString()); setIsEditingBudget(true); }}
-                      className="text-[10px] opacity-25 hover:opacity-100 uppercase font-black border border-[var(--border)] px-2 py-1 rounded-lg transition-opacity">
-                      ✏️ Modifier
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="text-right">
-                {budgetIsDefined ? (
-                  <span className={`text-xl font-black ${remaining < 0 ? 'text-[var(--france-red)]' : 'text-[var(--france-blue)]'}`}>
-                    {remaining < 0 ? `−${formatEuro(Math.abs(remaining))} dépassé` : `${formatEuro(remaining)} restants`}
-                  </span>
-                ) : (
-                  <span className="text-sm font-bold opacity-30">{formatEuro(totalAmount)} dépensés</span>
-                )}
-              </div>
-            </div>
-            <div className="h-3 bg-[var(--bg-input)] rounded-full overflow-hidden border border-[var(--border)]">
-              {budgetIsDefined ? (
-                <div
-                  className={`h-full transition-all duration-1000 rounded-full ${percentUsed >= 90 ? 'bg-[var(--france-red)]' : 'bg-[var(--france-blue)]'}`}
-                  style={{ width: `${percentUsed}%` }} />
-              ) : (
-                <div className="h-full w-1/3 bg-[var(--france-blue)] opacity-20 animate-pulse rounded-full" />
-              )}
-            </div>
-            {budgetIsDefined && (
-              <div className="flex justify-between mt-2">
-                <span className="text-[10px] font-bold opacity-30">{formatEuro(totalAmount)} dépensés</span>
-                <span className="text-[10px] font-bold opacity-30">{Math.round(percentUsed)}%</span>
-              </div>
-            )}
+        {/* ── SKELETON ── */}
+        {isInitialLoading && <DashboardSkeleton />}
+
+        {/* ── ERREUR D'ACCÈS ── */}
+        {!isInitialLoading && dataError && (
+          <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border)] p-10 text-center">
+            <div className="text-4xl mb-3">⚠️</div>
+            <p className="font-black text-base mb-2">{dataError}</p>
+            <p className="text-sm opacity-50 mb-6">Vérifiez que vous êtes bien connecté·e.</p>
+            <button onClick={() => fetchData(true)}
+              className="px-6 py-3 rounded-2xl bg-[var(--france-blue)] text-white font-black text-sm hover:brightness-110 transition-all">
+              Réessayer
+            </button>
           </div>
+        )}
 
-          <div className="bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)] shadow-sm flex flex-col justify-center">
-            <h3 className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--text-muted)' }}>
-              {viewScope === 'month' ? 'Projection fin de mois' : 'Total annuel'}
-            </h3>
-            <div className="text-2xl font-black mb-2">{formatEuro(projection)}</div>
-            {budgetIsDefined && (
-              <div className={`text-[10px] font-black uppercase tracking-wider ${projection > currentEffectiveBudget ? 'text-[var(--france-red)]' : 'text-emerald-500'}`}>
-                {projection > currentEffectiveBudget ? '⚠️ Dépassement prévu' : '✅ Dans les clous'}
-              </div>
-            )}
-            <div className="mt-3 pt-3 border-t border-[var(--border)]">
-              <span className="text-[10px] font-bold" style={{ color: 'var(--text-muted)' }}>
-                {filteredExpenses.length} opération{filteredExpenses.length > 1 ? 's' : ''}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── GRAPHIQUES & FORMULAIRE ─────────────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[var(--bg-card)] p-6 rounded-[32px] border border-[var(--border)] shadow-sm" style={{ height: 280 }}>
-                <h3 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
-                  📈 Évolution
-                </h3>
-                <div className="relative" style={{ height: 200 }}>
-                  {filteredExpenses.length === 0 && <EmptyChartOverlay label="Aucune dépense" />}
-                  <Line data={lineData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
-                </div>
-              </div>
-              <div className="bg-[var(--bg-card)] p-6 rounded-[32px] border border-[var(--border)] shadow-sm" style={{ height: 280 }}>
-                <h3 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>
-                  🍰 Répartition
-                </h3>
-                <div className="relative" style={{ height: 200 }}>
-                  {doughnutData.isEmpty && <EmptyChartOverlay label="Aucune catégorie" />}
-                  <Doughnut data={doughnutData.data} options={{
-                    responsive: true, maintainAspectRatio: false, cutout: '75%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: !doughnutData.isEmpty } }
-                  }} />
-                </div>
-              </div>
-            </div>
-
-            {/* ── FORMULAIRE D'AJOUT ── */}
-            <div className="bg-[var(--bg-card)] p-8 rounded-[40px] border border-[var(--border)] shadow-sm">
-              <h3 className="text-base font-black mb-6 flex items-center gap-2">
-                <span className="w-7 h-7 rounded-full bg-[var(--france-red)] flex items-center justify-center text-white text-xs font-black">+</span>
-                Nouvelle dépense
-              </h3>
-              <form onSubmit={handleAddExpense} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="select-child" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Enfant</label>
-                  <select id="select-child" name="child"
-                    className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors" required>
-                    <option value="">Choisir un enfant</option>
-                    {profiles.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="select-category" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Catégorie</label>
-                  <select id="select-category" name="category"
-                    className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors" required>
-                    {Object.keys(categoryIcons).map(cat => (
-                      <option key={cat} value={cat}>{categoryIcons[cat]} {cat}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="input-label" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Désignation</label>
-                  <input id="input-label" name="label" required
-                    className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors"
-                    placeholder="Ex : Pampers taille 3" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="input-amount" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Montant (€)</label>
-                  <input id="input-amount" name="amount" type="number" step="0.01" min="0.01" required
-                    className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors"
-                    placeholder="0,00" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="input-date" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Date</label>
-                  <input id="input-date" name="date" type="date" required defaultValue={getTodayISO()}
-                    className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors" />
-                </div>
-                <div className="flex items-center gap-3 px-2 pt-3">
-                  <input type="checkbox" name="recurring" id="rec" className="w-5 h-5 accent-[var(--france-blue)]" />
-                  <label htmlFor="rec" className="text-sm font-bold opacity-40">Récurrente 🔁</label>
-                </div>
-                <button type="submit" disabled={isLoading || profiles.length === 0}
-                  className="md:col-span-2 bg-[var(--france-red)] text-white font-black py-5 rounded-2xl hover:brightness-110 shadow-lg transition-all active:scale-95 disabled:opacity-40 text-sm tracking-wider uppercase">
-                  {isLoading
-                    ? '⏳ Synchronisation...'
-                    : profiles.length === 0
-                      ? "Ajoutez un enfant d'abord"
-                      : '☁️ Ajouter au cloud'}
-                </button>
-              </form>
-            </div>
-          </div>
-
-          {/* ── SIDEBAR ─────────────────────────────────────────────────────── */}
-          <aside className="space-y-6">
-            <div className="bg-[var(--bg-card)] p-6 rounded-[32px] border border-[var(--border)] shadow-sm">
-              <h3 className="text-base font-black mb-5">👶 Ma Famille</h3>
-              <div className="space-y-2 mb-5">
-                {profiles.map(p => (
-                  <div key={p.id} className="flex justify-between items-center p-3 bg-[var(--bg-input)] rounded-2xl group">
-                    <span className="font-bold text-sm">{p.name}</span>
-                    <button onClick={() => deleteProfile(p.id, p.name)}
-                      className="text-[10px] opacity-0 group-hover:opacity-30 hover:!opacity-100 hover:text-red-500 font-black uppercase transition-all">
-                      Retirer
-                    </button>
-                  </div>
-                ))}
-                {profiles.length === 0 && (
-                  <p className="text-center text-xs py-4 font-bold" style={{ color: 'var(--text-muted)' }}>
-                    Aucun enfant ajouté
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <label htmlFor="new-profile-input" className="sr-only">Prénom de l'enfant</label>
-                <input id="new-profile-input"
-                  className="bg-[var(--bg-input)] p-3 rounded-xl text-sm w-full outline-none border border-[var(--border)] font-bold focus:border-[var(--france-blue)] transition-colors"
-                  placeholder="Prénom..."
-                  value={newProfileName}
-                  onChange={(e) => setNewProfileName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && addProfile()} />
-                <button onClick={addProfile} disabled={!newProfileName.trim()}
-                  className="bg-[var(--france-blue)] text-white px-5 rounded-xl font-black disabled:opacity-40 transition-all hover:brightness-110"
-                  aria-label="Ajouter cet enfant">
-                  +
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between items-center px-1">
-                <h3 className="text-base font-black">Historique</h3>
-                <span className="text-sm font-black text-[var(--france-blue)]">{formatEuro(totalAmount)}</span>
-              </div>
-              <div className="max-h-[520px] overflow-y-auto space-y-2 pr-1 scrollbar-hide">
-                {reversedFilteredExpenses.map(exp => (
-                  <div key={exp.id}
-                    className={`bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] group transition-all duration-200 hover:border-[var(--france-blue)] hover:shadow-sm ${lastAddedId === exp.id ? 'highlight-new' : ''}`}>
-                    <div className="flex justify-between items-center p-4">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-xl flex-shrink-0" aria-hidden="true">
-                          {categoryIcons[exp.category] || "📦"}
+        {/* ── CONTENU PRINCIPAL ── */}
+        {!isInitialLoading && !dataError && (
+          <>
+            {/* ── BUDGET & PROJECTION ── */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="md:col-span-2 bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)] shadow-sm">
+                <div className="flex justify-between items-end mb-5">
+                  <div>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>
+                      Budget {viewScope === 'month' ? 'Mensuel' : 'Annuel'}
+                    </h3>
+                    {isEditingBudget ? (
+                      <div className="flex gap-2 items-center">
+                        <label htmlFor="budget-input" className="sr-only">Modifier le budget</label>
+                        <input id="budget-input" type="number"
+                          className="bg-[var(--bg-input)] border-2 border-[var(--france-blue)] rounded-xl px-3 py-2 text-xl font-black w-28 outline-none"
+                          value={tempBudget} autoFocus
+                          onChange={(e) => setTempBudget(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && updateBudget()} />
+                        <button onClick={updateBudget}
+                          className="bg-[var(--france-blue)] text-white px-4 py-2 rounded-xl text-xs font-black hover:brightness-110 transition-all">OK</button>
+                        <button onClick={() => setIsEditingBudget(false)}
+                          className="opacity-30 hover:opacity-70 text-xs font-bold px-2 transition-opacity">✕</button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl font-black">
+                          {budgetIsDefined ? formatEuro(currentEffectiveBudget) : <span className="text-base opacity-30">Budget non défini</span>}
                         </span>
-                        <div className="min-w-0">
-                          <div className="font-bold text-sm leading-none mb-1 flex items-center gap-1.5 flex-wrap">
-                            <span className="truncate">{exp.label}</span>
-                            {exp.is_recurring && (
-                              <span className="text-[9px] font-black opacity-40 bg-[var(--bg-input)] px-1.5 py-0.5 rounded-full flex-shrink-0">🔁</span>
-                            )}
+                        <button
+                          onClick={() => { setTempBudget(monthlyBudget.toString()); setIsEditingBudget(true); }}
+                          className="text-[10px] opacity-25 hover:opacity-100 uppercase font-black border border-[var(--border)] px-2 py-1 rounded-lg transition-opacity">
+                          ✏️ Modifier
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    {budgetIsDefined ? (
+                      <span className={`text-xl font-black ${remaining < 0 ? 'text-[var(--france-red)]' : 'text-[var(--france-blue)]'}`}>
+                        {remaining < 0 ? `−${formatEuro(Math.abs(remaining))} dépassé` : `${formatEuro(remaining)} restants`}
+                      </span>
+                    ) : (
+                      <span className="text-sm font-bold opacity-30">{formatEuro(totalAmount)} dépensés</span>
+                    )}
+                  </div>
+                </div>
+                <div className="h-3 bg-[var(--bg-input)] rounded-full overflow-hidden border border-[var(--border)]">
+                  {budgetIsDefined ? (
+                    <div className={`h-full transition-all duration-1000 rounded-full ${percentUsed >= 90 ? 'bg-[var(--france-red)]' : 'bg-[var(--france-blue)]'}`}
+                      style={{ width: `${percentUsed}%` }} />
+                  ) : (
+                    <div className="h-full w-1/3 bg-[var(--france-blue)] opacity-20 animate-pulse rounded-full" />
+                  )}
+                </div>
+                {budgetIsDefined && (
+                  <div className="flex justify-between mt-2">
+                    <span className="text-[10px] font-bold opacity-30">{formatEuro(totalAmount)} dépensés</span>
+                    <span className="text-[10px] font-bold opacity-30">{Math.round(percentUsed)}%</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)] shadow-sm flex flex-col justify-center">
+                <h3 className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--text-muted)' }}>
+                  {viewScope === 'month' ? 'Projection fin de mois' : 'Total annuel'}
+                </h3>
+                <div className="text-2xl font-black mb-2">{formatEuro(projection)}</div>
+                {budgetIsDefined && (
+                  <div className={`text-[10px] font-black uppercase tracking-wider ${projection > currentEffectiveBudget ? 'text-[var(--france-red)]' : 'text-emerald-500'}`}>
+                    {projection > currentEffectiveBudget ? '⚠️ Dépassement prévu' : '✅ Dans les clous'}
+                  </div>
+                )}
+                {/* Comparaison mois précédent */}
+                {prevMonthDiff !== null && (
+                  <div className="mt-3 pt-3 border-t border-[var(--border)]">
+                    <span className="text-[10px] font-bold" style={{ color: 'var(--text-muted)' }}>vs mois précédent </span>
+                    <span className={`text-[10px] font-black ${prevMonthDiff > 0 ? 'text-[var(--france-red)]' : 'text-emerald-500'}`}>
+                      {prevMonthDiff > 0 ? '▲' : '▼'} {Math.abs(prevMonthDiff).toFixed(0)}%
+                    </span>
+                  </div>
+                )}
+                <div className="mt-2">
+                  <span className="text-[10px] font-bold" style={{ color: 'var(--text-muted)' }}>
+                    {filteredExpenses.length} opération{filteredExpenses.length > 1 ? 's' : ''}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* ── GRAPHIQUES & FORMULAIRE ── */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-[var(--bg-card)] p-6 rounded-[32px] border border-[var(--border)] shadow-sm" style={{ height: 280 }}>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>📈 Évolution</h3>
+                    <div className="relative" style={{ height: 200 }}>
+                      {filteredExpenses.length === 0 && <EmptyChartOverlay label="Aucune dépense" />}
+                      <Line data={lineData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+                    </div>
+                  </div>
+                  <div className="bg-[var(--bg-card)] p-6 rounded-[32px] border border-[var(--border)] shadow-sm" style={{ height: 280 }}>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: 'var(--text-muted)' }}>🍰 Répartition</h3>
+                    <div className="relative" style={{ height: 200 }}>
+                      {doughnutData.isEmpty && <EmptyChartOverlay label="Aucune catégorie" />}
+                      <Doughnut data={doughnutData.data} options={{
+                        responsive: true, maintainAspectRatio: false, cutout: '75%',
+                        plugins: { legend: { display: false }, tooltip: { enabled: !doughnutData.isEmpty } }
+                      }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── FORMULAIRE D'AJOUT ── */}
+                <div className="bg-[var(--bg-card)] p-8 rounded-[40px] border border-[var(--border)] shadow-sm">
+                  <h3 className="text-base font-black mb-6 flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-full bg-[var(--france-red)] flex items-center justify-center text-white text-xs font-black">+</span>
+                    Nouvelle dépense
+                  </h3>
+                  <form onSubmit={handleAddExpense} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="select-child" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Enfant</label>
+                      <select id="select-child" name="child"
+                        className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors" required>
+                        <option value="">Choisir un enfant</option>
+                        {profiles.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="select-category" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Catégorie</label>
+                      <select id="select-category" name="category"
+                        className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors" required>
+                        {Object.keys(categoryIcons).map(cat => (
+                          <option key={cat} value={cat}>{categoryIcons[cat]} {cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="input-label" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Désignation</label>
+                      <input id="input-label" name="label" required
+                        className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors"
+                        placeholder="Ex : Pampers taille 3" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="input-amount" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Montant (€)</label>
+                      <input id="input-amount" name="amount" type="number" step="0.01" min="0.01" required
+                        className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors"
+                        placeholder="0,00" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor="input-date" className="text-[10px] font-black uppercase opacity-40 px-1 tracking-wider">Date</label>
+                      <input id="input-date" name="date" type="date" required defaultValue={getTodayISO()}
+                        className="bg-[var(--bg-input)] p-4 rounded-2xl outline-none text-sm font-bold border border-transparent focus:border-[var(--france-blue)] transition-colors" />
+                    </div>
+                    <div className="flex items-center gap-3 px-2 pt-3">
+                      <input type="checkbox" name="recurring" id="rec" className="w-5 h-5 accent-[var(--france-blue)]" />
+                      <label htmlFor="rec" className="text-sm font-bold opacity-40">Récurrente 🔁</label>
+                    </div>
+                    <button type="submit" disabled={isLoading || profiles.length === 0}
+                      className="md:col-span-2 bg-[var(--france-red)] text-white font-black py-5 rounded-2xl hover:brightness-110 shadow-lg transition-all active:scale-95 disabled:opacity-40 text-sm tracking-wider uppercase">
+                      {isLoading ? '⏳ Synchronisation...' : profiles.length === 0 ? "Ajoutez un enfant d'abord" : '☁️ Ajouter au cloud'}
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              {/* ── SIDEBAR ── */}
+              <aside className="space-y-6">
+
+                {/* Ma Famille */}
+                <div className="bg-[var(--bg-card)] p-6 rounded-[32px] border border-[var(--border)] shadow-sm">
+                  <h3 className="text-base font-black mb-5">👶 Ma Famille</h3>
+                  <div className="space-y-2 mb-5">
+                    {profiles.map(p => (
+                      <div key={p.id} className="flex justify-between items-center p-3 bg-[var(--bg-input)] rounded-2xl group">
+                        <span className="font-bold text-sm">{p.name}</span>
+                        <button onClick={() => deleteProfile(p.id, p.name)}
+                          className="text-[10px] opacity-0 group-hover:opacity-30 hover:!opacity-100 hover:text-red-500 font-black uppercase transition-all">
+                          Retirer
+                        </button>
+                      </div>
+                    ))}
+                    {profiles.length === 0 && (
+                      <p className="text-center text-xs py-4 font-bold" style={{ color: 'var(--text-muted)' }}>Aucun enfant ajouté</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <label htmlFor="new-profile-input" className="sr-only">Prénom de l'enfant</label>
+                    <input id="new-profile-input"
+                      className="bg-[var(--bg-input)] p-3 rounded-xl text-sm w-full outline-none border border-[var(--border)] font-bold focus:border-[var(--france-blue)] transition-colors"
+                      placeholder="Prénom..."
+                      value={newProfileName}
+                      onChange={(e) => setNewProfileName(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && addProfile()} />
+                    <button onClick={addProfile} disabled={!newProfileName.trim()}
+                      className="bg-[var(--france-blue)] text-white px-5 rounded-xl font-black disabled:opacity-40 transition-all hover:brightness-110"
+                      aria-label="Ajouter cet enfant">+</button>
+                  </div>
+                </div>
+
+                {/* Historique */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center px-1">
+                    <h3 className="text-base font-black">Historique</h3>
+                    <div className="flex items-center gap-2">
+                      {/* Export CSV */}
+                      {filteredExpenses.length > 0 && (
+                        <button onClick={handleExportCSV}
+                          title="Exporter en CSV"
+                          className="text-[10px] font-black opacity-40 hover:opacity-100 border border-[var(--border)] px-2 py-1 rounded-lg transition-opacity bg-[var(--bg-card)]">
+                          ⬇ CSV
+                        </button>
+                      )}
+                      {/* Tri */}
+                      <select
+                        value={sortKey}
+                        onChange={e => setSortKey(e.target.value as SortKey)}
+                        className="text-[10px] font-black bg-[var(--bg-card)] border border-[var(--border)] rounded-lg px-2 py-1 outline-none opacity-60 hover:opacity-100 transition-opacity"
+                        aria-label="Trier l'historique"
+                      >
+                        <option value="date_desc">Date ↓</option>
+                        <option value="date_asc">Date ↑</option>
+                        <option value="amount_desc">Montant ↓</option>
+                        <option value="amount_asc">Montant ↑</option>
+                      </select>
+                      <span className="text-sm font-black text-[var(--france-blue)]">{formatEuro(totalAmount)}</span>
+                    </div>
+                  </div>
+
+                  <div className="max-h-[520px] overflow-y-auto space-y-2 pr-1 scrollbar-hide">
+                    {sortedFilteredExpenses.map(exp => (
+                      <div key={exp.id}
+                        className={`bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] group transition-all duration-200 hover:border-[var(--france-blue)] hover:shadow-sm ${lastAddedId === exp.id ? 'highlight-new' : ''}`}>
+                        <div className="flex justify-between items-center p-4">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className="text-xl flex-shrink-0" aria-hidden="true">
+                              {categoryIcons[exp.category] || "📦"}
+                            </span>
+                            <div className="min-w-0">
+                              <div className="font-bold text-sm leading-none mb-1 flex items-center gap-1.5 flex-wrap">
+                                <span className="truncate">{exp.label}</span>
+                                {exp.is_recurring && (
+                                  <span className="text-[9px] font-black opacity-40 bg-[var(--bg-input)] px-1.5 py-0.5 rounded-full flex-shrink-0">🔁</span>
+                                )}
+                              </div>
+                              <div className="text-[9px] uppercase font-black" style={{ color: 'var(--text-muted)' }}>
+                                {exp.child_name} · {parseDateLocal(exp.date).toLocaleDateString('fr-FR')}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-[9px] uppercase font-black" style={{ color: 'var(--text-muted)' }}>
-                            {exp.child_name} · {parseDateLocal(exp.date).toLocaleDateString('fr-FR')}
+                          <div className="font-black text-sm text-[var(--france-blue)] flex-shrink-0 ml-2">
+                            {formatEuro(exp.amount)}
+                          </div>
+                        </div>
+                        <div className="overflow-hidden max-h-0 group-hover:max-h-12 transition-all duration-200 ease-out">
+                          <div className="flex border-t border-[var(--border)] divide-x divide-[var(--border)]">
+                            <button onClick={() => setEditingExpense(exp)}
+                              className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-[var(--france-blue)] transition-all flex items-center justify-center gap-1"
+                              aria-label={`Modifier ${exp.label}`}>✏️ Modifier</button>
+                            <button onClick={() => handleDuplicateExpense(exp)}
+                              className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-emerald-500 transition-all flex items-center justify-center gap-1"
+                              aria-label={`Dupliquer ${exp.label}`}>📋 Dupliquer</button>
+                            <button onClick={() => deleteExpense(exp.id, exp.label)}
+                              className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-[var(--france-red)] transition-all flex items-center justify-center gap-1"
+                              aria-label={`Supprimer ${exp.label}`}>🗑 Supprimer</button>
                           </div>
                         </div>
                       </div>
-                      <div className="font-black text-sm text-[var(--france-blue)] flex-shrink-0 ml-2">
-                        {formatEuro(exp.amount)}
+                    ))}
+
+                    {filteredExpenses.length === 0 && (
+                      <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
+                        <div className="text-5xl mb-3 opacity-50">📭</div>
+                        <div className="text-xs font-black uppercase tracking-widest opacity-50">Aucune dépense</div>
+                        <div className="text-[10px] opacity-30 mt-1 font-bold">sur cette période</div>
                       </div>
-                    </div>
-                    <div className="overflow-hidden max-h-0 group-hover:max-h-12 transition-all duration-200 ease-out">
-                      <div className="flex border-t border-[var(--border)] divide-x divide-[var(--border)]">
-                        <button onClick={() => setEditingExpense(exp)}
-                          className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-[var(--france-blue)] transition-all flex items-center justify-center gap-1"
-                          aria-label={`Modifier ${exp.label}`}>
-                          ✏️ Modifier
-                        </button>
-                        <button onClick={() => handleDuplicateExpense(exp)}
-                          className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-emerald-500 transition-all flex items-center justify-center gap-1"
-                          aria-label={`Dupliquer ${exp.label}`}>
-                          📋 Dupliquer
-                        </button>
-                        <button onClick={() => deleteExpense(exp.id, exp.label)}
-                          className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-[var(--france-red)] transition-all flex items-center justify-center gap-1"
-                          aria-label={`Supprimer ${exp.label}`}>
-                          🗑 Supprimer
-                        </button>
-                      </div>
-                    </div>
+                    )}
                   </div>
-                ))}
-                {filteredExpenses.length === 0 && (
-                  <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
-                    <div className="text-5xl mb-3 opacity-50">📭</div>
-                    <div className="text-xs font-black uppercase tracking-widest opacity-50">Aucune dépense</div>
-                    <div className="text-[10px] opacity-30 mt-1 font-bold">sur cette période</div>
-                  </div>
-                )}
-              </div>
+                </div>
+              </aside>
             </div>
-          </aside>
-        </div>
+          </>
+        )}
       </main>
 
       {confirmModal && (
