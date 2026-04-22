@@ -549,13 +549,29 @@ export default function LandingPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          FOOTER SOURCE
+          FOOTER
       ═══════════════════════════════════════════════ */}
-      <footer style={{ padding: '24px', textAlign: 'center', borderTop: '1px solid #E2E8F0', background: 'white' }}>
-        <p style={{ fontSize: 11, color: '#94A3B8', margin: 0, lineHeight: 1.6 }}>
-          Données indicatives basées sur les moyennes nationales françaises.<br />
-          Sources : INSEE "Enquête budget des familles 2023" · CAF.fr · DREES · CREDOC "Budget des familles 2022"
-        </p>
+      <footer style={{ padding: '32px 24px', borderTop: '1px solid #E2E8F0', background: 'white' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 28, height: 28, background: '#0F172A', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>👶</div>
+              <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 15, color: '#0F172A', letterSpacing: '-0.02em' }}>
+                Baby<span style={{ color: '#6366F1' }}>Budget</span>
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              <Link href="/confidentialite" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Confidentialité</Link>
+              <Link href="/cgu" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>CGU</Link>
+              <a href="mailto:contact@babybudget.app" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Contact</a>
+            </div>
+          </div>
+          <div style={{ height: 1, background: '#F1F5F9', marginBottom: 16 }} />
+          <p style={{ fontSize: 11, color: '#94A3B8', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
+            Données indicatives basées sur les moyennes nationales françaises (INSEE, CAF, DREES, CREDOC). À titre indicatif uniquement.<br />
+            © {new Date().getFullYear()} BabyBudget — Application gratuite, sans publicité, sans engagement.
+          </p>
+        </div>
       </footer>
 
     </div>
