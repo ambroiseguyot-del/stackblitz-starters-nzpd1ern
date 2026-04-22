@@ -44,7 +44,7 @@ export default function Onboarding({ onComplete }: Props) {
         .from("settings")
         .upsert(
           { key: "monthly_budget", value: budget },
-          { onConflict: "key" }
+          { onConflict: "key,user_id" }
         );
       if (err) throw err;
       setBudgetSaved(true);
