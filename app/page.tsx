@@ -50,7 +50,7 @@ function FeatureCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode; 
       }}>
         {icon}
       </div>
-      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 8, color: '#0F172A', fontFamily: 'Syne, sans-serif' }}>{title}</h3>
+      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 8, color: '#0F172A', fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" }}>{title}</h3>
       <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.6, margin: 0 }}>{desc}</p>
     </motion.div>
   );
@@ -73,7 +73,7 @@ function FAQItem({ q, a, delay = 0 }: { q: string; a: string; delay?: number }) 
           width: '100%', textAlign: 'left', padding: '20px 0',
           background: 'none', border: 'none', cursor: 'pointer',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16,
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
         }}
       >
         <span style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A' }}>{q}</span>
@@ -91,11 +91,9 @@ function FAQItem({ q, a, delay = 0 }: { q: string; a: string; delay?: number }) 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function LandingPage() {
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', color: '#0F172A', lineHeight: '1.6', overflowX: 'hidden' }}>
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", color: '#0F172A', lineHeight: '1.6', overflowX: 'hidden' }}>
 
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
-
         @keyframes gradientMove {
           0%   { background-position: 0% 50%; }
           50%  { background-position: 100% 50%; }
@@ -154,7 +152,7 @@ export default function LandingPage() {
             style={{
               fontSize: 'clamp(2.2rem, 5vw, 3.6rem)',
               fontWeight: 800,
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
               letterSpacing: '-2px',
               lineHeight: 1.08,
               marginBottom: 24,
@@ -225,7 +223,7 @@ export default function LandingPage() {
                   borderRadius: 12, padding: '14px 16px', textAlign: 'left',
                 }}>
                   <p style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 6px' }}>{card.label}</p>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: card.green ? '#10B981' : card.accent ? '#1E40AF' : '#0F172A', margin: 0, fontFamily: 'Syne, sans-serif' }}>{card.value}</p>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: card.green ? '#10B981' : card.accent ? '#1E40AF' : '#0F172A', margin: 0, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" }}>{card.value}</p>
                 </div>
               ))}
             </div>
@@ -292,7 +290,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
-                <p style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: 'Syne, sans-serif', color: '#60A5FA', margin: '0 0 8px', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
+                <p style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", color: '#60A5FA', margin: '0 0 8px', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
                   <Counter to={stat.value} suffix={stat.suffix} />
                 </p>
                 <p style={{ fontSize: '0.85rem', color: '#CBD5E1', margin: '0 0 4px', fontWeight: 500, lineHeight: 1.4 }}>{stat.label}</p>
@@ -316,7 +314,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
           >
             <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#EF4444', marginBottom: 12 }}>Le problème réel</p>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: 'Syne, sans-serif', letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 20 }}>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 20 }}>
               Un budget qui explose…<br />sans prévenir
             </h2>
             <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.75, marginBottom: 20 }}>
@@ -370,7 +368,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
           >
             <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0070F3', marginBottom: 12 }}>Fonctionnalité unique</p>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: 'Syne, sans-serif', letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 16 }}>
               Êtes-vous au-dessus ou en dessous<br />de la moyenne nationale ?
             </h2>
             <p style={{ color: '#475569', fontSize: '1rem', maxWidth: 580, margin: '0 auto 48px', lineHeight: 1.7 }}>
@@ -438,7 +436,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             style={{ textAlign: 'center', marginBottom: 56 }}
           >
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: 'Syne, sans-serif', letterSpacing: '-1px', marginBottom: 12 }}>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', marginBottom: 12 }}>
               Pensé pour les parents modernes
             </h2>
             <p style={{ color: '#64748B', fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
@@ -466,7 +464,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             style={{ textAlign: 'center', marginBottom: 56 }}
           >
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.2rem)', fontWeight: 800, fontFamily: 'Syne, sans-serif', letterSpacing: '-1px', marginBottom: 12 }}>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.2rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', marginBottom: 12 }}>
               Questions fréquentes
             </h2>
           </motion.div>
@@ -515,7 +513,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
           >
             <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0070F3', marginBottom: 16 }}>Commencez maintenant</p>
-            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 800, fontFamily: 'Syne, sans-serif', letterSpacing: '-1.5px', lineHeight: 1.1, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1.5px', lineHeight: 1.1, marginBottom: 16 }}>
               Reprenez le contrôle<br />dès aujourd'hui
             </h2>
             <p style={{ color: '#64748B', fontSize: '1rem', marginBottom: 36, lineHeight: 1.7 }}>
@@ -556,7 +554,7 @@ export default function LandingPage() {
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 28, height: 28, background: '#0F172A', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>👶</div>
-              <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 15, color: '#0F172A', letterSpacing: '-0.02em' }}>
+              <span style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", fontWeight: 800, fontSize: 15, color: '#0F172A', letterSpacing: '-0.02em' }}>
                 Baby<span style={{ color: '#6366F1' }}>Budget</span>
               </span>
             </div>
