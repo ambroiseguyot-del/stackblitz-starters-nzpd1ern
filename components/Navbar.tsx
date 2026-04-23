@@ -69,11 +69,9 @@ export default function Navbar() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
-
         .nb {
           position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-          font-family: 'DM Sans', sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           transition: background 0.2s, box-shadow 0.2s, backdrop-filter 0.2s;
         }
         .nb.scrolled {
@@ -93,7 +91,7 @@ export default function Navbar() {
         }
 
         .nb-logo {
-          font-family: 'Syne', sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           font-weight: 800;
           font-size: 1.1rem;
           letter-spacing: -0.03em;
@@ -146,7 +144,7 @@ export default function Navbar() {
           width: 26px; height: 26px; border-radius: 50%;
           background: #0F172A;
           display: flex; align-items: center; justify-content: center;
-          font-size: 11px; color: white; font-weight: 700; font-family: 'Syne', sans-serif;
+          font-size: 11px; color: white; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           flex-shrink: 0;
         }
 
@@ -154,7 +152,7 @@ export default function Navbar() {
           padding: 7px 14px; border-radius: 10px;
           border: 1px solid #E2E8F0; background: white;
           font-size: 13px; font-weight: 500; color: #64748B;
-          cursor: pointer; font-family: 'DM Sans', sans-serif;
+          cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           transition: background 0.15s, color 0.15s, border-color 0.15s;
         }
         .nb-btn-signout:hover { background: #FEF2F2; color: #DC2626; border-color: #FECACA; }
@@ -163,7 +161,7 @@ export default function Navbar() {
           padding: 8px 18px; border-radius: 10px;
           background: #0F172A; color: white;
           font-size: 13px; font-weight: 500;
-          text-decoration: none; font-family: 'DM Sans', sans-serif;
+          text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           transition: background 0.15s;
         }
         .nb-btn-login:hover { background: #1E293B; }
@@ -181,7 +179,7 @@ export default function Navbar() {
           padding: 8px 18px; border-radius: 10px;
           border: 1px solid #E2E8F0; background: white;
           color: #374151; font-size: 13px; font-weight: 500;
-          text-decoration: none; font-family: 'DM Sans', sans-serif;
+          text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           transition: background 0.15s;
         }
         .nb-btn-signup:hover { background: #F8FAFC; }
