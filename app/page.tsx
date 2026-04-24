@@ -549,8 +549,8 @@ export default function LandingPage() {
                     padding: '24px', height: '100%',
                     transition: 'border-color 0.15s, box-shadow 0.15s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = tool.color; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = c.cardBorder; (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; }}
+                  onMouseEnter={e => { const el = e.currentTarget; el.style.borderColor = tool.color; el.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)'; }}
+                  onMouseLeave={e => { const el = e.currentTarget; el.style.borderColor = c.cardBorder; el.style.boxShadow = 'none'; }}
                   >
                     <div style={{ fontSize: 28, marginBottom: 14 }}>{tool.emoji}</div>
                     <h3 style={{ fontSize: '1rem', fontWeight: 700, color: c.text, marginBottom: 8, lineHeight: 1.3 }}>{tool.title}</h3>
