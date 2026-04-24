@@ -61,6 +61,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/app',        label: 'Dashboard',   icon: '🚀' },
     { href: '/analyse',    label: 'Analyse',      icon: '📊' },
+    { href: '/budget', label: 'Budget estimé', icon: '🧮' },
     { href: '/comparaison', label: 'Comparaison', icon: '🇫🇷' },
     { href: '/informations', label: 'Informations',  icon: '📋' },
   ];
