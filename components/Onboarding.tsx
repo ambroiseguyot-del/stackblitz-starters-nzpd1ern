@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 
 interface Props {
   onComplete: () => void;
@@ -64,8 +64,6 @@ export default function Onboarding({ onComplete }: Props) {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
-
         .ob-overlay {
           position: fixed; inset: 0; z-index: 1000;
           background: rgba(15,23,42,0.5);
@@ -81,7 +79,7 @@ export default function Onboarding({ onComplete }: Props) {
           box-shadow: 0 24px 80px rgba(0,0,0,0.2);
           overflow: hidden;
           animation: obSlideUp 0.35s cubic-bezier(0.32,0.72,0,1);
-          font-family: 'DM Sans', sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
         }
 
         .ob-header {
@@ -92,7 +90,7 @@ export default function Onboarding({ onComplete }: Props) {
 
         .ob-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
         .ob-logo-icon { width: 30px; height: 30px; background: #6366F1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .ob-logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; color: white; letter-spacing: -0.02em; }
+        .ob-logo-name { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 15px; color: white; letter-spacing: -0.02em; }
 
         .ob-steps { display: flex; align-items: center; gap: 0; }
         .ob-step-item { display: flex; align-items: center; gap: 6px; }
@@ -114,14 +112,14 @@ export default function Onboarding({ onComplete }: Props) {
         .ob-body { padding: 32px; }
 
         .ob-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6366F1; margin: 0 0 8px; }
-        .ob-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; color: #0F172A; letter-spacing: -0.03em; margin: 0 0 8px; line-height: 1.2; }
+        .ob-title { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 1.5rem; color: #0F172A; letter-spacing: -0.03em; margin: 0 0 8px; line-height: 1.2; }
         .ob-sub { font-size: 14px; color: #64748B; margin: 0 0 24px; line-height: 1.6; }
 
         .ob-label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 6px; }
         .ob-input-row { display: flex; gap: 8px; }
         .ob-input {
           flex: 1; padding: 12px 16px; border: 1.5px solid #E2E8F0; border-radius: 12px;
-          font-size: 14px; font-family: 'DM Sans', sans-serif; color: #0F172A;
+          font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; color: #0F172A;
           outline: none; transition: border-color 0.15s, box-shadow 0.15s;
         }
         .ob-input:focus { border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
@@ -130,7 +128,7 @@ export default function Onboarding({ onComplete }: Props) {
         .ob-btn-add {
           padding: 12px 20px; border-radius: 12px; border: none;
           background: #0F172A; color: white;
-          font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+          font-size: 13px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           cursor: pointer; transition: background 0.15s; white-space: nowrap;
           flex-shrink: 0;
         }
@@ -145,14 +143,14 @@ export default function Onboarding({ onComplete }: Props) {
         .ob-btn-next {
           width: 100%; padding: 14px; margin-top: 24px;
           background: #6366F1; color: white; border: none; border-radius: 12px;
-          font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+          font-size: 14px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           cursor: pointer; transition: background 0.15s, transform 0.1s;
           display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .ob-btn-next:hover { background: #4F46E5; }
         .ob-btn-next:active { transform: scale(0.99); }
 
-        .ob-skip { display: block; text-align: center; margin-top: 12px; font-size: 12px; color: #94A3B8; cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; width: 100%; }
+        .ob-skip { display: block; text-align: center; margin-top: 12px; font-size: 12px; color: #94A3B8; cursor: pointer; background: none; border: none; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; width: 100%; }
         .ob-skip:hover { color: #64748B; }
 
         .ob-feature-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; }
@@ -164,7 +162,7 @@ export default function Onboarding({ onComplete }: Props) {
         .ob-cta {
           width: 100%; padding: 16px; margin-top: 28px;
           background: #0F172A; color: white; border: none; border-radius: 14px;
-          font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+          font-size: 15px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           cursor: pointer; transition: background 0.15s;
         }
         .ob-cta:hover { background: #1E293B; }
