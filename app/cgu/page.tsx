@@ -77,7 +77,7 @@ export default function CGU() {
 
       <Section title="10. Droit applicable">
         <p>Les présentes conditions sont soumises au droit français. En cas de litige, les tribunaux français seront compétents.</p>
-        <p>Pour toute question : <strong>contact@babybudget.app</strong></p>
+        <p>Pour toute question : <strong>contact@babybudget.fr</strong></p>
       </Section>
 
       <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid #E2E8F0', display: 'flex', gap: 24, flexWrap: 'wrap' }}>
