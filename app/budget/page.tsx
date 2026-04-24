@@ -445,24 +445,24 @@ export default function BudgetPrevisionnelPage() {
 
             {/* Budget total sélectionné */}
             <div style={{ background: '#0F172A', borderRadius: 20, padding: '24px' }}>
-              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#475569', marginBottom: 8 }}>
+              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748B', marginBottom: 8 }}>
                 {EMOJI_MODE[modeSelectionne]} {LABELS_MODE[modeSelectionne]} — Budget mensuel estimé
               </p>
               <p style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, color: '#60A5FA', letterSpacing: '-1.5px', margin: '0 0 4px' }}>
                 {selected.total.toLocaleString('fr-FR')} €/mois
               </p>
-              <p style={{ fontSize: 13, color: '#475569', margin: '0 0 20px', lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: '#94A3B8', margin: '0 0 20px', lineHeight: 1.6 }}>
                 Soit environ <strong style={{ color: '#94A3B8' }}>{(selected.total * 12).toLocaleString('fr-FR')} €/an</strong> pour la première année.
               </p>
               <div style={{ borderTop: '1px solid #1E293B', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
-                  { label: 'Coût garde brut', val: selected.coutGarde.brut, color: '#F87171' },
-                  { label: 'CMG déduit', val: -selected.coutGarde.aide, color: '#34D399' },
-                  { label: 'Dépenses courantes', val: depenses.total, color: '#A78BFA' },
-                  { label: 'PAJE déduite', val: -paje, color: '#34D399' },
+                  { label: 'Coût garde brut', val: selected.coutGarde.brut, color: '#FCA5A5' },
+                  { label: 'CMG déduit', val: -selected.coutGarde.aide, color: '#6EE7B7' },
+                  { label: 'Dépenses courantes', val: depenses.total, color: '#C4B5FD' },
+                  { label: 'PAJE déduite', val: -paje, color: '#6EE7B7' },
                 ].map(({ label, val, color }) => val !== 0 && (
                   <div key={label} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: 13, color: '#64748B' }}>{label}</span>
+                    <span style={{ fontSize: 13, color: '#94A3B8' }}>{label}</span>
                     <span style={{ fontSize: 13, fontWeight: 600, color }}>
                       {val > 0 ? '+' : ''}{val.toLocaleString('fr-FR')} €
                     </span>
