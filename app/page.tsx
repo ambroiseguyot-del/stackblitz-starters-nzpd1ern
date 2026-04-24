@@ -5,6 +5,20 @@ import { Baby, TrendingDown, ShieldCheck, Zap, PieChart, BarChart2, ArrowRight, 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 
+// ─── Hook dark mode ───────────────────────────────────────────────────────────
+function useGlobalDark(): boolean {
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+  return isDark;
+}
+
 // ─── Animated Counter ────────────────────────────────────────────────────────
 function Counter({ to, prefix = '', suffix = '', duration = 2 }: { to: number; prefix?: string; suffix?: string; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -36,10 +50,10 @@ function FeatureCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode; 
       transition={{ duration: 0.5, ease: 'easeOut', delay }}
       whileHover={{ y: -4 }}
       style={{
-        background: 'white',
+        background: c.card,
         padding: '28px',
         borderRadius: '20px',
-        border: '1px solid #EAECF0',
+        border: `1px solid ${c.cardBorder}`,
         boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
         transition: 'box-shadow 0.2s',
       }}
@@ -51,7 +65,7 @@ function FeatureCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode; 
         {icon}
       </div>
       <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 8, color: '#0F172A', fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" }}>{title}</h3>
-      <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.6, margin: 0 }}>{desc}</p>
+      <p style={{ fontSize: '0.9rem', color: c.textFaint, lineHeight: 1.6, margin: 0 }}>{desc}</p>
     </motion.div>
   );
 }
@@ -65,7 +79,7 @@ function FAQItem({ q, a, delay = 0 }: { q: string; a: string; delay?: number }) 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, ease: 'easeOut', delay }}
-      style={{ borderBottom: '1px solid #E2E8F0' }}
+      style={{ borderBottom: `1px solid ${c.border}` }}
     >
       <button
         onClick={() => setOpen(!open)}
@@ -76,11 +90,11 @@ function FAQItem({ q, a, delay = 0 }: { q: string; a: string; delay?: number }) 
           fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
         }}
       >
-        <span style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A' }}>{q}</span>
+        <span style={{ fontSize: '1rem', fontWeight: 600, color: c.text }}>{q}</span>
         <span style={{ fontSize: '1.2rem', color: '#94A3B8', flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(45deg)' : 'none' }}>+</span>
       </button>
       {open && (
-        <div style={{ padding: '0 0 20px', fontSize: '0.95rem', color: '#475569', lineHeight: 1.7 }}>
+        <div style={{ padding: '0 0 20px', fontSize: '0.95rem', color: c.textMuted, lineHeight: 1.7 }}>
           {a}
         </div>
       )}
@@ -90,8 +104,29 @@ function FAQItem({ q, a, delay = 0 }: { q: string; a: string; delay?: number }) 
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function LandingPage() {
+  const isDark = useGlobalDark();
+
+  // Variables de couleur dark/light
+  const c = {
+    bg: isDark ? '#0B0E14' : '#FFFFFF',
+    bgAlt: isDark ? '#111827' : '#F8FAFC',
+    bgHero: isDark ? 'linear-gradient(180deg, #0F172A 0%, #0B0E14 100%)' : 'linear-gradient(180deg, #F0F7FF 0%, #FFFFFF 100%)',
+    bgCTA: isDark ? 'linear-gradient(180deg, #0B0E14 0%, #0F172A 100%)' : 'linear-gradient(180deg, #FFFFFF 0%, #F0F7FF 100%)',
+    text: isDark ? '#F1F5F9' : '#0F172A',
+    textMuted: isDark ? '#94A3B8' : '#475569',
+    textFaint: isDark ? '#64748B' : '#64748B',
+    border: isDark ? '#1E293B' : '#E2E8F0',
+    card: isDark ? '#161B26' : '#FFFFFF',
+    cardBorder: isDark ? '#1E293B' : '#EAECF0',
+    featureBg: isDark ? 'linear-gradient(180deg, #161B26, #1E293B)' : 'linear-gradient(180deg, #F8FAFC, #F1F5F9)',
+    mockupBg: isDark ? '#161B26' : '#F8FAFC',
+    footerBg: isDark ? '#0B0E14' : '#FFFFFF',
+    footerBorder: isDark ? '#1E293B' : '#E2E8F0',
+    footerLine: isDark ? '#1E293B' : '#F1F5F9',
+  };
+
   return (
-    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", color: '#0F172A', lineHeight: '1.6', overflowX: 'hidden' }}>
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", color: c.text, lineHeight: '1.6', overflowX: 'hidden' }}>
 
       <style jsx global>{`
         @keyframes gradientMove {
@@ -126,7 +161,7 @@ export default function LandingPage() {
       <section style={{
         padding: '120px 24px 100px',
         textAlign: 'center',
-        background: 'linear-gradient(180deg, #F0F7FF 0%, #FFFFFF 100%)',
+        background: c.bgHero,
         position: 'relative',
       }}>
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
@@ -167,9 +202,9 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            style={{ fontSize: '1.15rem', color: '#475569', maxWidth: 560, margin: '0 auto 36px', lineHeight: 1.7 }}
+            style={{ fontSize: '1.15rem', color: c.textMuted, maxWidth: 560, margin: '0 auto 36px', lineHeight: 1.7 }}
           >
-            Un bébé coûte en moyenne <strong style={{ color: '#0F172A' }}>700 € par mois</strong> la première année.
+            Un bébé coûte en moyenne <strong style={{ color: c.text }}>700 € par mois</strong> la première année.
             Visualisez chaque dépense, comparez-vous à la moyenne nationale et anticipez les coûts avant qu'ils vous surprennent.
           </motion.p>
 
@@ -206,7 +241,7 @@ export default function LandingPage() {
               overflow: 'hidden',
               boxShadow: '0 24px 80px rgba(0,0,0,0.14)',
               border: '1px solid #E2E8F0',
-              background: '#F8FAFC',
+              background: c.mockupBg,
               padding: 24,
             }}
           >
@@ -218,8 +253,8 @@ export default function LandingPage() {
                 { label: 'Opérations', value: '23' },
               ].map((card, i) => (
                 <div key={i} style={{
-                  background: card.accent ? '#EFF6FF' : 'white',
-                  border: `1px solid ${card.accent ? '#BFDBFE' : '#E2E8F0'}`,
+                  background: card.accent ? '#EFF6FF' : c.card,
+                  border: `1px solid ${card.accent ? '#BFDBFE' : c.border}`,
                   borderRadius: 12, padding: '14px 16px', textAlign: 'left',
                 }}>
                   <p style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 6px' }}>{card.label}</p>
@@ -228,7 +263,7 @@ export default function LandingPage() {
               ))}
             </div>
             {/* Barres simulées */}
-            <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: '16px 20px' }}>
+            <div style={{ background: c.card, borderRadius: 12, border: `1px solid ${c.border}`, padding: '16px 20px' }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: '#0F172A', margin: '0 0 14px' }}>Dépenses par catégorie</p>
               {[
                 { label: 'Couches', pct: 62, color: '#1E40AF' },
@@ -238,7 +273,7 @@ export default function LandingPage() {
               ].map((bar, i) => (
                 <div key={i} style={{ marginBottom: 10 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ fontSize: 11, color: '#475569' }}>{bar.label}</span>
+                    <span style={{ fontSize: 11, color: c.textMuted }}>{bar.label}</span>
                     <span style={{ fontSize: 11, color: '#94A3B8' }}>{bar.pct}% de la moyenne</span>
                   </div>
                   <div style={{ height: 6, background: '#F1F5F9', borderRadius: 99, overflow: 'hidden' }}>
@@ -261,7 +296,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#475569', marginBottom: 48 }}
+            style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.textMuted, marginBottom: 48 }}
           >
             Ce que les études disent vraiment
           </motion.p>
@@ -294,7 +329,7 @@ export default function LandingPage() {
                   <Counter to={stat.value} suffix={stat.suffix} />
                 </p>
                 <p style={{ fontSize: '0.85rem', color: '#CBD5E1', margin: '0 0 4px', fontWeight: 500, lineHeight: 1.4 }}>{stat.label}</p>
-                <p style={{ fontSize: 11, color: '#475569', margin: 0 }}>{stat.source}</p>
+                <p style={{ fontSize: 11, color: c.textMuted, margin: 0 }}>{stat.source}</p>
               </motion.div>
             ))}
           </div>
@@ -304,7 +339,7 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════
           PROBLÈME / AGITATION
       ═══════════════════════════════════════════════ */}
-      <section style={{ padding: '100px 24px', background: 'white' }}>
+      <section style={{ padding: '100px 24px', background: c.bg }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 60, alignItems: 'center' }}>
 
           <motion.div
@@ -317,11 +352,11 @@ export default function LandingPage() {
             <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 20 }}>
               Un budget qui explose…<br />sans prévenir
             </h2>
-            <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.75, marginBottom: 20 }}>
-              Selon l'INSEE, un bébé coûte en moyenne <strong style={{ color: '#0F172A' }}>700 € par mois</strong> la première année — mais 40% des parents sous-estiment cette dépense de moitié (CREDOC 2022).
+            <p style={{ color: c.textMuted, fontSize: '1rem', lineHeight: 1.75, marginBottom: 20 }}>
+              Selon l'INSEE, un bébé coûte en moyenne <strong style={{ color: c.text }}>700 € par mois</strong> la première année — mais 40% des parents sous-estiment cette dépense de moitié (CREDOC 2022).
             </p>
-            <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.75, marginBottom: 0 }}>
-              Sans visibilité sur leurs dépenses réelles, les familles dépassent leur budget dès le 3e mois. <strong style={{ color: '#0F172A' }}>BabyBudget vous donne une vision claire, en temps réel.</strong>
+            <p style={{ color: c.textMuted, fontSize: '1rem', lineHeight: 1.75, marginBottom: 0 }}>
+              Sans visibilité sur leurs dépenses réelles, les familles dépassent leur budget dès le 3e mois. <strong style={{ color: c.text }}>BabyBudget vous donne une vision claire, en temps réel.</strong>
             </p>
           </motion.div>
 
@@ -331,10 +366,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
             style={{
-              background: 'linear-gradient(180deg, #F8FAFC, #F1F5F9)',
+              background: c.featureBg,
               padding: '36px',
               borderRadius: 24,
-              border: '1px solid #E2E8F0',
+              border: `1px solid ${c.border}`,
             }}
           >
             {[
@@ -358,7 +393,7 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════
           FEATURE DIFFÉRENCIANTE — COMPARAISON NATIONALE
       ═══════════════════════════════════════════════ */}
-      <section style={{ padding: '100px 24px', background: '#F8FAFC' }}>
+      <section style={{ padding: '100px 24px', background: c.bgAlt }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', textAlign: 'center' }}>
 
           <motion.div
@@ -371,7 +406,7 @@ export default function LandingPage() {
             <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 16 }}>
               Êtes-vous au-dessus ou en dessous<br />de la moyenne nationale ?
             </h2>
-            <p style={{ color: '#475569', fontSize: '1rem', maxWidth: 580, margin: '0 auto 48px', lineHeight: 1.7 }}>
+            <p style={{ color: c.textMuted, fontSize: '1rem', maxWidth: 580, margin: '0 auto 48px', lineHeight: 1.7 }}>
               BabyBudget est la seule app qui compare vos dépenses aux moyennes nationales (INSEE, CAF, DREES) par tranche d'âge et par catégorie — pour savoir exactement où vous vous situez.
             </p>
           </motion.div>
@@ -383,7 +418,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
             style={{
-              background: 'white', borderRadius: 20, border: '1px solid #E2E8F0',
+              background: c.card, borderRadius: 20, border: `1px solid ${c.border}`,
               padding: '32px', boxShadow: '0 8px 40px rgba(0,0,0,0.06)',
               textAlign: 'left',
             }}
@@ -428,7 +463,7 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════
           FEATURES GRID
       ═══════════════════════════════════════════════ */}
-      <section style={{ padding: '100px 24px', background: 'white' }}>
+      <section style={{ padding: '100px 24px', background: c.bg }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -439,7 +474,7 @@ export default function LandingPage() {
             <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', marginBottom: 12 }}>
               Pensé pour les parents modernes
             </h2>
-            <p style={{ color: '#64748B', fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
+            <p style={{ color: c.textFaint, fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
               Tout ce dont vous avez besoin pour piloter le budget de votre bébé, sans complexité.
             </p>
           </motion.div>
@@ -456,7 +491,7 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════
           FAQ
       ═══════════════════════════════════════════════ */}
-      <section style={{ padding: '100px 24px', background: '#F8FAFC' }}>
+      <section style={{ padding: '100px 24px', background: c.bgAlt }}>
         <div style={{ maxWidth: 680, margin: '0 auto' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -503,7 +538,7 @@ export default function LandingPage() {
       <section style={{
         padding: '120px 24px',
         textAlign: 'center',
-        background: 'linear-gradient(180deg, #FFFFFF 0%, #F0F7FF 100%)',
+        background: c.bgCTA,
       }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
           <motion.div
@@ -516,7 +551,7 @@ export default function LandingPage() {
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1.5px', lineHeight: 1.1, marginBottom: 16 }}>
               Reprenez le contrôle<br />dès aujourd'hui
             </h2>
-            <p style={{ color: '#64748B', fontSize: '1rem', marginBottom: 36, lineHeight: 1.7 }}>
+            <p style={{ color: c.textFaint, fontSize: '1rem', marginBottom: 36, lineHeight: 1.7 }}>
               Rejoignez les familles qui pilotent leur budget bébé avec clarté.
             </p>
 
@@ -549,23 +584,22 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════
           FOOTER
       ═══════════════════════════════════════════════ */}
-      <footer style={{ padding: '32px 24px', borderTop: '1px solid #E2E8F0', background: 'white' }}>
+      <footer style={{ padding: '32px 24px', borderTop: `1px solid ${c.footerBorder}`, background: c.footerBg }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 28, height: 28, background: '#0F172A', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>👶</div>
-              <span style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", fontWeight: 800, fontSize: 15, color: '#0F172A', letterSpacing: '-0.02em' }}>
+              <span style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", fontWeight: 800, fontSize: 15, color: c.text, letterSpacing: '-0.02em' }}>
                 Baby<span style={{ color: '#6366F1' }}>Budget</span>
               </span>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-              <Link href="/confidentialite" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Confidentialité</Link>
-              <Link href="/cgu" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>CGU</Link>
-              <Link href="/informations" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Guide dépenses</Link>
-              <a href="mailto:contact@babybudget.app" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Contact</a>
+              <Link href="/confidentialite" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Confidentialité</Link>
+              <Link href="/cgu" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>CGU</Link>
+              <a href="mailto:contact@babybudget.app" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Contact</a>
             </div>
           </div>
-          <div style={{ height: 1, background: '#F1F5F9', marginBottom: 16 }} />
+          <div style={{ height: 1, background: c.footerLine, marginBottom: 16 }} />
           <p style={{ fontSize: 11, color: '#94A3B8', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
             Données indicatives basées sur les moyennes nationales françaises (INSEE, CAF, DREES, CREDOC). À titre indicatif uniquement.<br />
             © {new Date().getFullYear()} BabyBudget — Application gratuite, sans publicité, sans engagement.
