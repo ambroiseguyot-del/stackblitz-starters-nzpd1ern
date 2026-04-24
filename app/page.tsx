@@ -41,7 +41,7 @@ function Counter({ to, prefix = '', suffix = '', duration = 2 }: { to: number; p
 }
 
 // ─── Feature Card ────────────────────────────────────────────────────────────
-function FeatureCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode; title: string; desc: string; delay?: number }) {
+function FeatureCard({ icon, title, desc, delay = 0, cardBg = 'white', cardBorder = '#EAECF0' }: { icon: React.ReactNode; title: string; desc: string; delay?: number; cardBg?: string; cardBorder?: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -50,10 +50,10 @@ function FeatureCard({ icon, title, desc, delay = 0 }: { icon: React.ReactNode; 
       transition={{ duration: 0.5, ease: 'easeOut', delay }}
       whileHover={{ y: -4 }}
       style={{
-        background: c.card,
+        background: cardBg,
         padding: '28px',
         borderRadius: '20px',
-        border: `1px solid ${c.cardBorder}`,
+        border: `1px solid ${cardBorder}`,
         boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
         transition: 'box-shadow 0.2s',
       }}
@@ -480,10 +480,10 @@ export default function LandingPage() {
           </motion.div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
-            <FeatureCard icon={<Zap size={20} color="#0070F3" />} title="Ultra rapide" desc="Ajoutez une dépense en 3 secondes. Interface pensée pour être utilisée entre deux biberons." delay={0} />
-            <FeatureCard icon={<PieChart size={20} color="#0070F3" />} title="Visuels clairs" desc="Graphiques intuitifs pour comprendre votre budget d'un coup d'œil, sans formation." delay={0.1} />
-            <FeatureCard icon={<Baby size={20} color="#0070F3" />} title="Multi-enfants" desc="Un profil et un budget indépendant par enfant. Idéal pour les familles avec plusieurs enfants." delay={0.2} />
-            <FeatureCard icon={<BarChart2 size={20} color="#0070F3" />} title="Insights automatiques" desc="L'app génère des analyses et conseils personnalisés sans que vous n'ayez rien à configurer." delay={0.3} />
+            <FeatureCard icon={<Zap size={20} color="#0070F3" />} title="Ultra rapide" desc="Ajoutez une dépense en 3 secondes. Interface pensée pour être utilisée entre deux biberons." delay={0} cardBg={c.card} cardBorder={c.cardBorder} />
+            <FeatureCard icon={<PieChart size={20} color="#0070F3" />} title="Visuels clairs" desc="Graphiques intuitifs pour comprendre votre budget d'un coup d'œil, sans formation." delay={0.1} cardBg={c.card} cardBorder={c.cardBorder} />
+            <FeatureCard icon={<Baby size={20} color="#0070F3" />} title="Multi-enfants" desc="Un profil et un budget indépendant par enfant. Idéal pour les familles avec plusieurs enfants." delay={0.2} cardBg={c.card} cardBorder={c.cardBorder} />
+            <FeatureCard icon={<BarChart2 size={20} color="#0070F3" />} title="Insights automatiques" desc="L'app génère des analyses et conseils personnalisés sans que vous n'ayez rien à configurer." delay={0.3} cardBg={c.card} cardBorder={c.cardBorder} />
           </div>
         </div>
       </section>
