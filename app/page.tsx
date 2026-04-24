@@ -500,7 +500,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             style={{ textAlign: 'center', marginBottom: 40 }}
           >
-            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0070F3', marginBottom: 10 }}>Ressources gratuites</p>
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0070F3', marginBottom: 10 }}>Disponible sur BabyBudget</p>
             <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', marginBottom: 12, color: c.text }}>
               Tout pour préparer l'arrivée de bébé
             </h2>
@@ -512,55 +512,63 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
             {[
               {
-                href: '/informations',
                 emoji: '📋',
                 title: 'Guide des dépenses par âge',
                 desc: 'De la grossesse aux 2 ans — vaccins obligatoires, achats indispensables, aides disponibles. Étape par étape.',
-                cta: 'Consulter le guide →',
                 color: '#6366F1',
               },
               {
-                href: '/budget',
                 emoji: '🧮',
                 title: 'Calculateur de budget prévisionnel',
-                desc: 'Estimez votre budget mensuel réel selon vos revenus et mode de garde — aides CAF déduites automatiquement.',
-                cta: 'Calculer mon budget →',
+                desc: "Estimez votre budget mensuel réel selon vos revenus et mode de garde — aides CAF déduites automatiquement.",
                 color: '#0070F3',
               },
               {
-                href: '/comparaison',
                 emoji: '🇫🇷',
                 title: 'Comparaison nationale',
                 desc: "Comparez vos dépenses aux moyennes nationales INSEE/CAF par catégorie et tranche d'âge.",
-                cta: 'Voir ma position →',
                 color: '#10B981',
               },
             ].map((tool, i) => (
               <motion.div
-                key={tool.href}
+                key={tool.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
               >
-                <Link href={tool.href} style={{ textDecoration: 'none', display: 'block' }}>
-                  <div style={{
-                    background: c.card, borderRadius: 20, border: `1px solid ${c.cardBorder}`,
-                    padding: '24px', height: '100%',
-                    transition: 'border-color 0.15s, box-shadow 0.15s',
-                  }}
-                  onMouseEnter={e => { const el = e.currentTarget; el.style.borderColor = tool.color; el.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)'; }}
-                  onMouseLeave={e => { const el = e.currentTarget; el.style.borderColor = c.cardBorder; el.style.boxShadow = 'none'; }}
-                  >
-                    <div style={{ fontSize: 28, marginBottom: 14 }}>{tool.emoji}</div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: c.text, marginBottom: 8, lineHeight: 1.3 }}>{tool.title}</h3>
-                    <p style={{ fontSize: '0.875rem', color: c.textMuted, lineHeight: 1.6, marginBottom: 16 }}>{tool.desc}</p>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: tool.color }}>{tool.cta}</span>
-                  </div>
-                </Link>
+                <div style={{
+                  background: c.card, borderRadius: 20, border: `1px solid ${c.cardBorder}`,
+                  padding: '24px', height: '100%',
+                }}>
+                  <div style={{ fontSize: 28, marginBottom: 14 }}>{tool.emoji}</div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: c.text, marginBottom: 8, lineHeight: 1.3 }}>{tool.title}</h3>
+                  <p style={{ fontSize: '0.875rem', color: c.textMuted, lineHeight: 1.6, marginBottom: 0 }}>{tool.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            style={{ textAlign: 'center', marginTop: 36 }}
+          >
+            <p style={{ fontSize: 14, color: c.textMuted, marginBottom: 16 }}>
+              Créez un compte gratuit pour accéder à tous ces outils.
+            </p>
+            <Link href="/signup" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: '#0F172A', color: 'white',
+              padding: '12px 28px', borderRadius: 12,
+              fontSize: '0.95rem', fontWeight: 600, textDecoration: 'none',
+            }}>
+              Créer mon compte gratuitement →
+            </Link>
+          </motion.div>
+
         </div>
       </section>
 
