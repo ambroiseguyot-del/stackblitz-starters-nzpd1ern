@@ -504,32 +504,32 @@ export default function LandingPage() {
             </h2>
           </motion.div>
 
-          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
+            textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
             q="C'est vraiment gratuit ?"
             a="Oui, totalement gratuit. Sans carte bancaire, sans période d'essai cachée. BabyBudget est une application indépendante sans publicité."
             delay={0}
           />
-          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
+            textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
             q="Mes données sont-elles privées ?"
             a="Vos données sont stockées de façon sécurisée sur Supabase (infrastructure européenne). Chaque famille n'a accès qu'à ses propres données — aucun partage avec des tiers."
             delay={0.05}
           />
-          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
+            textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
             q="Ça fonctionne pour plusieurs enfants ?"
             a="Oui. Vous pouvez créer un profil par enfant et suivre un budget indépendant pour chacun. Les graphiques s'adaptent automatiquement."
             delay={0.1}
           />
-          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
+            textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
             q="D'où viennent les moyennes nationales ?"
             a="Les données de comparaison sont issues de l'INSEE (enquête budget des familles 2023), de la CAF et de la DREES. Elles sont mises à jour annuellement et représentent les moyennes françaises par tranche d'âge."
             delay={0.15}
           />
-          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
+            textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
             q="Puis-je exporter mes données ?"
             a="Oui, vous pouvez exporter vos dépenses en CSV depuis la page Analyse. Vos données vous appartiennent et sont récupérables à tout moment."
             delay={0.2}
@@ -601,7 +601,6 @@ export default function LandingPage() {
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
               <Link href="/confidentialite" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Confidentialité</Link>
               <Link href="/cgu" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>CGU</Link>
-              <Link href="/budget" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Budget estimé</Link>
               <a href="mailto:contact@babybudget.app" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Contact</a>
             </div>
           </div>
