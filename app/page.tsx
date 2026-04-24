@@ -488,6 +488,82 @@ export default function LandingPage() {
         </div>
       </section>
 
+
+      {/* ═══════════════════════════════════════════════
+          OUTILS GRATUITS
+      ═══════════════════════════════════════════════ */}
+      <section style={{ padding: '80px 24px', background: c.bgAlt }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{ textAlign: 'center', marginBottom: 40 }}
+          >
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0070F3', marginBottom: 10 }}>Ressources gratuites</p>
+            <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', marginBottom: 12, color: c.text }}>
+              Tout pour préparer l'arrivée de bébé
+            </h2>
+            <p style={{ color: c.textMuted, fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
+              Des outils concrets pour anticiper les dépenses avant même la naissance.
+            </p>
+          </motion.div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+            {[
+              {
+                href: '/informations',
+                emoji: '📋',
+                title: 'Guide des dépenses par âge',
+                desc: 'De la grossesse aux 2 ans — vaccins obligatoires, achats indispensables, aides disponibles. Étape par étape.',
+                cta: 'Consulter le guide →',
+                color: '#6366F1',
+              },
+              {
+                href: '/budget',
+                emoji: '🧮',
+                title: 'Calculateur de budget prévisionnel',
+                desc: 'Estimez votre budget mensuel réel selon vos revenus et mode de garde — aides CAF déduites automatiquement.',
+                cta: 'Calculer mon budget →',
+                color: '#0070F3',
+              },
+              {
+                href: '/comparaison',
+                emoji: '🇫🇷',
+                title: 'Comparaison nationale',
+                desc: 'Comparez vos dépenses aux moyennes nationales INSEE/CAF par catégorie et tranche d'âge.',
+                cta: 'Voir ma position →',
+                color: '#10B981',
+              },
+            ].map((tool, i) => (
+              <motion.div
+                key={tool.href}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+              >
+                <Link href={tool.href} style={{ textDecoration: 'none', display: 'block' }}>
+                  <div style={{
+                    background: c.card, borderRadius: 20, border: `1px solid ${c.cardBorder}`,
+                    padding: '24px', height: '100%',
+                    transition: 'border-color 0.15s, box-shadow 0.15s',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = tool.color; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = c.cardBorder; (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; }}
+                  >
+                    <div style={{ fontSize: 28, marginBottom: 14 }}>{tool.emoji}</div>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: c.text, marginBottom: 8, lineHeight: 1.3 }}>{tool.title}</h3>
+                    <p style={{ fontSize: '0.875rem', color: c.textMuted, lineHeight: 1.6, marginBottom: 16 }}>{tool.desc}</p>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: tool.color }}>{tool.cta}</span>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════════════════════════════════════
           FAQ
       ═══════════════════════════════════════════════ */}
@@ -599,9 +675,11 @@ export default function LandingPage() {
               </span>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              <Link href="/informations" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Guide dépenses</Link>
+              <Link href="/budget" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Budget estimé</Link>
               <Link href="/confidentialite" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Confidentialité</Link>
               <Link href="/cgu" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>CGU</Link>
-              <a href="mailto:contact@babybudget.app" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Contact</a>
+              <a href="mailto:contact@babybudget.fr" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Contact</a>
             </div>
           </div>
           <div style={{ height: 1, background: c.footerLine, marginBottom: 16 }} />
