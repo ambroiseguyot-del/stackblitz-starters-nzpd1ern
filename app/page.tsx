@@ -561,6 +561,7 @@ export default function LandingPage() {
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
               <Link href="/confidentialite" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Confidentialité</Link>
               <Link href="/cgu" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>CGU</Link>
+              <Link href="/informations" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Guide dépenses</Link>
               <a href="mailto:contact@babybudget.app" style={{ fontSize: 13, color: '#64748B', textDecoration: 'none' }}>Contact</a>
             </div>
           </div>

@@ -62,6 +62,7 @@ export default function Navbar() {
     { href: '/app',        label: 'Dashboard',   icon: '🚀' },
     { href: '/analyse',    label: 'Analyse',      icon: '📊' },
     { href: '/comparaison', label: 'Comparaison', icon: '🇫🇷' },
+    { href: '/informations', label: 'Informations',  icon: '📋' },
   ];
 
   const isActive = (href: string) => pathname === href;
