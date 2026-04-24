@@ -41,7 +41,7 @@ function Counter({ to, prefix = '', suffix = '', duration = 2 }: { to: number; p
 }
 
 // ─── Feature Card ────────────────────────────────────────────────────────────
-function FeatureCard({ icon, title, desc, delay = 0, cardBg = 'white', cardBorder = '#EAECF0' }: { icon: React.ReactNode; title: string; desc: string; delay?: number; cardBg?: string; cardBorder?: string }) {
+function FeatureCard({ icon, title, desc, delay = 0, cardBg = 'white', cardBorder = '#EAECF0', textColor = '#0F172A', textMuted = '#64748B' }: { icon: React.ReactNode; title: string; desc: string; delay?: number; cardBg?: string; cardBorder?: string; textColor?: string; textMuted?: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -64,14 +64,14 @@ function FeatureCard({ icon, title, desc, delay = 0, cardBg = 'white', cardBorde
       }}>
         {icon}
       </div>
-      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 8, color: '#0F172A', fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" }}>{title}</h3>
-      <p style={{ fontSize: '0.9rem', color: c.textFaint, lineHeight: 1.6, margin: 0 }}>{desc}</p>
+      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 8, color: textColor, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" }}>{title}</h3>
+      <p style={{ fontSize: '0.9rem', color: textMuted, lineHeight: 1.6, margin: 0 }}>{desc}</p>
     </motion.div>
   );
 }
 
 // ─── FAQ Item ────────────────────────────────────────────────────────────────
-function FAQItem({ q, a, delay = 0 }: { q: string; a: string; delay?: number }) {
+function FAQItem({ q, a, delay = 0, textColor = '#0F172A', textMuted = '#475569', borderColor = '#E2E8F0' }: { q: string; a: string; delay?: number; textColor?: string; textMuted?: string; borderColor?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <motion.div
@@ -79,7 +79,7 @@ function FAQItem({ q, a, delay = 0 }: { q: string; a: string; delay?: number }) 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, ease: 'easeOut', delay }}
-      style={{ borderBottom: `1px solid ${c.border}` }}
+      style={{ borderBottom: `1px solid ${borderColor}` }}
     >
       <button
         onClick={() => setOpen(!open)}
@@ -90,11 +90,11 @@ function FAQItem({ q, a, delay = 0 }: { q: string; a: string; delay?: number }) 
           fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
         }}
       >
-        <span style={{ fontSize: '1rem', fontWeight: 600, color: c.text }}>{q}</span>
+        <span style={{ fontSize: '1rem', fontWeight: 600, color: textColor }}>{q}</span>
         <span style={{ fontSize: '1.2rem', color: '#94A3B8', flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(45deg)' : 'none' }}>+</span>
       </button>
       {open && (
-        <div style={{ padding: '0 0 20px', fontSize: '0.95rem', color: c.textMuted, lineHeight: 1.7 }}>
+        <div style={{ padding: '0 0 20px', fontSize: '0.95rem', color: textMuted, lineHeight: 1.7 }}>
           {a}
         </div>
       )}
@@ -480,10 +480,10 @@ export default function LandingPage() {
           </motion.div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
-            <FeatureCard icon={<Zap size={20} color="#0070F3" />} title="Ultra rapide" desc="Ajoutez une dépense en 3 secondes. Interface pensée pour être utilisée entre deux biberons." delay={0} cardBg={c.card} cardBorder={c.cardBorder} />
-            <FeatureCard icon={<PieChart size={20} color="#0070F3" />} title="Visuels clairs" desc="Graphiques intuitifs pour comprendre votre budget d'un coup d'œil, sans formation." delay={0.1} cardBg={c.card} cardBorder={c.cardBorder} />
-            <FeatureCard icon={<Baby size={20} color="#0070F3" />} title="Multi-enfants" desc="Un profil et un budget indépendant par enfant. Idéal pour les familles avec plusieurs enfants." delay={0.2} cardBg={c.card} cardBorder={c.cardBorder} />
-            <FeatureCard icon={<BarChart2 size={20} color="#0070F3" />} title="Insights automatiques" desc="L'app génère des analyses et conseils personnalisés sans que vous n'ayez rien à configurer." delay={0.3} cardBg={c.card} cardBorder={c.cardBorder} />
+            <FeatureCard icon={<Zap size={20} color="#0070F3" />} title="Ultra rapide" desc="Ajoutez une dépense en 3 secondes. Interface pensée pour être utilisée entre deux biberons." delay={0} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
+            <FeatureCard icon={<PieChart size={20} color="#0070F3" />} title="Visuels clairs" desc="Graphiques intuitifs pour comprendre votre budget d'un coup d'œil, sans formation." delay={0.1} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
+            <FeatureCard icon={<Baby size={20} color="#0070F3" />} title="Multi-enfants" desc="Un profil et un budget indépendant par enfant. Idéal pour les familles avec plusieurs enfants." delay={0.2} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
+            <FeatureCard icon={<BarChart2 size={20} color="#0070F3" />} title="Insights automatiques" desc="L'app génère des analyses et conseils personnalisés sans que vous n'ayez rien à configurer." delay={0.3} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
           </div>
         </div>
       </section>
@@ -504,26 +504,31 @@ export default function LandingPage() {
             </h2>
           </motion.div>
 
+          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
             q="C'est vraiment gratuit ?"
             a="Oui, totalement gratuit. Sans carte bancaire, sans période d'essai cachée. BabyBudget est une application indépendante sans publicité."
             delay={0}
           />
+          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
             q="Mes données sont-elles privées ?"
             a="Vos données sont stockées de façon sécurisée sur Supabase (infrastructure européenne). Chaque famille n'a accès qu'à ses propres données — aucun partage avec des tiers."
             delay={0.05}
           />
+          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
             q="Ça fonctionne pour plusieurs enfants ?"
             a="Oui. Vous pouvez créer un profil par enfant et suivre un budget indépendant pour chacun. Les graphiques s'adaptent automatiquement."
             delay={0.1}
           />
+          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
             q="D'où viennent les moyennes nationales ?"
             a="Les données de comparaison sont issues de l'INSEE (enquête budget des familles 2023), de la CAF et de la DREES. Elles sont mises à jour annuellement et représentent les moyennes françaises par tranche d'âge."
             delay={0.15}
           />
+          textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
           <FAQItem
             q="Puis-je exporter mes données ?"
             a="Oui, vous pouvez exporter vos dépenses en CSV depuis la page Analyse. Vos données vous appartiennent et sont récupérables à tout moment."
