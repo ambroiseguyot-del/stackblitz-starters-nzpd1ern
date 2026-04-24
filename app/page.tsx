@@ -531,7 +531,7 @@ export default function LandingPage() {
                 href: '/comparaison',
                 emoji: '🇫🇷',
                 title: 'Comparaison nationale',
-                desc: 'Comparez vos dépenses aux moyennes nationales INSEE/CAF par catégorie et tranche d'âge.',
+                desc: "Comparez vos dépenses aux moyennes nationales INSEE/CAF par catégorie et tranche d'âge.",
                 cta: 'Voir ma position →',
                 color: '#10B981',
               },
