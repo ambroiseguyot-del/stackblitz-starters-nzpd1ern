@@ -191,7 +191,7 @@ export default function LandingPage() {
               letterSpacing: '-2px',
               lineHeight: 1.08,
               marginBottom: 24,
-              color: '#0F172A',
+              color: c.text,
             }}
           >
             Bébé arrive.<br />
@@ -214,17 +214,30 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.3 }}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}
           >
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <Link href="/signup" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                background: '#0F172A', color: 'white',
-                padding: '15px 32px', borderRadius: 12,
-                fontSize: '1rem', fontWeight: 600, textDecoration: 'none',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-              }}>
-                Analyser mes dépenses gratuitement <ArrowRight size={16} />
-              </Link>
-            </motion.div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                <Link href="/signup" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  background: '#0F172A', color: 'white',
+                  padding: '15px 32px', borderRadius: 12,
+                  fontSize: '1rem', fontWeight: 600, textDecoration: 'none',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                }}>
+                  Analyser mes dépenses gratuitement <ArrowRight size={16} />
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link href="/informations" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  background: 'transparent', color: c.textMuted,
+                  padding: '15px 24px', borderRadius: 12,
+                  fontSize: '1rem', fontWeight: 500, textDecoration: 'none',
+                  border: `1px solid ${c.border}`,
+                }}>
+                  Voir le guide →
+                </Link>
+              </motion.div>
+            </div>
             <p style={{ fontSize: 12, color: '#94A3B8', margin: 0 }}>
               Sans carte bancaire · Données privées · 2 minutes pour démarrer
             </p>
@@ -264,7 +277,7 @@ export default function LandingPage() {
             </div>
             {/* Barres simulées */}
             <div style={{ background: c.card, borderRadius: 12, border: `1px solid ${c.border}`, padding: '16px 20px' }}>
-              <p style={{ fontSize: 12, fontWeight: 600, color: '#0F172A', margin: '0 0 14px' }}>Dépenses par catégorie</p>
+              <p style={{ fontSize: 12, fontWeight: 600, color: c.text, margin: '0 0 14px' }}>Dépenses par catégorie</p>
               {[
                 { label: 'Couches', pct: 62, color: '#1E40AF' },
                 { label: 'Alimentation', pct: 48, color: '#3B82F6' },
@@ -296,7 +309,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.textMuted, marginBottom: 48 }}
+            style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#475569', marginBottom: 48 }}
           >
             Ce que les études disent vraiment
           </motion.p>
@@ -382,7 +395,7 @@ export default function LandingPage() {
                 <div style={{ width: 40, height: 40, borderRadius: 10, background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {item.icon}
                 </div>
-                <span style={{ fontWeight: 500, color: '#1E293B', fontSize: '0.95rem' }}>{item.text}</span>
+                <span style={{ fontWeight: 500, color: c.text, fontSize: '0.95rem' }}>{item.text}</span>
               </div>
             ))}
           </motion.div>
@@ -424,7 +437,7 @@ export default function LandingPage() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
-              <p style={{ fontWeight: 700, color: '#0F172A', margin: 0, fontSize: '0.95rem' }}>Tranche 0–1 an · Comparaison nationale</p>
+              <p style={{ fontWeight: 700, color: c.text, margin: 0, fontSize: '0.95rem' }}>Tranche 0–1 an · Comparaison nationale</p>
               <span style={{ background: '#EFF6FF', color: '#1D4ED8', fontSize: 12, fontWeight: 600, padding: '4px 12px', borderRadius: 99 }}>🇫🇷 Données INSEE · CAF · DREES</span>
             </div>
             {[
@@ -439,7 +452,7 @@ export default function LandingPage() {
               return (
                 <div key={i} style={{ marginBottom: i < 3 ? 20 : 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, alignItems: 'center' }}>
-                    <span style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>{row.cat}</span>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: c.text }}>{row.cat}</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <span style={{ fontSize: 13, fontWeight: 700, color: '#1E40AF' }}>{row.vous} €</span>
                       <span style={{ fontSize: 12, color: '#94A3B8' }}>/ {row.nationale} € moy.</span>
@@ -514,20 +527,54 @@ export default function LandingPage() {
               {
                 emoji: '📋',
                 title: 'Guide des dépenses par âge',
-                desc: 'De la grossesse aux 2 ans — vaccins obligatoires, achats indispensables, aides disponibles. Étape par étape.',
+                desc: 'De la grossesse aux 2 ans — vaccins obligatoires, achats indispensables, aides disponibles.',
                 color: '#6366F1',
+                preview: (
+                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 12 }}>
+                    {['Avant naissance', '0–1 mois', '2–3 mois', '4–6 mois'].map(s => (
+                      <span key={s} style={{ fontSize: 10, padding: '2px 7px', borderRadius: 99, background: isDark ? '#1E2D4A' : '#EFF6FF', color: isDark ? '#60A5FA' : '#1D4ED8', fontWeight: 500 }}>{s}</span>
+                    ))}
+                  </div>
+                ),
               },
               {
                 emoji: '🧮',
                 title: 'Calculateur de budget prévisionnel',
-                desc: "Estimez votre budget mensuel réel selon vos revenus et mode de garde — aides CAF déduites automatiquement.",
+                desc: "Estimez votre budget mensuel réel selon vos revenus et mode de garde — aides CAF déduites.",
                 color: '#0070F3',
+                preview: (
+                  <div style={{ marginTop: 12 }}>
+                    {[['Crèche', 55], ['Assistante mat.', 38], ['Garde à domicile', 80]].map(([label, pct]) => (
+                      <div key={label as string} style={{ marginBottom: 6 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: c.textMuted, marginBottom: 3 }}>
+                          <span>{label}</span><span>{pct}%</span>
+                        </div>
+                        <div style={{ height: 4, background: isDark ? '#1E293B' : '#E2E8F0', borderRadius: 99 }}>
+                          <div style={{ height: '100%', width: `${pct}%`, background: '#0070F3', borderRadius: 99, opacity: 0.7 }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ),
               },
               {
                 emoji: '🇫🇷',
                 title: 'Comparaison nationale',
                 desc: "Comparez vos dépenses aux moyennes nationales INSEE/CAF par catégorie et tranche d'âge.",
                 color: '#10B981',
+                preview: (
+                  <div style={{ marginTop: 12 }}>
+                    {[['Couches', 72, 60], ['Alimentation', 45, 80], ['Santé', 88, 70]].map(([label, vous, nat]) => (
+                      <div key={label as string} style={{ marginBottom: 6 }}>
+                        <div style={{ fontSize: 10, color: c.textMuted, marginBottom: 3 }}>{label}</div>
+                        <div style={{ position: 'relative', height: 4, background: isDark ? '#1E293B' : '#E2E8F0', borderRadius: 99 }}>
+                          <div style={{ position: 'absolute', height: '100%', width: `${nat}%`, background: isDark ? '#2D364D' : '#CBD5E1', borderRadius: 99 }} />
+                          <div style={{ position: 'absolute', height: '100%', width: `${vous}%`, background: '#10B981', borderRadius: 99, opacity: 0.8 }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ),
               },
             ].map((tool, i) => (
               <motion.div
@@ -544,6 +591,7 @@ export default function LandingPage() {
                   <div style={{ fontSize: 28, marginBottom: 14 }}>{tool.emoji}</div>
                   <h3 style={{ fontSize: '1rem', fontWeight: 700, color: c.text, marginBottom: 8, lineHeight: 1.3 }}>{tool.title}</h3>
                   <p style={{ fontSize: '0.875rem', color: c.textMuted, lineHeight: 1.6, marginBottom: 0 }}>{tool.desc}</p>
+                  {tool.preview}
                 </div>
               </motion.div>
             ))}
@@ -575,7 +623,7 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════
           FAQ
       ═══════════════════════════════════════════════ */}
-      <section style={{ padding: '100px 24px', background: c.bgAlt }}>
+      <section style={{ padding: '100px 24px', background: c.bg }}>
         <div style={{ maxWidth: 680, margin: '0 auto' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -591,7 +639,7 @@ export default function LandingPage() {
           <FAQItem
             textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
             q="C'est vraiment gratuit ?"
-            a="Oui, totalement gratuit. Sans carte bancaire, sans période d'essai cachée. BabyBudget est une application indépendante sans publicité."
+            a="Oui, totalement gratuit. Sans carte bancaire, sans période d'essai cachée. BabyBudget est une application indépendante, sans publicité et sans abonnement caché."
             delay={0}
           />
           <FAQItem
@@ -683,6 +731,8 @@ export default function LandingPage() {
               </span>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              <Link href="/informations" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Guide dépenses</Link>
+              <Link href="/budget" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Budget estimé</Link>
               <Link href="/confidentialite" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Confidentialité</Link>
               <Link href="/cgu" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>CGU</Link>
               <a href="mailto:contact@babybudget.fr" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Contact</a>
