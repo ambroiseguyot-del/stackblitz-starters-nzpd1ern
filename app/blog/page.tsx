@@ -28,11 +28,11 @@ const ARTICLES = [
 ];
 
 const ARTICLES_A_VENIR = [
-  { titre: 'Aides CAF bébé 2024 : tout ce à quoi vous avez droit', categorie: 'Aides & CAF', emoji: '🎁' },
+  { titre: 'Aides CAF bébé 2026 : tout ce à quoi vous avez droit', categorie: 'Aides & CAF', emoji: '🎁' },
   { titre: 'Crèche, nounou ou garde à domicile : quel mode de garde choisir ?', categorie: 'Mode de garde', emoji: '🏠' },
   { titre: 'Liste des achats indispensables avant la naissance de bébé', categorie: 'Équipement', emoji: '🛒' },
   { titre: 'Budget bébé mois par mois : à quoi s\'attendre ?', categorie: 'Budget & finances', emoji: '📅' },
-  { titre: 'Combien coûte une assistante maternelle en 2024 ?', categorie: 'Mode de garde', emoji: '👶' },
+  { titre: 'Combien coûte une assistante maternelle en 2026 ?', categorie: 'Mode de garde', emoji: '👶' },
 ];
 
 export default function BlogPage() {
