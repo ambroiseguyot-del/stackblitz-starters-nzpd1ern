@@ -64,6 +64,7 @@ export default function Navbar() {
     { href: '/budget', label: 'Budget estimé', icon: '🧮' },
     { href: '/comparaison', label: 'Comparaison', icon: '🇫🇷' },
     { href: '/informations', label: 'Informations',  icon: '📋' },
+    { href: '/blog', label: 'Blog', icon: '📝' },
   ];
 
   const isActive = (href: string) => pathname === href;
