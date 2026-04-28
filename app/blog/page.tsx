@@ -26,6 +26,18 @@ const ARTICLES = [
     emoji: '💰',
   },
 ];
+{
+    slug: 'aides-caf-bebe-2026',
+    titre: 'Aides CAF bébé 2026 : tout ce à quoi vous avez droit',
+    description: "Prime de naissance, allocation de base, CMG, congé supplémentaire de naissance... Guide complet des aides revalorisées au 1er avril 2026 avec les montants officiels.",
+    categorie: 'aides',
+    categorieLabel: 'Aides & CAF',
+    date: '2026',
+    lecture: '10 min',
+    sources: ['CAF 2026', 'Service-public', 'Ameli'],
+    featured: false,
+    emoji: '🎁',
+  },
 
 const ARTICLES_A_VENIR = [
   { titre: 'Aides CAF bébé 2026 : tout ce à quoi vous avez droit', categorie: 'Aides & CAF', emoji: '🎁' },
