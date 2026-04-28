@@ -310,6 +310,10 @@ export default function ArticleCoutBebe() {
           </div>
         </div>
 
+        <p style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.7, fontStyle: 'italic', marginBottom: 32, borderTop: '1px solid #E2E8F0', paddingTop: 16 }}>
+  Les chiffres présentés dans cet article sont issus des dernières enquêtes disponibles (INSEE 2023, CAF 2024). En raison de l'inflation et de la revalorisation annuelle des barèmes CAF, les montants réels en 2026 peuvent être légèrement supérieurs — comptez une hausse indicative de 3 à 5 % par rapport aux valeurs affichées.
+</p>
+
         {/* Conclusion */}
         <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px', margin: '0 0 16px' }}>
           En résumé
