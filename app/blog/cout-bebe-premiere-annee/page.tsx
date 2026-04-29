@@ -5,8 +5,9 @@ import Link from 'next/link';
 const FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
 
 const SOURCES = [
-  { id: 1, label: 'INSEE — Enquête Budget des familles 2023', href: 'https://www.insee.fr/fr/statistiques/8241854' },
-  { id: 2, label: 'CAF.fr — Barème PAJE et aides à la petite enfance 2024', href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
+  { id: 1, label: 'Avis Parents — Coût réel d\'un bébé la première année 2026 (490-750 €/mois hors garde)', href: 'https://www.avis-parents.com/vie-famille/budget-famille/cout-bebe-premiere-annee/' },
+  { id: 8, label: 'INSEE — Lancement nouvelle enquête Budget de famille 2026', href: 'https://www.insee.fr/fr/information/8719834' },
+  { id: 2, label: 'CAF.fr — Barème PAJE et aides à la petite enfance 2026', href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
   { id: 3, label: 'CREDOC — Enquête sur les dépenses des familles avec jeunes enfants 2022', href: 'https://www.credoc.fr' },
   { id: 4, label: 'CNAF — Observatoire national de la petite enfance, Rapport 2023', href: 'https://www.caf.fr/sites/default/files/cnaf/Documents/Dossiers_documentaires/ONPE/Rapport_ONPE_2023.pdf' },
   { id: 5, label: 'Service-public.fr — Complément de Mode de Garde (CMG)', href: 'https://www.service-public.fr/particuliers/vosdroits/F345' },
@@ -43,7 +44,7 @@ export default function ArticleCoutBebe() {
             Couches, lait, mode de garde, équipement... Le budget réel d'un enfant la première année dépasse souvent les estimations. Chiffres, postes de dépenses et aides disponibles — tout ce qu'il faut savoir avant l'arrivée de bébé.
           </p>
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 12, color: '#64748B' }}>📅 Mis à jour en 2024</span>
+            <span style={{ fontSize: 12, color: '#64748B' }}>📅 Mis à jour en 2026</span>
             <span style={{ fontSize: 12, color: '#64748B' }}>⏱ 8 min de lecture</span>
             <span style={{ fontSize: 12, color: '#64748B' }}>✅ Sources INSEE · CAF · CREDOC</span>
           </div>
@@ -58,7 +59,7 @@ export default function ArticleCoutBebe() {
           <p style={{ fontSize: 15, color: '#1D4ED8', fontWeight: 600, margin: '0 0 8px' }}>💡 À retenir</p>
           <p style={{ fontSize: 14, color: '#1E40AF', lineHeight: 1.7, margin: 0 }}>
             Selon l'INSEE, un bébé coûte en moyenne <strong>700 € par mois</strong> la première année, soit <strong>8 400 € sur 12 mois</strong><Ref id={1} />. 
-            Mais 40 % des parents sous-estiment ce budget de moitié avant la naissance<Ref id={3} />.
+            Les dépenses courantes mensuelles hors garde s'élèvent désormais à <strong>490 – 750 €/mois</strong> selon les choix de la famille. Mais 40 % des parents sous-estiment ce budget de moitié avant la naissance<Ref id={3} />.
           </p>
         </div>
 
@@ -126,10 +127,10 @@ export default function ArticleCoutBebe() {
 
         {/* Section 3 */}
         <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px', margin: '32px 0 16px' }}>
-          Les dépenses courantes : 375 € par mois hors mode de garde
+          Les dépenses courantes : 490 à 750 € par mois hors mode de garde
         </h2>
         <p style={{ fontSize: 16, lineHeight: 1.8, color: '#374151', marginBottom: 16 }}>
-          Une fois bébé arrivé, les dépenses récurrentes mensuelles s'installent durablement. Hors mode de garde, l'INSEE les évalue à <strong>375 € par mois en moyenne</strong> pour un nourrisson<Ref id={1} />.
+          Une fois bébé arrivé, les dépenses récurrentes mensuelles s'installent durablement. Hors mode de garde, les dépenses récurrentes s'établissent en 2026 entre <strong>490 et 750 € par mois</strong> selon les choix de la famille — allaitement ou lait infantile, couches jetables ou lavables, petits pots ou cuisine maison<Ref id={1} />.
         </p>
 
         <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 16, overflow: 'hidden', marginBottom: 32 }}>
@@ -164,7 +165,7 @@ export default function ArticleCoutBebe() {
         </div>
 
         <p style={{ fontSize: 14, color: '#94A3B8', margin: '0 0 32px', fontStyle: 'italic' }}>
-          Note : si vous allaitez, économisez ~90 €/mois sur le lait. Le budget tombe alors autour de 285 €/mois hors mode de garde.
+          Note : si vous allaitez, économisez 80 à 120 €/mois sur le lait. Si vous optez pour des couches lavables (investissement initial ~400 €), vous économisez jusqu'à 400 €/an. Le budget peut descendre autour de 400 €/mois hors mode de garde avec ces deux ajustements.
         </p>
 
         {/* Section 4 */}
@@ -209,8 +210,8 @@ export default function ArticleCoutBebe() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
           {[
-            { aide: 'Prime de naissance (PAJE)', montant: '1 021 €', timing: 'Versement unique au 7e mois de grossesse', condition: 'Sous conditions de ressources' },
-            { aide: 'Allocation de base (PAJE)', montant: 'Jusqu\'à 184 €/mois', timing: 'Pendant 3 ans', condition: 'Sous conditions de ressources' },
+            { aide: 'Prime de naissance (PAJE)', montant: '1 084,43 €', timing: 'Versement unique au 7e mois de grossesse', condition: 'Sous conditions de ressources' },
+            { aide: 'Allocation de base (PAJE)', montant: 'Jusqu\'à 196,60 €/mois', timing: 'Pendant 3 ans', condition: 'Sous conditions de ressources' },
             { aide: 'CMG — Complément Mode de Garde', montant: 'Jusqu\'à 2 085 €/mois', timing: 'Tant que l\'enfant est gardé', condition: 'Selon revenus et mode de garde' },
             { aide: 'Crédit d\'impôt frais de garde', montant: '50 % des dépenses', timing: 'Sur la déclaration annuelle', condition: "Plafonné à 2 300 € d'avantage fiscal" },
             { aide: 'Congé paternité indemnisé', montant: '28 jours', timing: 'À la naissance', condition: 'Indemnisé par la CPAM' },
@@ -248,10 +249,10 @@ export default function ArticleCoutBebe() {
             </thead>
             <tbody>
               {[
-                { mode: 'Crèche', garde: '280 €', dep: '375 €', paje: '-92 €', total: '563 €', highlight: false },
-                { mode: 'Assistante mat.', garde: '311 €', dep: '375 €', paje: '-92 €', total: '594 €', highlight: false },
-                { mode: 'Garde à domicile', garde: '1 118 €', dep: '375 €', paje: '-92 €', total: '1 401 €', highlight: false },
-                { mode: 'Parent (congé)', garde: '0 €', dep: '375 €', paje: '-92 €', total: '283 €', highlight: true },
+                { mode: 'Crèche', garde: '280 €', dep: '490 €', paje: '-98 €', total: '672 €', highlight: false },
+                { mode: 'Assistante mat.', garde: '311 €', dep: '490 €', paje: '-98 €', total: '703 €', highlight: false },
+                { mode: 'Garde à domicile', garde: '1 118 €', dep: '490 €', paje: '-98 €', total: '1 510 €', highlight: false },
+                { mode: 'Parent (congé)', garde: '0 €', dep: '490 €', paje: '-98 €', total: '392 €', highlight: true },
               ].map(({ mode, garde, dep, paje, total, highlight }) => (
                 <tr key={mode} style={{ borderBottom: '1px solid #F1F5F9', background: highlight ? '#F0FDF4' : 'white' }}>
                   <td style={{ padding: '12px 14px', fontWeight: 600, color: '#0F172A' }}>{mode}</td>
@@ -264,7 +265,7 @@ export default function ArticleCoutBebe() {
             </tbody>
           </table>
           <p style={{ fontSize: 11, color: '#94A3B8', padding: '10px 14px', margin: 0, fontStyle: 'italic' }}>
-            Simulation à titre indicatif. Basée sur les barèmes CAF 2024 <Ref id={2} /> et les données INSEE 2023 <Ref id={1} />.
+            Simulation à titre indicatif. Basée sur les barèmes CAF 2026 <Ref id={2} /> et les données de l'étude Avis Parents 2026 <Ref id={1} />.
           </p>
         </div>
 
@@ -309,10 +310,6 @@ export default function ArticleCoutBebe() {
             </Link>
           </div>
         </div>
-
-        <p style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.7, fontStyle: 'italic', marginBottom: 32, borderTop: '1px solid #E2E8F0', paddingTop: 16 }}>
-  Les chiffres présentés dans cet article sont issus des dernières enquêtes disponibles (INSEE 2023, CAF 2024). En raison de l'inflation et de la revalorisation annuelle des barèmes CAF, les montants réels en 2026 peuvent être légèrement supérieurs — comptez une hausse indicative de 3 à 5 % par rapport aux valeurs affichées.
-</p>
 
         {/* Conclusion */}
         <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px', margin: '0 0 16px' }}>
