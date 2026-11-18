@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import BrandLogo from '../components/BrandLogo';
 import { Baby, TrendingDown, ShieldCheck, Zap, PieChart, BarChart2, ArrowRight, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
@@ -313,10 +314,10 @@ export default function LandingPage() {
               Un budget qui explose…<br />sans prévenir
             </h2>
             <p style={{ color: c.textMuted, fontSize: '1rem', lineHeight: 1.75, marginBottom: 20 }}>
-              Selon l'INSEE, un bébé coûte en moyenne <strong style={{ color: c.text }}>700 € par mois</strong> la première année — mais 40% des parents sous-estiment cette dépense de moitié (CREDOC 2022).
+              Entre l'équipement, l'alimentation, la garde et les petits achats du quotidien, il est facile de perdre de vue le coût réel de la première année.
             </p>
             <p style={{ color: c.textMuted, fontSize: '1rem', lineHeight: 1.75, marginBottom: 0 }}>
-              Sans visibilité sur leurs dépenses réelles, les familles dépassent leur budget dès le 3e mois. <strong style={{ color: c.text }}>BabyBudget vous donne une vision claire, en temps réel.</strong>
+              Avec une vue centralisée de vos opérations, vous pouvez comprendre vos habitudes et ajuster vos choix. <strong style={{ color: c.text }}>BabyBudget vous aide à garder une vision claire, mois après mois.</strong>
             </p>
           </motion.div>
 
@@ -367,7 +368,7 @@ export default function LandingPage() {
               Êtes-vous au-dessus ou en dessous<br />de la moyenne nationale ?
             </h2>
             <p style={{ color: c.textMuted, fontSize: '1rem', maxWidth: 580, margin: '0 auto 48px', lineHeight: 1.7 }}>
-              BabyBudget est la seule app qui compare vos dépenses aux moyennes nationales (INSEE, CAF, DREES) par tranche d'âge et par catégorie — pour savoir exactement où vous vous situez.
+              Explorez vos dépenses aux côtés de repères indicatifs par âge et par catégorie. Ces estimations sont utiles pour réfléchir à votre budget, sans constituer des statistiques officielles ni un classement.
             </p>
           </motion.div>
 
@@ -672,10 +673,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 28, height: 28, background: '#16443D', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>👶</div>
-              <span style={{ fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontWeight: 800, fontSize: 15, color: c.text, letterSpacing: '-0.02em' }}>
-                Baby<span style={{ color: '#1C6856' }}>Budget</span>
-              </span>
+              <BrandLogo />
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
               <Link href="/confidentialite" style={{ fontSize: 13, color: c.textFaint, textDecoration: 'none' }}>Confidentialité</Link>
