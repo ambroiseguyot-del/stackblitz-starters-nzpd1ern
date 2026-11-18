@@ -41,7 +41,7 @@ jobs:
       - name: Production build (dummy Supabase environment)
         run: npm run build
       - name: Install browser for functional smoke tests
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium --only-shell
       - name: Smoke test — routes publiques
         run: |
           set -euo pipefail
