@@ -126,8 +126,14 @@ function useExpenses() {
       const { data: { session } } = await supabase.auth.getSession();
       const uid = session?.user?.id;
 
-      let query = supabase.from("expenses").select("*").limit(1000);
-      if (uid) query = query.eq("user_id", uid);
+      if (!uid) {
+        setExpenses([]);
+        setWarning("Connectez-vous pour comparer vos dépenses.");
+        setLoading(false);
+        return;
+      }
+
+      const query = supabase.from("expenses").select("*").eq("user_id", uid).limit(1000);
 
       const { data, error: err } = await query;
 
