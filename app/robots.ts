@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/app', '/login', '/signup', '/reset-password', '/auth'],
+      disallow: ['/app', '/analyse', '/previsions', '/recurrences', '/login', '/signup', '/reset-password', '/auth'],
     },
     sitemap: 'https://www.babybudget.fr/sitemap.xml',
   };
