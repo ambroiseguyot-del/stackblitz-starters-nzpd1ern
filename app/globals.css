@@ -733,3 +733,12 @@ html.dark .bb-blog-hero-visual { background: #F8F8F4; }
 .bb-comparison-method summary { cursor: pointer; font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.5; }
 .bb-comparison-method p { font-size: 13px; line-height: 1.7; color: var(--text-muted); margin: 12px 0 0; }
 .bb-comparison-method a { color: var(--bb-green); font-weight: 800; text-decoration: underline; }
+
+
+/* On narrow iPhones the mobile menu already exposes signup: avoid navigation overflow. */
+@media (max-width: 440px) {
+  .bb-nav .bb-auth-actions { display: none; }
+  .bb-brand-authentic { gap: 6px; }
+  .bb-brand-words { width: 122px; height: 29px; }
+  .bb-brand-authentic .bb-brand-wordmark { width: 122px; height: 29px; }
+}
