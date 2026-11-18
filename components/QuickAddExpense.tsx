@@ -150,7 +150,7 @@ export default function QuickAddExpense({ open, onClose, onSaved, profiles, cate
           <input id={formId + '-date'} type="date" value={date} onChange={event => setDate(event.target.value)} required/>
           <label className="bb-quick-check" htmlFor={formId + '-recurring'}>
             <input id={formId + '-recurring'} type="checkbox" checked={recurring} onChange={event => setRecurring(event.target.checked)}/>
-            <span>À prévoir chaque mois <small>(confirmation manuelle, sans duplication automatique)</small></span>
+            <span>Dépense mensuelle récurrente <small>(suivi dans « Récurrences »)</small></span>
           </label>
           {error && <p className="bb-quick-error" role="alert">{error}</p>}
           <button className="bb-quick-submit" type="submit" disabled={busy || profiles.length === 0}>
