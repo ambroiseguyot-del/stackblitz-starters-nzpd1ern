@@ -3,6 +3,7 @@
 import { supabase } from '../../supabaseClient';
 import { useState } from 'react';
 import Link from 'next/link';
+import BrandLogo from '../../components/BrandLogo';
 
 const SYSTEM_FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
 
@@ -112,8 +113,7 @@ export default function SignUp() {
           <div className="sr-left-bg" />
           <div className="sr-left-grid" />
           <div className="sr-brand">
-            <div className="sr-brand-icon">👶</div>
-            <span className="sr-brand-name">BabyBudget</span>
+            <BrandLogo light />
           </div>
           <div className="sr-left-content">
             <h2 className="sr-left-title">Créez votre<br />espace <span>familial</span><br />en 30 secondes</h2>
