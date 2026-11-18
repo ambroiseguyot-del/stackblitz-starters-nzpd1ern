@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // ── Titre & description ──────────────────────────────────────────────────
   title: {
     default: 'Baby Budget — Suivez les dépenses de votre bébé',
-    template: '%s | BabyBudget',
+    template: '%s | Baby Budget',
   },
   description: 'Suivez les dépenses de votre enfant, anticipez votre budget familial et visualisez vos habitudes en toute simplicité. Application gratuite et sans publicité.',
 
@@ -14,12 +14,12 @@ export const metadata: Metadata = {
   keywords: [
     'budget bébé', 'dépenses bébé', 'coût bébé', 'budget famille',
     'aides CAF naissance', 'PAJE', 'calculateur budget bébé',
-    'suivi dépenses enfant', 'comparaison nationale bébé', 'coût premier enfant',
+    'suivi dépenses enfant', 'repères budget bébé', 'coût premier enfant',
   ],
 
   // ── Auteur & robots ──────────────────────────────────────────────────────
-  authors: [{ name: 'BabyBudget', url: 'https://www.babybudget.fr' }],
-  creator: 'BabyBudget',
+  authors: [{ name: 'Baby Budget', url: 'https://www.babybudget.fr' }],
+  creator: 'Baby Budget',
   robots: {
     index: true,
     follow: true,

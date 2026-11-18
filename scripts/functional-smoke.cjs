@@ -32,7 +32,7 @@ async function main() {
   await check('Homepage shows product proposition and account CTA', async page => {
     const response = await page.goto(origin + '/', { waitUntil: 'domcontentloaded' });
     assert.equal(response.status(), 200);
-    await page.getByRole('heading', { name: /Grandir ensemble/i }).waitFor();
+    await page.getByRole('heading', { name: /Combien coûte vraiment votre bébé/i }).waitFor();
     await page.getByRole('link', { name: /Créer mon compte/i }).first().waitFor();
     assert.equal(await page.locator('a.bb-home-link').count(), 1);
   });
@@ -127,21 +127,24 @@ async function main() {
 
   await check('Comparison acknowledges illustrative estimates rather than national statistics', async page => {
     await page.goto(origin + '/comparaison', { waitUntil: 'domcontentloaded' });
-    await page.getByText(/hypothèses budgétaires illustratives/i).first().waitFor();
+    await page.getByText(/hypothèses budgétaires fictives/i).first().waitFor();
+    await page.getByText(/Comment sont construits ces repères/i).first().waitFor();
     assert.equal(await page.getByText(/vous êtes plus économe que \d+%/i).count(), 0);
   });
 
   await check('Brand identity: SVG symbol, favicon, iPhone and social media assets', async page => {
     const res = await page.goto(origin + '/', { waitUntil: 'domcontentloaded' });
     assert.equal(res.status(), 200);
-    const brand = page.getByRole('navigation', { name: 'Navigation principale' }).locator('img.bb-brand-symbol');
-    await brand.waitFor();
-    assert.ok((await brand.getAttribute('src')).includes('/brand-symbol.svg'));
+    const brand = page.getByRole('navigation', { name: 'Navigation principale' });
+    await brand.locator('img.bb-brand-symbol').first().waitFor();
+    assert.equal(await brand.locator('img.bb-brand-symbol').count(), 2);
+    assert.ok((await brand.locator('img.bb-brand-symbol').first().getAttribute('src')).includes('/brand-symbol.svg'));
+    assert.equal(await brand.locator('img.bb-brand-wordmark').count(), 2, 'Exact traced wordmark must be present');
     const meta = await page.locator('meta[property="og:image"]').getAttribute('content');
     assert.ok(meta.includes('/og-image.png'), 'Open Graph must use the matching new image');
     const twitter = await page.locator('meta[name="twitter:image"]').getAttribute('content');
     assert.ok(twitter.includes('/og-image.png'), 'Twitter image must match Open Graph');
-    for (const path of ['/favicon.ico','/favicon.svg','/apple-touch-icon.png',
+    for (const path of ['/brand-lockup.svg','/brand-symbol-dark.svg','/brand-wordmark.svg','/favicon.ico','/favicon.svg','/apple-touch-icon.png',
       '/icon-192.png','/icon-512.png','/icon-maskable-512.png','/og-image.png','/og-image.jpg']) {
       const resource = await page.request.get(origin + path);
       assert.equal(resource.status(), 200, 'Missing identity asset: ' + path);
@@ -159,6 +162,31 @@ async function main() {
     await page.goto(origin + '/blog/cout-bebe-premiere-annee', { waitUntil: 'domcontentloaded' });
     await page.getByRole('heading', { name: /Combien coûte un bébé la première année/i }).waitFor();
     assert.ok((await page.locator('article').innerText()).includes('exemple entièrement illustratif'));
+  });
+
+  await check('Dark mode applies to blog index, article and all reading cards', async page => {
+    await page.goto(origin + '/', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'Activer le mode sombre' }).click();
+    await page.goto(origin + '/blog', { waitUntil: 'domcontentloaded' });
+    await page.locator('html.dark').waitFor();
+    const index = await page.locator('.bb-blog-card').first().evaluate(el => getComputedStyle(el).backgroundColor);
+    assert.equal(index, 'rgb(28, 44, 36)', 'Blog cards must use the dark palette');
+    await page.goto(origin + '/blog/cout-bebe-premiere-annee', { waitUntil: 'domcontentloaded' });
+    await page.locator('html.dark').waitFor();
+    const pageBg = await page.locator('.bb-blog-page').evaluate(el => getComputedStyle(el).backgroundColor);
+    assert.equal(pageBg, 'rgb(16, 28, 23)', 'Article background must be dark');
+    const textColor = await page.locator('.bb-blog-prose p').first().evaluate(el => getComputedStyle(el).color);
+    assert.equal(textColor, 'rgb(239, 247, 240)', 'Article text must have light foreground');
+  });
+
+  await check('Landing references fictitious comparison, euro examples and complete percentages', async page => {
+    await page.goto(origin + '/', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('heading', { name: /Combien coûte vraiment votre bébé/i }).waitFor();
+    assert.ok((await page.locator('body').innerText()).includes('pics de dépenses mensuels'));
+    assert.ok((await page.locator('body').innerText()).includes('31 % des dépenses'));
+    assert.ok((await page.locator('body').innerText()).includes('250 €/mois'));
+    assert.ok((await page.locator('body').innerText()).includes('Exemples fictifs de coût mensuel avant aides'));
+    assert.ok(!(await page.locator('body').innerText()).includes('Comparaison nationale'));
   });
 
   await check('Protected dashboard redirects anonymous visitor to login', async page => {

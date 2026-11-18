@@ -175,8 +175,8 @@ export default function LandingPage() {
               color: c.text,
             }}
           >
-            Grandir ensemble.<br />
-            <span style={{ color: '#1C6856' }}>Garder le cap sur votre budget.</span>
+            Combien coûte vraiment votre bébé ?<br />
+            <span style={{ color: isDark ? '#9FCDB1' : '#1C6856' }}>Suivez et anticipez chaque dépense.</span>
           </motion.h1>
 
           <motion.p
@@ -185,7 +185,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             style={{ fontSize: '1.15rem', color: c.textMuted, maxWidth: 560, margin: '0 auto 36px', lineHeight: 1.7 }}
           >
-            Suivez les dépenses de votre enfant, visualisez votre budget en temps réel et préparez les prochains mois sereinement. Toutes vos informations au même endroit, sans complexité.
+            Du premier achat aux frais de garde : enregistrez vos dépenses, comprenez votre budget et anticipez les prochains mois avec des prévisions adaptées à votre famille.
           </motion.p>
 
           <motion.div
@@ -260,15 +260,15 @@ export default function LandingPage() {
             <div style={{ background: c.card, borderRadius: 12, border: `1px solid ${c.border}`, padding: '16px 20px' }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: c.text, margin: '0 0 14px' }}>Dépenses par catégorie</p>
               {[
-                { label: 'Couches', pct: 62, color: '#16443D' },
-                { label: 'Alimentation', pct: 48, color: '#418A74' },
-                { label: 'Santé', pct: 71, color: '#9FCDB1' },
-                { label: 'Équipement', pct: 35, color: '#93C5FD' },
+                { label: 'Couches', pct: 31, amount: 210, color: '#1C6856' },
+                { label: 'Alimentation', pct: 26, amount: 180, color: '#418A74' },
+                { label: 'Santé', pct: 18, amount: 124, color: '#9FCDB1' },
+                { label: 'Équipement', pct: 25, amount: 170, color: '#93C5FD' },
               ].map((bar, i) => (
                 <div key={i} style={{ marginBottom: 10 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                     <span style={{ fontSize: 11, color: c.textMuted }}>{bar.label}</span>
-                    <span style={{ fontSize: 11, color: '#94A3B8' }}>{bar.pct}du budget estimé</span>
+                    <span style={{ fontSize: 11, color: c.textMuted }}>{bar.amount} € · {bar.pct} % des dépenses</span>
                   </div>
                   <div style={{ height: 6, background: '#F0F3EE', borderRadius: 99, overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${bar.pct}%`, background: bar.color, borderRadius: 99 }} />
@@ -334,7 +334,7 @@ export default function LandingPage() {
             }}
           >
             {[
-              { icon: <TrendingDown size={20} color="#1C6856" />, text: 'Anticipez les pics de dépenses mensuel' },
+              { icon: <TrendingDown size={20} color="#1C6856" />, text: 'Anticipez les pics de dépenses mensuels' },
               { icon: <ShieldCheck size={20} color="#1C6856" />, text: 'Sécurisez votre budget familial' },
               { icon: <PieChart size={20} color="#1C6856" />, text: 'Repérez les postes de gaspillage' },
               { icon: <BarChart2 size={20} color="#1C6856" />, text: 'Comparez vos dépenses à des repères illustratifs' },
@@ -352,7 +352,7 @@ export default function LandingPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          FEATURE DIFFÉRENCIANTE — COMPARAISON NATIONALE
+          REPÈRES BUDGÉTAIRES ILLUSTRATIFS
       ═══════════════════════════════════════════════ */}
       <section style={{ padding: '100px 24px', background: c.bgAlt }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', textAlign: 'center' }}>
@@ -363,7 +363,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 12 }}>Fonctionnalité unique</p>
+            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 12 }}>Repères budgétaires illustratifs</p>
             <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 16 }}>
               Comment se situent vos dépenses<br />face à un budget indicatif ?
             </h2>
@@ -385,7 +385,7 @@ export default function LandingPage() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
-              <p style={{ fontWeight: 700, color: c.text, margin: 0, fontSize: '0.95rem' }}>Tranche 0–1 an · Comparaison nationale</p>
+              <p style={{ fontWeight: 700, color: c.text, margin: 0, fontSize: '0.95rem' }}>Tranche 0–1 an · Repères indicatifs</p>
               <span style={{ background: '#E7F1EA', color: '#1C6856', fontSize: 12, fontWeight: 600, padding: '4px 12px', borderRadius: 99 }}>Repères indicatifs · hypothèses explicites</span>
             </div>
             {[
@@ -402,8 +402,8 @@ export default function LandingPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, alignItems: 'center' }}>
                     <span style={{ fontSize: 13, fontWeight: 500, color: c.text }}>{row.cat}</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#16443D' }}>{row.vous} €</span>
-                      <span style={{ fontSize: 12, color: '#94A3B8' }}>/ {row.nationale} € moy.</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: c.text }}>{row.vous} €</span>
+                      <span style={{ fontSize: 12, color: '#94A3B8' }}>/ {row.nationale} € de repère</span>
                       <span style={{ fontSize: 12, fontWeight: 600, color: isOver ? '#C85B56' : '#2F8A6B' }}>
                         {isOver ? '▲' : '▼'} {Math.abs(Number(diff))}%
                       </span>
@@ -492,23 +492,24 @@ export default function LandingPage() {
                 color: '#1C6856',
                 preview: (
                   <div style={{ marginTop: 12 }}>
-                    {[['Crèche', 55], ['Assistante mat.', 38], ['Garde à domicile', 80]].map(([label, pct]) => (
+                    {[['Crèche', 250], ['Assistante mat.', 450], ['Garde à domicile', 950]].map(([label, montant]) => (
                       <div key={label as string} style={{ marginBottom: 6 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: c.textMuted, marginBottom: 3 }}>
-                          <span>{label}</span><span>{pct}%</span>
+                          <span>{label}</span><span>{montant} €/mois</span>
                         </div>
                         <div style={{ height: 4, background: isDark ? '#214C40' : '#DFE7DE', borderRadius: 99 }}>
-                          <div style={{ height: '100%', width: `${pct}%`, background: '#1C6856', borderRadius: 99, opacity: 0.7 }} />
+                          <div style={{ height: '100%', width: `${Number(montant) / 950 * 100}%`, background: '#1C6856', borderRadius: 99, opacity: 0.7 }} />
                         </div>
                       </div>
                     ))}
+                    <p style={{ fontSize: 10, color: c.textMuted, lineHeight: 1.5, margin: '9px 0 0' }}>Exemples fictifs de coût mensuel avant aides, pour illustrer les différences entre modes de garde. Pas des tarifs officiels ni des taux de prise en charge.</p>
                   </div>
                 ),
               },
               {
-                emoji: '🇫🇷',
-                title: 'Comparaison nationale',
-                desc: "Visualisez vos dépenses face à des budgets de référence illustratifs par catégorie et par âge.",
+                emoji: '📊',
+                title: 'Repères budgétaires indicatifs',
+                desc: "Visualisez les écarts entre vos dépenses et des exemples de budgets fictifs par catégorie et par âge.",
                 color: '#2F8A6B',
                 preview: (
                   <div style={{ marginTop: 12 }}>
@@ -593,7 +594,7 @@ export default function LandingPage() {
           <FAQItem
             textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
             q="Mes données sont-elles privées ?"
-            a="Vos données sont stockées de façon sécurisée sur Supabase (infrastructure européenne). Chaque famille n'a accès qu'à ses propres données — aucun partage avec des tiers."
+            a="Les données de chaque compte sont protégées par des contrôles d'accès. Consultez notre politique de confidentialité pour connaître les prestataires et les traitements appliqués."
             delay={0.05}
           />
           <FAQItem
@@ -604,8 +605,8 @@ export default function LandingPage() {
           />
           <FAQItem
             textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
-            q="D'où viennent les repères budgétaires ?"
-            a="Les montants de comparaison actuellement présentés sont des hypothèses illustratives par âge et catégorie, et non des moyennes officielles ou une distribution statistique de familles françaises."
+            q="D'où viennent les repères budgétaires indicatifs ?"
+            a="Les repères sont des budgets fictifs par âge et catégorie, destinés à donner un ordre de grandeur pour une simulation. Ils ne proviennent pas d'une enquête représentative, ne classent pas les familles et ne permettent pas de déduire vos droits CAF. Consultez les sources officielles de nos guides pour les chiffres réglementaires."
             delay={0.15}
           />
           <FAQItem
