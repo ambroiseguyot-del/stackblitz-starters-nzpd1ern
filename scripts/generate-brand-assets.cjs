@@ -55,6 +55,7 @@ async function main() {
     <text x="443" y="526" fill="#648672" font-family="DejaVu Sans,Arial,sans-serif" font-size="22">babybudget.fr</text>
   </svg>`;
   fs.writeFileSync(path.join(pub,'og-image.png'),await sharp(Buffer.from(og)).png({compressionLevel:9}).toBuffer());
+  fs.writeFileSync(path.join(pub,'og-image.jpg'),await sharp(Buffer.from(og)).jpeg({quality:88,mozjpeg:true}).toBuffer());
   console.log('Generated favicon.ico, sizes 16/32/180/192/512, maskable and OG 1200x630.');
 }
 main().catch(err=>{console.error(err);process.exitCode=1});
