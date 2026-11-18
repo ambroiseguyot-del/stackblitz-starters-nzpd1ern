@@ -274,6 +274,7 @@ export default function UltimateBabyBudget() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [monthlyBudget, setMonthlyBudget] = useState<number>(0);
+  const [childBudgets, setChildBudgets] = useState<Record<string, number>>({});
   const [isInitialLoading, setIsInitialLoading] = useState(true); // skeleton au premier chargement
   const [dataError, setDataError] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -316,7 +317,7 @@ export default function UltimateBabyBudget() {
       // Defense in depth: never issue a private request without an authenticated owner.
       const expQuery = supabase.from('expenses').select('*').eq('user_id', uid).order('date', { ascending: true });
       const profQuery = supabase.from('profiles').select('*').eq('user_id', uid).order('name', { ascending: true });
-      const settQuery = supabase.from('settings').select('*').eq('key', 'monthly_budget').eq('user_id', uid).maybeSingle();
+      const settQuery = supabase.from('settings').select('key,value').eq('user_id', uid);
 
       const [expRes, profRes, settRes] = await Promise.all([expQuery, profQuery, settQuery]);
 
@@ -332,7 +333,18 @@ export default function UltimateBabyBudget() {
 
       setExpenses((expRes.data as Expense[]) || []);
       setProfiles((profRes.data as Profile[]) || []);
-      if (settRes.data) setMonthlyBudget(parseFloat(settRes.data.value));
+      if (settRes.error) throw new Error(settRes.error.message);
+      const preferences = settRes.data || [];
+      const globalSetting = preferences.find(row => row.key === 'monthly_budget');
+      setMonthlyBudget(globalSetting ? Number(globalSetting.value) || 0 : 0);
+      const byChild: Record<string, number> = {};
+      preferences.forEach(row => {
+        if (row.key.startsWith('child_budget:')) {
+          const amount = Number(row.value);
+          if (Number.isFinite(amount) && amount >= 0) byChild[row.key.slice('child_budget:'.length)] = amount;
+        }
+      });
+      setChildBudgets(byChild);
     } catch (error: any) {
       showToastRef.current(error.message, 'error');
     } finally {
@@ -538,12 +550,17 @@ export default function UltimateBabyBudget() {
     const val = parseFloat(tempBudget);
     if (isNaN(val) || val < 0) { showToast("Budget invalide", 'error'); return; }
     try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) throw new Error('Reconnectez-vous pour enregistrer votre budget.');
+      const selectedProfile = profiles.find(p => p.name === filterChild);
+      const settingKey = selectedProfile ? `child_budget:${selectedProfile.id}` : 'monthly_budget';
       const { error } = await supabase.from('settings').upsert(
-        { key: 'monthly_budget', value: tempBudget },
+        { key: settingKey, value: String(val), user_id: user.id },
         { onConflict: 'key,user_id' }
       );
       if (error) throw error;
-      setMonthlyBudget(val);
+      if (selectedProfile) setChildBudgets(prev => ({ ...prev, [selectedProfile.id]: val }));
+      else setMonthlyBudget(val);
       setIsEditingBudget(false);
       showToast("Budget mis à jour ✓");
     } catch (err: any) { showToast(err.message, 'error'); }
@@ -586,7 +603,9 @@ export default function UltimateBabyBudget() {
     showToast(`Export CSV : ${filteredExpenses.length} dépenses ✓`);
   };
 
-  const currentEffectiveBudget = viewScope === 'month' ? monthlyBudget : monthlyBudget * 12;
+  const selectedBudgetProfile = profiles.find(p => p.name === filterChild);
+  const monthlySelectedBudget = selectedBudgetProfile ? (childBudgets[selectedBudgetProfile.id] ?? 0) : monthlyBudget;
+  const currentEffectiveBudget = viewScope === 'month' ? monthlySelectedBudget : monthlySelectedBudget * 12;
   const budgetIsDefined = currentEffectiveBudget > 0;
   const percentUsed = budgetIsDefined ? Math.min((totalAmount / currentEffectiveBudget) * 100, 100) : 0;
   const remaining = currentEffectiveBudget - totalAmount;
@@ -665,12 +684,12 @@ export default function UltimateBabyBudget() {
         {profiles.length >= 1 && (
           <div className="flex items-center gap-2 mb-6 flex-wrap">
             <span className="text-[10px] font-black uppercase opacity-40 mr-1 tracking-wider select-none">Enfant :</span>
-            <button onClick={() => setFilterChild('all')}
+            <button onClick={() => { setFilterChild('all'); setIsEditingBudget(false); }}
               className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all ${filterChild === 'all' ? 'bg-[var(--france-blue)] text-white border-[var(--france-blue)] shadow-md' : 'bg-[var(--bg-card)] border-[var(--border)] opacity-50 hover:opacity-100 hover:border-[var(--france-blue)]'}`}>
               Tous
             </button>
             {profiles.map(p => (
-              <button key={p.id} onClick={() => setFilterChild(filterChild === p.name ? 'all' : p.name)}
+              <button key={p.id} onClick={() => { setFilterChild(filterChild === p.name ? 'all' : p.name); setIsEditingBudget(false); }}
                 className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all flex items-center gap-1.5 ${filterChild === p.name ? 'bg-[var(--france-blue)] text-white border-[var(--france-blue)] shadow-md' : 'bg-[var(--bg-card)] border-[var(--border)] opacity-50 hover:opacity-100 hover:border-[var(--france-blue)]'}`}>
                 <span>👶</span>{p.name}
               </button>
@@ -678,6 +697,7 @@ export default function UltimateBabyBudget() {
           </div>
         )}
 
+        <a className="bb-quick-add" href="#nouvelle-depense" aria-label="Accéder au formulaire de nouvelle dépense">+ Ajouter une dépense</a>
         {/* ── SKELETON ── */}
         {isInitialLoading && <DashboardSkeleton />}
 
@@ -726,7 +746,7 @@ export default function UltimateBabyBudget() {
                 <div className="flex justify-between items-end mb-5">
                   <div>
                     <h3 className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>
-                      Budget {viewScope === 'month' ? 'Mensuel' : 'Annuel'}
+                      Budget {viewScope === 'month' ? 'Mensuel' : 'Annuel'} {selectedBudgetProfile ? `— ${selectedBudgetProfile.name}` : '— Famille'}
                     </h3>
                     {isEditingBudget ? (
                       <div className="flex gap-2 items-center">
@@ -747,7 +767,7 @@ export default function UltimateBabyBudget() {
                           {budgetIsDefined ? formatEuro(currentEffectiveBudget) : <span className="text-base opacity-30">Budget non défini</span>}
                         </span>
                         <button
-                          onClick={() => { setTempBudget(monthlyBudget.toString()); setIsEditingBudget(true); }}
+                          onClick={() => { setTempBudget(monthlySelectedBudget.toString()); setIsEditingBudget(true); }}
                           className="text-[10px] opacity-25 hover:opacity-100 uppercase font-black border border-[var(--border)] px-2 py-1 rounded-lg transition-opacity">
                           ✏️ Modifier
                         </button>
@@ -832,7 +852,7 @@ export default function UltimateBabyBudget() {
                 </div>
 
                 {/* ── FORMULAIRE D'AJOUT ── */}
-                <div className="bg-[var(--bg-card)] p-8 rounded-[40px] border border-[var(--border)] shadow-sm">
+                <div id="nouvelle-depense" className="bg-[var(--bg-card)] p-8 rounded-[40px] border border-[var(--border)] shadow-sm bb-expense-entry">
                   <h3 className="text-base font-black mb-6 flex items-center gap-2">
                     <span className="w-7 h-7 rounded-full bg-[var(--france-red)] flex items-center justify-center text-white text-xs font-black">+</span>
                     Nouvelle dépense
