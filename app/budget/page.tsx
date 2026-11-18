@@ -314,7 +314,7 @@ export default function BudgetPrevisionnelPage() {
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           {[
-            { label: 'Barèmes CAF 2024', href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
+            { label: 'Hypothèses historiques CAF 2024', href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
             { label: 'Données INSEE 2023', href: 'https://www.insee.fr/fr/statistiques/8241854' },
             { label: 'Service-public.fr CMG', href: 'https://www.service-public.fr/particuliers/vosdroits/F345' },
           ].map(s => (
@@ -329,7 +329,7 @@ export default function BudgetPrevisionnelPage() {
 
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px 80px' }}>
         <aside className="bb-data-notice" role="note">
-          <strong>Simulation indicative</strong> — Certaines hypothèses et barèmes de ce calculateur datent de 2024. Vérifiez les montants applicables sur caf.fr avant toute décision financière.
+          <strong>Simulation historique</strong> — Cet outil utilise des hypothèses et barèmes de 2024, qui ne représentent plus les aides en vigueur. En particulier, la réforme du CMG de septembre 2025 a changé les règles de calcul. <strong>Ne considérez pas le montant « après aides » comme une estimation de vos droits actuels.</strong> Vérifiez votre situation sur caf.fr ou monenfant.fr.
         </aside>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
 
@@ -440,7 +440,7 @@ export default function BudgetPrevisionnelPage() {
               <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: cv.textMuted, margin: '0 0 4px' }}>
                 📊 Comparaison des modes de garde
               </p>
-              <p style={{ fontSize: 11, color: cv.textMuted, margin: '0 0 20px' }}>Coût mensuel net après aides CAF et dépenses courantes</p>
+              <p style={{ fontSize: 11, color: cv.textMuted, margin: '0 0 20px' }}>Résultat indicatif avec hypothèses historiques d'aides (non opposable)</p>
               <BudgetBarChart data={resultats.map(r => ({ mode: r.mode, total: r.total }))} cv={cv} />
             </div>
 
