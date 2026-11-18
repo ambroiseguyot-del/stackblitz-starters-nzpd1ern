@@ -551,3 +551,11 @@ html.dark [class*="bg-[var(--france-blue)]"][class*="text-white"] { color:#122C2
   .bb-recurring-money { margin-left:auto; }
   .bb-recurring-actions { width:100%; justify-content:flex-end; }
 }
+
+.bb-recurring-amount { display:flex; flex-direction:column; gap:2px; flex:none; }
+.bb-recurring-amount label { font-size:10px; font-weight:650; color:var(--text-muted); }
+.bb-recurring-amount input { width:100px; border:1px solid var(--border); border-radius:10px; padding:8px 9px; background:var(--bg-input); color:var(--text-main); font-size:13px; font-weight:800; font-variant-numeric:tabular-nums; }
+.bb-recurring-amount strong { font-variant-numeric:tabular-nums; font-size:14px; }
+.bb-forecast-chart { overflow-x:auto; }
+.bb-forecast-column { min-width:21px; }
+@media(max-width:680px) { .bb-recurring-amount { margin-left:auto; } }
