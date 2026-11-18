@@ -59,10 +59,15 @@ export default function CategoryManager({ onCategoriesChange }: CategoryManagerP
       .eq("user_id", user.id)
       .order("created_at", { ascending: true });
 
-    if (data && data.length > 0) {
-      setUserCategories(data);
-      // use_defaults est stocké sur chaque ligne — on lit la première
+    setUserCategories(data ?? []);
+    const { data: savedPreference } = await supabase.from("settings")
+      .select("value").eq("user_id", user.id).eq("key", "use_default_categories").maybeSingle();
+    if (savedPreference) {
+      setUseDefaults(savedPreference.value !== "false");
+    } else if (data && data.length > 0) {
       setUseDefaults(data[0].use_defaults ?? true);
+    } else {
+      setUseDefaults(true);
     }
   }, []);
 
@@ -79,17 +84,31 @@ export default function CategoryManager({ onCategoriesChange }: CategoryManagerP
     onCategoriesChange([...defaultsFiltered, ...custom]);
   }, [userCategories, useDefaults, onCategoriesChange]);
 
-  // Toggle catégories par défaut
+  // Persist the preference even if no custom category exists.
   const handleToggleDefaults = async (val: boolean) => {
+    setError(null);
+    const previous = useDefaults;
     setUseDefaults(val);
-    // Met à jour toutes les lignes de l'utilisateur
-    if (userCategories.length > 0) {
-      await supabase
-        .from("categories")
-        .update({ use_defaults: val })
-        .eq("user_id", userCategories[0].user_id);
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      setUseDefaults(previous);
+      setError("Reconnectez-vous pour enregistrer vos préférences.");
+      return;
     }
-    // Si pas de catégories custom encore, on stocke le préférence dans une ligne fantôme
+    const { error } = await supabase.from("settings").upsert(
+      { user_id: user.id, key: "use_default_categories", value: String(val) },
+      { onConflict: "key,user_id" }
+    );
+    if (error) {
+      setUseDefaults(previous);
+      setError("Impossible d'enregistrer cette préférence.");
+      return;
+    }
+    if (userCategories.length > 0) {
+      const { error: categoryError } = await supabase.from("categories")
+        .update({ use_defaults: val }).eq("user_id", user.id);
+      if (categoryError) setError("Préférence enregistrée, mais catégories à synchroniser.");
+    }
   };
 
   // Ajouter une catégorie
