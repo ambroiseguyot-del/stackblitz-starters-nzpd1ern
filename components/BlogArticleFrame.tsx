@@ -22,7 +22,7 @@ export default function BlogArticleFrame({
           <div className="bb-blog-meta">
             <span>Mis à jour le {updated}</span><span aria-hidden="true">·</span>
             <span>{readTime} de lecture</span><span aria-hidden="true">·</span>
-            <span>Équipe Baby Budget</span>
+            <span>Baby Budget</span>
           </div>
         </div>
       </section>
