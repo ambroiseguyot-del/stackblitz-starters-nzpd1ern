@@ -24,6 +24,7 @@ export default function RecurrencesPage() {
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [amountOverrides, setAmountOverrides] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -62,11 +63,18 @@ export default function RecurrencesPage() {
   }, [entries, selectedDate]);
 
   const pending = rules.filter(r => !r.exists);
-  const total = pending.reduce((sum, r) => sum + r.amount, 0);
+  const total = pending.reduce((sum, r) => {
+    const value = Number(amountOverrides[r.key] ?? r.amount);
+    return sum + (Number.isFinite(value) && value > 0 ? value : 0);
+  }, 0);
 
   async function register(rule: Rule) {
     setBusy(rule.key); setError(''); setNotice('');
     try {
+      const confirmedAmount = Number(amountOverrides[rule.key] ?? rule.amount);
+      if (!Number.isFinite(confirmedAmount) || confirmedAmount <= 0 || confirmedAmount > 1000000) {
+        throw new Error('Saisissez un montant strictement positif et inférieur à 1 000 000 €.');
+      }
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (!user || authError) throw new Error('Votre connexion a expiré.');
       const dateStart = monthKey(selectedDate) + '-01';
@@ -88,7 +96,7 @@ export default function RecurrencesPage() {
         child_name: rule.latest.child_name,
         category: rule.latest.category,
         label: rule.latest.label,
-        amount: rule.amount,
+        amount: Math.round(confirmedAmount * 100) / 100,
         date: rule.dueDate,
         is_recurring: true,
         recurring_day: cleanDay(rule.latest.recurring_day, rule.latest.date),
@@ -153,14 +161,22 @@ export default function RecurrencesPage() {
               <Link href="/app">Ajouter une dépense <ArrowRight size={15}/></Link>
             </div> :
               <div className="bb-recurring-list">
-                {rules.map(rule => (
+                {rules.map((rule, index) => (
                   <article className="bb-recurring-row" key={rule.key}>
                     <div className="bb-recurring-icon"><RefreshCw size={20}/></div>
                     <div className="bb-recurring-details">
                       <strong>{rule.latest.label}</strong>
                       <span>{rule.latest.child_name} · {rule.latest.category} · le {rule.dueDate.slice(-2)} du mois</span>
                     </div>
-                    <strong className="bb-recurring-money">{formatMoney(rule.amount)}</strong>
+                    <div className="bb-recurring-amount">
+                      {rule.exists ? <strong>{formatMoney(rule.amount)}</strong> : <>
+                        <label htmlFor={'rec-amount-' + index}>Montant €</label>
+                        <input id={'rec-amount-' + index} type="number" step="0.01" min="0.01" max="1000000"
+                          value={amountOverrides[rule.key] ?? String(rule.amount)}
+                          onChange={event => setAmountOverrides(prev => ({ ...prev, [rule.key]: event.target.value }))}
+                          disabled={Boolean(busy)} />
+                      </>}
+                    </div>
                     <div className="bb-recurring-actions">
                       {rule.exists ? <span className="bb-recurring-done"><Check size={16}/> Enregistrée</span> :
                         <button type="button" onClick={() => void register(rule)} disabled={Boolean(busy)}>
