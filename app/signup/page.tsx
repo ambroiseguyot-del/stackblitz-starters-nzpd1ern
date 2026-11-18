@@ -40,8 +40,8 @@ export default function SignUp() {
   };
 
   const getPasswordStrength = () => {
-    if (password.length === 0) return { label: '', color: '#E2E8F0', width: '0%' };
-    if (password.length < 6) return { label: 'Trop court', color: '#EF4444', width: '25%' };
+    if (password.length === 0) return { label: '', color: '#DFE7DE', width: '0%' };
+    if (password.length < 6) return { label: 'Trop court', color: '#C85B56', width: '25%' };
     if (password.length < 8) return { label: 'Faible', color: '#F97316', width: '40%' };
     if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) return { label: 'Moyen', color: '#EAB308', width: '65%' };
     return { label: 'Fort', color: '#22C55E', width: '100%' };
@@ -54,12 +54,12 @@ export default function SignUp() {
       <style>{`
         *, *::before, *::after { box-sizing: border-box; }
         .sr { min-height: 100vh; display: flex; font-family: ${SYSTEM_FONT}; background: #F7F4F0; }
-        .sr-left { display: none; flex: 1; background: #0F172A; padding: 3rem; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+        .sr-left { display: none; flex: 1; background: #16443D; padding: 3rem; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
         @media (min-width: 860px) { .sr-left { display: flex; } }
         .sr-left-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 60%, rgba(16,185,129,0.15) 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, rgba(99,102,241,0.12) 0%, transparent 50%); }
         .sr-left-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 44px 44px; }
         .sr-brand { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
-        .sr-brand-icon { width: 38px; height: 38px; background: #10B981; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .sr-brand-icon { width: 38px; height: 38px; background: #2F8A6B; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         .sr-brand-name { font-weight: 800; font-size: 18px; color: white; letter-spacing: -0.02em; }
         .sr-left-content { position: relative; z-index: 1; }
         .sr-left-title { font-weight: 800; font-size: 2.4rem; color: white; line-height: 1.12; letter-spacing: -0.03em; margin: 0 0 1rem; }
@@ -73,37 +73,37 @@ export default function SignUp() {
         .sr-right { flex: 0 0 100%; display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
         @media (min-width: 860px) { .sr-right { flex: 0 0 460px; } }
         .sr-wrap { width: 100%; max-width: 380px; }
-        .sr-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #10B981; margin: 0 0 8px; }
-        .sr-title { font-weight: 800; font-size: 1.8rem; color: #0F172A; letter-spacing: -0.03em; margin: 0 0 6px; }
-        .sr-sub { font-size: 14px; color: #64748B; margin: 0 0 1.75rem; line-height: 1.5; }
+        .sr-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #2F8A6B; margin: 0 0 8px; }
+        .sr-title { font-weight: 800; font-size: 1.8rem; color: #16443D; letter-spacing: -0.03em; margin: 0 0 6px; }
+        .sr-sub { font-size: 14px; color: #657A6E; margin: 0 0 1.75rem; line-height: 1.5; }
         .sr-field { margin-bottom: 1rem; }
-        .sr-label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+        .sr-label { display: block; font-size: 12px; font-weight: 500; color: #3D5648; margin-bottom: 6px; }
         .sr-input-wrap { position: relative; }
-        .sr-input { width: 100%; padding: 13px 16px; border: 1.5px solid #E2E8F0; border-radius: 12px; font-size: 14px; font-family: ${SYSTEM_FONT}; background: white; color: #0F172A; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
-        .sr-input:focus { border-color: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+        .sr-input { width: 100%; padding: 13px 16px; border: 1.5px solid #DFE7DE; border-radius: 12px; font-size: 14px; font-family: ${SYSTEM_FONT}; background: white; color: #16443D; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+        .sr-input:focus { border-color: #2F8A6B; box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
         .sr-input.pw { padding-right: 48px; }
-        .sr-input.err { border-color: #EF4444; }
-        .sr-input:disabled { opacity: 0.5; background: #F8FAFC; }
+        .sr-input.err { border-color: #C85B56; }
+        .sr-input:disabled { opacity: 0.5; background: #F8F8F4; }
         .sr-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 4px; color: #94A3B8; font-size: 15px; line-height: 1; display: flex; align-items: center; transition: color 0.1s; }
-        .sr-eye:hover { color: #475569; }
+        .sr-eye:hover { color: #4D6759; }
         .sr-strength { margin-top: 8px; }
-        .sr-strength-bar { height: 3px; background: #E2E8F0; border-radius: 99px; overflow: hidden; margin-bottom: 4px; }
+        .sr-strength-bar { height: 3px; background: #DFE7DE; border-radius: 99px; overflow: hidden; margin-bottom: 4px; }
         .sr-strength-fill { height: 100%; border-radius: 99px; transition: width 0.3s, background 0.3s; }
         .sr-error { display: flex; align-items: flex-start; gap: 8px; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 10px; padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; color: #991B1B; line-height: 1.4; animation: fadeIn 0.2s ease-out; }
-        .sr-btn { width: 100%; padding: 14px; margin-top: 0.75rem; background: #0F172A; color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 500; font-family: ${SYSTEM_FONT}; cursor: pointer; transition: background 0.15s, transform 0.1s; letter-spacing: 0.01em; }
-        .sr-btn:hover:not(:disabled) { background: #1E293B; }
+        .sr-btn { width: 100%; padding: 14px; margin-top: 0.75rem; background: #16443D; color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 500; font-family: ${SYSTEM_FONT}; cursor: pointer; transition: background 0.15s, transform 0.1s; letter-spacing: 0.01em; }
+        .sr-btn:hover:not(:disabled) { background: #214C40; }
         .sr-btn:active:not(:disabled) { transform: scale(0.99); }
         .sr-btn:disabled { opacity: 0.45; cursor: not-allowed; }
         .sr-footer { margin-top: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .sr-divider { width: 100%; height: 1px; background: #E2E8F0; }
-        .sr-link { font-size: 13px; color: #64748B; text-decoration: none; transition: color 0.15s; }
-        .sr-link:hover { color: #0F172A; }
-        .sr-link.accent { color: #10B981; font-weight: 500; }
+        .sr-divider { width: 100%; height: 1px; background: #DFE7DE; }
+        .sr-link { font-size: 13px; color: #657A6E; text-decoration: none; transition: color 0.15s; }
+        .sr-link:hover { color: #16443D; }
+        .sr-link.accent { color: #2F8A6B; font-weight: 500; }
         .sr-link.accent:hover { color: #059669; }
         .sr-success { text-align: center; padding: 2rem 1rem; animation: fadeIn 0.3s ease-out; }
-        .sr-success-icon { width: 64px; height: 64px; border-radius: 50%; background: #F0FDF4; border: 2px solid #BBF7D0; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 1.25rem; }
-        .sr-success-title { font-weight: 800; font-size: 1.4rem; color: #0F172A; letter-spacing: -0.02em; margin: 0 0 8px; }
-        .sr-success-sub { font-size: 14px; color: #64748B; line-height: 1.6; margin: 0 0 1.5rem; }
+        .sr-success-icon { width: 64px; height: 64px; border-radius: 50%; background: #EEF7EE; border: 2px solid #BBF7D0; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 1.25rem; }
+        .sr-success-title { font-weight: 800; font-size: 1.4rem; color: #16443D; letter-spacing: -0.02em; margin: 0 0 8px; }
+        .sr-success-sub { font-size: 14px; color: #657A6E; line-height: 1.6; margin: 0 0 1.5rem; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
@@ -185,7 +185,7 @@ export default function SignUp() {
                       </button>
                     </div>
                     {confirm.length > 0 && confirm !== password && (
-                      <p style={{ fontSize: 11, color: '#EF4444', margin: '5px 0 0' }}>Les mots de passe ne correspondent pas</p>
+                      <p style={{ fontSize: 11, color: '#C85B56', margin: '5px 0 0' }}>Les mots de passe ne correspondent pas</p>
                     )}
                   </div>
                   <button type="submit" className="sr-btn" disabled={loading}>
@@ -193,7 +193,7 @@ export default function SignUp() {
                   </button>
                   <div className="sr-footer">
                     <div className="sr-divider" />
-                    <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
+                    <p style={{ fontSize: 13, color: '#657A6E', margin: 0 }}>
                       Déjà un compte ?{' '}<Link href="/login" className="sr-link accent">Se connecter</Link>
                     </p>
                   </div>
