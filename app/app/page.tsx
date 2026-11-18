@@ -4,6 +4,9 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { supabase } from '../../supabaseClient';
 import Onboarding from '../../components/Onboarding';
 import BrandLogo from '../../components/BrandLogo';
+import QuickAddExpense, { type QuickExpensePayload } from '../../components/QuickAddExpense';
+import ForecastPanel from '../../components/ForecastPanel';
+import Link from 'next/link';
 import CategoryManager, { DEFAULT_CATEGORIES } from '../../components/CategoryManager';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
@@ -272,6 +275,7 @@ export default function UltimateBabyBudget() {
   }, [categories]);
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [monthlyBudget, setMonthlyBudget] = useState<number>(0);
   const [childBudgets, setChildBudgets] = useState<Record<string, number>>({});
@@ -489,6 +493,18 @@ export default function UltimateBabyBudget() {
     finally { setIsLoading(false); }
   };
 
+  const handleQuickAdd = async (expense: QuickExpensePayload) => {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) throw new Error('Reconnectez-vous avant d’enregistrer une dépense.');
+    const { data, error } = await supabase.from('expenses').insert([{
+      ...expense, user_id: user.id,
+    }]).select('id').single();
+    if (error) throw new Error(error.message);
+    setLastAddedId(data?.id || null);
+    await fetchData();
+    showToast('Dépense enregistrée ✓');
+  };
+
   const handleEditExpense = async (updated: Partial<Expense>) => {
     if (!editingExpense) return;
     try {
@@ -697,7 +713,8 @@ export default function UltimateBabyBudget() {
           </div>
         )}
 
-        <a className="bb-quick-add" href="#nouvelle-depense" aria-label="Accéder au formulaire de nouvelle dépense">+ Ajouter une dépense</a>
+        <button type="button" className="bb-quick-add" onClick={() => setQuickAddOpen(true)}
+          aria-label="Ajouter une dépense rapidement">+ Ajouter une dépense</button>
         {/* ── SKELETON ── */}
         {isInitialLoading && <DashboardSkeleton />}
 
@@ -740,6 +757,9 @@ export default function UltimateBabyBudget() {
                 {/* ── CONTENU PRINCIPAL ── */}
         {!isInitialLoading && !dataError && (
           <>
+            <div className="mb-7">
+              <ForecastPanel expenses={expenses} budget={monthlySelectedBudget} compact />
+            </div>
             {/* ── BUDGET & PROJECTION ── */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="md:col-span-2 bg-[var(--bg-card)] p-8 rounded-[32px] border border-[var(--border)] shadow-sm">
@@ -918,7 +938,7 @@ export default function UltimateBabyBudget() {
                       <div key={p.id} className="flex justify-between items-center p-3 bg-[var(--bg-input)] rounded-2xl group">
                         <span className="font-bold text-sm">{p.name}</span>
                         <button onClick={() => deleteProfile(p.id, p.name)}
-                          className="text-[10px] opacity-0 group-hover:opacity-30 hover:!opacity-100 hover:text-red-500 font-black uppercase transition-all">
+                          className="text-[10px] opacity-70 hover:!opacity-100 focus:opacity-100 hover:text-red-500 font-black uppercase transition-all">
                           Retirer
                         </button>
                       </div>
@@ -995,7 +1015,7 @@ export default function UltimateBabyBudget() {
                             {formatEuro(exp.amount)}
                           </div>
                         </div>
-                        <div className="overflow-hidden max-h-0 group-hover:max-h-12 transition-all duration-200 ease-out">
+                        <div className="bb-expense-actions">
                           <div className="flex border-t border-[var(--border)] divide-x divide-[var(--border)]">
                             <button onClick={() => setEditingExpense(exp)}
                               className="flex-1 py-2.5 text-[10px] font-black uppercase opacity-30 hover:opacity-100 hover:text-[var(--france-blue)] transition-all flex items-center justify-center gap-1"
@@ -1035,6 +1055,15 @@ export default function UltimateBabyBudget() {
           }}
         />
       )}
+
+      <QuickAddExpense
+        open={quickAddOpen}
+        onClose={() => setQuickAddOpen(false)}
+        onSaved={handleQuickAdd}
+        profiles={profiles}
+        categories={categories}
+        recent={expenses}
+      />
 
       {confirmModal && (
         <ConfirmModal
