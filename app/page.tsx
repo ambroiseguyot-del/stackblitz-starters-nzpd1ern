@@ -41,7 +41,7 @@ function Counter({ to, prefix = '', suffix = '', duration = 2 }: { to: number; p
 }
 
 // ─── Feature Card ────────────────────────────────────────────────────────────
-function FeatureCard({ icon, title, desc, delay = 0, cardBg = 'white', cardBorder = '#EAECF0', textColor = '#0F172A', textMuted = '#64748B' }: { icon: React.ReactNode; title: string; desc: string; delay?: number; cardBg?: string; cardBorder?: string; textColor?: string; textMuted?: string }) {
+function FeatureCard({ icon, title, desc, delay = 0, cardBg = 'white', cardBorder = '#EAECF0', textColor = '#16443D', textMuted = '#657A6E' }: { icon: React.ReactNode; title: string; desc: string; delay?: number; cardBg?: string; cardBorder?: string; textColor?: string; textMuted?: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -60,18 +60,18 @@ function FeatureCard({ icon, title, desc, delay = 0, cardBg = 'white', cardBorde
     >
       <div style={{
         width: 44, height: 44, borderRadius: 12,
-        background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16
+        background: '#E7F1EA', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16
       }}>
         {icon}
       </div>
-      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 8, color: textColor, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" }}>{title}</h3>
+      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 8, color: textColor, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>{title}</h3>
       <p style={{ fontSize: '0.9rem', color: textMuted, lineHeight: 1.6, margin: 0 }}>{desc}</p>
     </motion.div>
   );
 }
 
 // ─── FAQ Item ────────────────────────────────────────────────────────────────
-function FAQItem({ q, a, delay = 0, textColor = '#0F172A', textMuted = '#475569', borderColor = '#E2E8F0' }: { q: string; a: string; delay?: number; textColor?: string; textMuted?: string; borderColor?: string }) {
+function FAQItem({ q, a, delay = 0, textColor = '#16443D', textMuted = '#4D6759', borderColor = '#DFE7DE' }: { q: string; a: string; delay?: number; textColor?: string; textMuted?: string; borderColor?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <motion.div
@@ -87,7 +87,7 @@ function FAQItem({ q, a, delay = 0, textColor = '#0F172A', textMuted = '#475569'
           width: '100%', textAlign: 'left', padding: '20px 0',
           background: 'none', border: 'none', cursor: 'pointer',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16,
-          fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
+          fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         }}
       >
         <span style={{ fontSize: '1rem', fontWeight: 600, color: textColor }}>{q}</span>
@@ -109,24 +109,24 @@ export default function LandingPage() {
   // Variables de couleur dark/light
   const c = {
     bg: isDark ? '#0B0E14' : '#FFFFFF',
-    bgAlt: isDark ? '#111827' : '#F8FAFC',
-    bgHero: isDark ? 'linear-gradient(180deg, #0F172A 0%, #0B0E14 100%)' : 'linear-gradient(180deg, #F0F7FF 0%, #FFFFFF 100%)',
-    bgCTA: isDark ? 'linear-gradient(180deg, #0B0E14 0%, #0F172A 100%)' : 'linear-gradient(180deg, #FFFFFF 0%, #F0F7FF 100%)',
-    text: isDark ? '#F1F5F9' : '#0F172A',
-    textMuted: isDark ? '#94A3B8' : '#475569',
-    textFaint: isDark ? '#64748B' : '#64748B',
-    border: isDark ? '#1E293B' : '#E2E8F0',
+    bgAlt: isDark ? '#111827' : '#F8F8F4',
+    bgHero: isDark ? 'linear-gradient(180deg, #16443D 0%, #0B0E14 100%)' : 'linear-gradient(180deg, #F0F6EF 0%, #FFFFFF 100%)',
+    bgCTA: isDark ? 'linear-gradient(180deg, #0B0E14 0%, #16443D 100%)' : 'linear-gradient(180deg, #FFFFFF 0%, #F0F6EF 100%)',
+    text: isDark ? '#F0F3EE' : '#16443D',
+    textMuted: isDark ? '#94A3B8' : '#4D6759',
+    textFaint: isDark ? '#657A6E' : '#657A6E',
+    border: isDark ? '#214C40' : '#DFE7DE',
     card: isDark ? '#161B26' : '#FFFFFF',
-    cardBorder: isDark ? '#1E293B' : '#EAECF0',
-    featureBg: isDark ? 'linear-gradient(180deg, #161B26, #1E293B)' : 'linear-gradient(180deg, #F8FAFC, #F1F5F9)',
-    mockupBg: isDark ? '#161B26' : '#F8FAFC',
+    cardBorder: isDark ? '#214C40' : '#EAECF0',
+    featureBg: isDark ? 'linear-gradient(180deg, #161B26, #214C40)' : 'linear-gradient(180deg, #F8F8F4, #F0F3EE)',
+    mockupBg: isDark ? '#161B26' : '#F8F8F4',
     footerBg: isDark ? '#0B0E14' : '#FFFFFF',
-    footerBorder: isDark ? '#1E293B' : '#E2E8F0',
-    footerLine: isDark ? '#1E293B' : '#F1F5F9',
+    footerBorder: isDark ? '#214C40' : '#DFE7DE',
+    footerLine: isDark ? '#214C40' : '#F0F3EE',
   };
 
   return (
-    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", color: c.text, lineHeight: '1.6', overflowX: 'hidden' }}>
+    <div style={{ fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: c.text, lineHeight: '1.6', overflowX: 'hidden' }}>
 
       <style jsx global>{`
         @keyframes gradientMove {
@@ -158,8 +158,9 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════
           HERO
       ═══════════════════════════════════════════════ */}
-      <section style={{
-        padding: '120px 24px 100px',
+      <section className="bb-landing-hero"
+      style={{
+        padding: '100px 24px 90px',
         textAlign: 'center',
         background: c.bgHero,
         position: 'relative',
@@ -172,12 +173,12 @@ export default function LandingPage() {
             transition={{ duration: 0.4 }}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: '#E0EDFF', color: '#0070F3',
+              background: '#E7F1EA', color: '#1C6856',
               padding: '7px 16px', borderRadius: 99,
               fontSize: 13, fontWeight: 600, marginBottom: 24,
             }}
           >
-            <Baby size={15} /> L'allié financier des nouveaux parents
+            <Baby size={15} /> Le budget familial, en toute simplicité
           </motion.div>
 
           <motion.h1
@@ -187,15 +188,15 @@ export default function LandingPage() {
             style={{
               fontSize: 'clamp(2.2rem, 5vw, 3.6rem)',
               fontWeight: 800,
-              fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
+              fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               letterSpacing: '-2px',
               lineHeight: 1.08,
               marginBottom: 24,
               color: c.text,
             }}
           >
-            Bébé arrive.<br />
-            <span style={{ color: '#0070F3' }}>Gardez le contrôle du budget.</span>
+            Grandir ensemble.<br />
+            <span style={{ color: '#1C6856' }}>Garder le cap sur votre budget.</span>
           </motion.h1>
 
           <motion.p
@@ -204,8 +205,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             style={{ fontSize: '1.15rem', color: c.textMuted, maxWidth: 560, margin: '0 auto 36px', lineHeight: 1.7 }}
           >
-            Un bébé coûte en moyenne <strong style={{ color: c.text }}>700 € par mois</strong> la première année.
-            Visualisez chaque dépense, comparez-vous à la moyenne nationale et anticipez les coûts avant qu'ils vous surprennent.
+            Suivez les dépenses de votre enfant, visualisez votre budget en temps réel et préparez les prochains mois sereinement. Toutes vos informations au même endroit, sans complexité.
           </motion.p>
 
           <motion.div
@@ -218,12 +218,12 @@ export default function LandingPage() {
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link href="/signup" style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
-                  background: '#0F172A', color: 'white',
+                  background: '#16443D', color: 'white',
                   padding: '15px 32px', borderRadius: 12,
                   fontSize: '1rem', fontWeight: 600, textDecoration: 'none',
                   boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
                 }}>
-                  Analyser mes dépenses gratuitement <ArrowRight size={16} />
+                  Créer mon espace gratuitement <ArrowRight size={16} />
                 </Link>
               </motion.div>
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -253,7 +253,7 @@ export default function LandingPage() {
               borderRadius: 20,
               overflow: 'hidden',
               boxShadow: '0 24px 80px rgba(0,0,0,0.14)',
-              border: '1px solid #E2E8F0',
+              border: '1px solid #DFE7DE',
               background: c.mockupBg,
               padding: 24,
             }}
@@ -266,12 +266,12 @@ export default function LandingPage() {
                 { label: 'Opérations', value: '23' },
               ].map((card, i) => (
                 <div key={i} style={{
-                  background: card.accent ? '#EFF6FF' : c.card,
-                  border: `1px solid ${card.accent ? '#BFDBFE' : c.border}`,
+                  background: card.accent ? '#E7F1EA' : c.card,
+                  border: `1px solid ${card.accent ? '#B9D8C3' : c.border}`,
                   borderRadius: 12, padding: '14px 16px', textAlign: 'left',
                 }}>
                   <p style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 6px' }}>{card.label}</p>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: card.green ? '#10B981' : card.accent ? '#1E40AF' : '#0F172A', margin: 0, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif" }}>{card.value}</p>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: card.green ? '#2F8A6B' : card.accent ? '#16443D' : '#16443D', margin: 0, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>{card.value}</p>
                 </div>
               ))}
             </div>
@@ -279,9 +279,9 @@ export default function LandingPage() {
             <div style={{ background: c.card, borderRadius: 12, border: `1px solid ${c.border}`, padding: '16px 20px' }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: c.text, margin: '0 0 14px' }}>Dépenses par catégorie</p>
               {[
-                { label: 'Couches', pct: 62, color: '#1E40AF' },
-                { label: 'Alimentation', pct: 48, color: '#3B82F6' },
-                { label: 'Santé', pct: 71, color: '#60A5FA' },
+                { label: 'Couches', pct: 62, color: '#16443D' },
+                { label: 'Alimentation', pct: 48, color: '#418A74' },
+                { label: 'Santé', pct: 71, color: '#9FCDB1' },
                 { label: 'Équipement', pct: 35, color: '#93C5FD' },
               ].map((bar, i) => (
                 <div key={i} style={{ marginBottom: 10 }}>
@@ -289,7 +289,7 @@ export default function LandingPage() {
                     <span style={{ fontSize: 11, color: c.textMuted }}>{bar.label}</span>
                     <span style={{ fontSize: 11, color: '#94A3B8' }}>{bar.pct}% de la moyenne</span>
                   </div>
-                  <div style={{ height: 6, background: '#F1F5F9', borderRadius: 99, overflow: 'hidden' }}>
+                  <div style={{ height: 6, background: '#F0F3EE', borderRadius: 99, overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${bar.pct}%`, background: bar.color, borderRadius: 99 }} />
                   </div>
                 </div>
@@ -300,52 +300,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          CHIFFRES CLÉS ANIMÉS
-      ═══════════════════════════════════════════════ */}
-      <section style={{ padding: '80px 24px', background: '#0F172A' }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#475569', marginBottom: 48 }}
-          >
-            Ce que les études disent vraiment
-          </motion.p>
-          <style>{`
-            .stats-grid {
-              display: grid;
-              grid-template-columns: repeat(2, 1fr);
-              gap: 40px 24px;
-              text-align: center;
-            }
-            @media (min-width: 768px) {
-              .stats-grid { grid-template-columns: repeat(4, 1fr); }
-            }
-          `}</style>
-          <div className="stats-grid">
-            {[
-              { value: 700, suffix: ' €/mois', label: 'Coût moyen 1re année', source: 'INSEE 2023' },
-              { value: 10000, suffix: ' €', label: 'Budget total 1re année', source: 'CAF.fr' },
-              { value: 40, suffix: '%', label: 'Parents dépassent leur budget', source: 'CREDOC 2022' },
-              { value: 3, suffix: 'e mois', label: 'Quand le budget dérape', source: 'Observatoire CAF' },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-              >
-                <p style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", color: '#60A5FA', margin: '0 0 8px', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
-                  <Counter to={stat.value} suffix={stat.suffix} />
-                </p>
-                <p style={{ fontSize: '0.85rem', color: '#CBD5E1', margin: '0 0 4px', fontWeight: 500, lineHeight: 1.4 }}>{stat.label}</p>
-                <p style={{ fontSize: 11, color: c.textMuted, margin: 0 }}>{stat.source}</p>
-              </motion.div>
-            ))}
-          </div>
+      <section className="bb-benefits-strip" aria-label="Pourquoi choisir BabyBudget">
+        <div className="bb-benefits-inner">
+          {[
+            { icon: '01', title: 'Comprendre', desc: 'Voyez rapidement où part votre budget.' },
+            { icon: '02', title: 'Anticiper', desc: 'Gardez un œil sur les dépenses à venir.' },
+            { icon: '03', title: 'Décider', desc: 'Faites vos choix avec une vision claire.' },
+            { icon: '04', title: 'Grandir', desc: 'Suivez votre famille au fil du temps.' },
+          ].map(item => (
+            <div key={item.icon} className="bb-benefit">
+              <span className="bb-benefit-number">{item.icon}</span>
+              <div><h2>{item.title}</h2><p>{item.desc}</p></div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -361,8 +328,8 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#EF4444', marginBottom: 12 }}>Le problème réel</p>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 20 }}>
+            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#C85B56', marginBottom: 12 }}>Le problème réel</p>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 20 }}>
               Un budget qui explose…<br />sans prévenir
             </h2>
             <p style={{ color: c.textMuted, fontSize: '1rem', lineHeight: 1.75, marginBottom: 20 }}>
@@ -386,13 +353,13 @@ export default function LandingPage() {
             }}
           >
             {[
-              { icon: <TrendingDown size={20} color="#0070F3" />, text: 'Anticipez les pics de dépenses mensuel' },
-              { icon: <ShieldCheck size={20} color="#0070F3" />, text: 'Sécurisez votre budget familial' },
-              { icon: <PieChart size={20} color="#0070F3" />, text: 'Repérez les postes de gaspillage' },
-              { icon: <BarChart2 size={20} color="#0070F3" />, text: 'Comparez-vous à la moyenne nationale (INSEE)' },
+              { icon: <TrendingDown size={20} color="#1C6856" />, text: 'Anticipez les pics de dépenses mensuel' },
+              { icon: <ShieldCheck size={20} color="#1C6856" />, text: 'Sécurisez votre budget familial' },
+              { icon: <PieChart size={20} color="#1C6856" />, text: 'Repérez les postes de gaspillage' },
+              { icon: <BarChart2 size={20} color="#1C6856" />, text: 'Comparez-vous à la moyenne nationale (INSEE)' },
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: i < 3 ? 20 : 0 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#E7F1EA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {item.icon}
                 </div>
                 <span style={{ fontWeight: 500, color: c.text, fontSize: '0.95rem' }}>{item.text}</span>
@@ -415,8 +382,8 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0070F3', marginBottom: 12 }}>Fonctionnalité unique</p>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 16 }}>
+            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 12 }}>Fonctionnalité unique</p>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 16 }}>
               Êtes-vous au-dessus ou en dessous<br />de la moyenne nationale ?
             </h2>
             <p style={{ color: c.textMuted, fontSize: '1rem', maxWidth: 580, margin: '0 auto 48px', lineHeight: 1.7 }}>
@@ -438,7 +405,7 @@ export default function LandingPage() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
               <p style={{ fontWeight: 700, color: c.text, margin: 0, fontSize: '0.95rem' }}>Tranche 0–1 an · Comparaison nationale</p>
-              <span style={{ background: '#EFF6FF', color: '#1D4ED8', fontSize: 12, fontWeight: 600, padding: '4px 12px', borderRadius: 99 }}>🇫🇷 Données INSEE · CAF · DREES</span>
+              <span style={{ background: '#E7F1EA', color: '#1C6856', fontSize: 12, fontWeight: 600, padding: '4px 12px', borderRadius: 99 }}>🇫🇷 Données INSEE · CAF · DREES</span>
             </div>
             {[
               { cat: 'Couches', vous: 58, nationale: 60 },
@@ -454,16 +421,16 @@ export default function LandingPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, alignItems: 'center' }}>
                     <span style={{ fontSize: 13, fontWeight: 500, color: c.text }}>{row.cat}</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#1E40AF' }}>{row.vous} €</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#16443D' }}>{row.vous} €</span>
                       <span style={{ fontSize: 12, color: '#94A3B8' }}>/ {row.nationale} € moy.</span>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: isOver ? '#EF4444' : '#10B981' }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: isOver ? '#C85B56' : '#2F8A6B' }}>
                         {isOver ? '▲' : '▼'} {Math.abs(Number(diff))}%
                       </span>
                     </div>
                   </div>
-                  <div style={{ position: 'relative', height: 8, background: '#F1F5F9', borderRadius: 99, overflow: 'visible' }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${(row.nationale / max) * 100}%`, background: '#E2E8F0', borderRadius: 99 }} />
-                    <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${(row.vous / max) * 100}%`, background: isOver ? '#EF4444' : '#6366F1', borderRadius: 99, opacity: 0.85 }} />
+                  <div style={{ position: 'relative', height: 8, background: '#F0F3EE', borderRadius: 99, overflow: 'visible' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${(row.nationale / max) * 100}%`, background: '#DFE7DE', borderRadius: 99 }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${(row.vous / max) * 100}%`, background: isOver ? '#C85B56' : '#1C6856', borderRadius: 99, opacity: 0.85 }} />
                   </div>
                 </div>
               );
@@ -484,7 +451,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             style={{ textAlign: 'center', marginBottom: 56 }}
           >
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', marginBottom: 12 }}>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: '-1px', marginBottom: 12 }}>
               Pensé pour les parents modernes
             </h2>
             <p style={{ color: c.textFaint, fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
@@ -493,10 +460,10 @@ export default function LandingPage() {
           </motion.div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
-            <FeatureCard icon={<Zap size={20} color="#0070F3" />} title="Ultra rapide" desc="Ajoutez une dépense en 3 secondes. Interface pensée pour être utilisée entre deux biberons." delay={0} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
-            <FeatureCard icon={<PieChart size={20} color="#0070F3" />} title="Visuels clairs" desc="Graphiques intuitifs pour comprendre votre budget d'un coup d'œil, sans formation." delay={0.1} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
-            <FeatureCard icon={<Baby size={20} color="#0070F3" />} title="Multi-enfants" desc="Un profil et un budget indépendant par enfant. Idéal pour les familles avec plusieurs enfants." delay={0.2} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
-            <FeatureCard icon={<BarChart2 size={20} color="#0070F3" />} title="Insights automatiques" desc="L'app génère des analyses et conseils personnalisés sans que vous n'ayez rien à configurer." delay={0.3} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
+            <FeatureCard icon={<Zap size={20} color="#1C6856" />} title="Ultra rapide" desc="Ajoutez une dépense en 3 secondes. Interface pensée pour être utilisée entre deux biberons." delay={0} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
+            <FeatureCard icon={<PieChart size={20} color="#1C6856" />} title="Visuels clairs" desc="Graphiques intuitifs pour comprendre votre budget d'un coup d'œil, sans formation." delay={0.1} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
+            <FeatureCard icon={<Baby size={20} color="#1C6856" />} title="Multi-enfants" desc="Un profil et un budget indépendant par enfant. Idéal pour les familles avec plusieurs enfants." delay={0.2} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
+            <FeatureCard icon={<BarChart2 size={20} color="#1C6856" />} title="Insights automatiques" desc="L'app génère des analyses et conseils personnalisés sans que vous n'ayez rien à configurer." delay={0.3} cardBg={c.card} cardBorder={c.cardBorder} textColor={c.text} textMuted={c.textFaint} />
           </div>
         </div>
       </section>
@@ -513,8 +480,8 @@ export default function LandingPage() {
             viewport={{ once: true }}
             style={{ textAlign: 'center', marginBottom: 40 }}
           >
-            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0070F3', marginBottom: 10 }}>Disponible sur BabyBudget</p>
-            <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', marginBottom: 12, color: c.text }}>
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 10 }}>Disponible sur BabyBudget</p>
+            <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 800, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: '-1px', marginBottom: 12, color: c.text }}>
               Tout pour préparer l'arrivée de bébé
             </h2>
             <p style={{ color: c.textMuted, fontSize: '1rem', maxWidth: 480, margin: '0 auto' }}>
@@ -528,11 +495,11 @@ export default function LandingPage() {
                 emoji: '📋',
                 title: 'Guide des dépenses par âge',
                 desc: 'De la grossesse aux 2 ans — vaccins obligatoires, achats indispensables, aides disponibles.',
-                color: '#6366F1',
+                color: '#1C6856',
                 preview: (
                   <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 12 }}>
                     {['Avant naissance', '0–1 mois', '2–3 mois', '4–6 mois'].map(s => (
-                      <span key={s} style={{ fontSize: 10, padding: '2px 7px', borderRadius: 99, background: isDark ? '#1E2D4A' : '#EFF6FF', color: isDark ? '#60A5FA' : '#1D4ED8', fontWeight: 500 }}>{s}</span>
+                      <span key={s} style={{ fontSize: 10, padding: '2px 7px', borderRadius: 99, background: isDark ? '#1E2D4A' : '#E7F1EA', color: isDark ? '#9FCDB1' : '#1C6856', fontWeight: 500 }}>{s}</span>
                     ))}
                   </div>
                 ),
@@ -541,7 +508,7 @@ export default function LandingPage() {
                 emoji: '🧮',
                 title: 'Calculateur de budget prévisionnel',
                 desc: "Estimez votre budget mensuel réel selon vos revenus et mode de garde — aides CAF déduites.",
-                color: '#0070F3',
+                color: '#1C6856',
                 preview: (
                   <div style={{ marginTop: 12 }}>
                     {[['Crèche', 55], ['Assistante mat.', 38], ['Garde à domicile', 80]].map(([label, pct]) => (
@@ -549,8 +516,8 @@ export default function LandingPage() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: c.textMuted, marginBottom: 3 }}>
                           <span>{label}</span><span>{pct}%</span>
                         </div>
-                        <div style={{ height: 4, background: isDark ? '#1E293B' : '#E2E8F0', borderRadius: 99 }}>
-                          <div style={{ height: '100%', width: `${pct}%`, background: '#0070F3', borderRadius: 99, opacity: 0.7 }} />
+                        <div style={{ height: 4, background: isDark ? '#214C40' : '#DFE7DE', borderRadius: 99 }}>
+                          <div style={{ height: '100%', width: `${pct}%`, background: '#1C6856', borderRadius: 99, opacity: 0.7 }} />
                         </div>
                       </div>
                     ))}
@@ -561,15 +528,15 @@ export default function LandingPage() {
                 emoji: '🇫🇷',
                 title: 'Comparaison nationale',
                 desc: "Comparez vos dépenses aux moyennes nationales INSEE/CAF par catégorie et tranche d'âge.",
-                color: '#10B981',
+                color: '#2F8A6B',
                 preview: (
                   <div style={{ marginTop: 12 }}>
                     {[['Couches', 72, 60], ['Alimentation', 45, 80], ['Santé', 88, 70]].map(([label, vous, nat]) => (
                       <div key={label as string} style={{ marginBottom: 6 }}>
                         <div style={{ fontSize: 10, color: c.textMuted, marginBottom: 3 }}>{label}</div>
-                        <div style={{ position: 'relative', height: 4, background: isDark ? '#1E293B' : '#E2E8F0', borderRadius: 99 }}>
-                          <div style={{ position: 'absolute', height: '100%', width: `${nat}%`, background: isDark ? '#2D364D' : '#CBD5E1', borderRadius: 99 }} />
-                          <div style={{ position: 'absolute', height: '100%', width: `${vous}%`, background: '#10B981', borderRadius: 99, opacity: 0.8 }} />
+                        <div style={{ position: 'relative', height: 4, background: isDark ? '#214C40' : '#DFE7DE', borderRadius: 99 }}>
+                          <div style={{ position: 'absolute', height: '100%', width: `${nat}%`, background: isDark ? '#2D364D' : '#B9D0BF', borderRadius: 99 }} />
+                          <div style={{ position: 'absolute', height: '100%', width: `${vous}%`, background: '#2F8A6B', borderRadius: 99, opacity: 0.8 }} />
                         </div>
                       </div>
                     ))}
@@ -609,7 +576,7 @@ export default function LandingPage() {
             </p>
             <Link href="/signup" style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: '#0F172A', color: 'white',
+              background: '#16443D', color: 'white',
               padding: '12px 28px', borderRadius: 12,
               fontSize: '0.95rem', fontWeight: 600, textDecoration: 'none',
             }}>
@@ -631,7 +598,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             style={{ textAlign: 'center', marginBottom: 56 }}
           >
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.2rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1px', marginBottom: 12 }}>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.2rem)', fontWeight: 800, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: '-1px', marginBottom: 12 }}>
               Questions fréquentes
             </h2>
           </motion.div>
@@ -684,8 +651,8 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#0070F3', marginBottom: 16 }}>Commencez maintenant</p>
-            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 800, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", letterSpacing: '-1.5px', lineHeight: 1.1, marginBottom: 16 }}>
+            <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 16 }}>Commencez maintenant</p>
+            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 800, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: '-1.5px', lineHeight: 1.1, marginBottom: 16 }}>
               Reprenez le contrôle<br />dès aujourd'hui
             </h2>
             <p style={{ color: c.textFaint, fontSize: '1rem', marginBottom: 36, lineHeight: 1.7 }}>
@@ -696,7 +663,7 @@ export default function LandingPage() {
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link href="/signup" style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
-                  background: '#0F172A', color: 'white',
+                  background: '#16443D', color: 'white',
                   padding: '16px 36px', borderRadius: 12,
                   fontSize: '1rem', fontWeight: 600, textDecoration: 'none',
                   boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
@@ -709,7 +676,7 @@ export default function LandingPage() {
               <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px 20px' }}>
                 {['Sans carte bancaire', 'Données privées', 'Résultats immédiats'].map((item) => (
                   <span key={item} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#94A3B8' }}>
-                    <CheckCircle size={12} color="#10B981" /> {item}
+                    <CheckCircle size={12} color="#2F8A6B" /> {item}
                   </span>
                 ))}
               </div>
@@ -725,9 +692,9 @@ export default function LandingPage() {
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 28, height: 28, background: '#0F172A', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>👶</div>
-              <span style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif", fontWeight: 800, fontSize: 15, color: c.text, letterSpacing: '-0.02em' }}>
-                Baby<span style={{ color: '#6366F1' }}>Budget</span>
+              <div style={{ width: 28, height: 28, background: '#16443D', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>👶</div>
+              <span style={{ fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontWeight: 800, fontSize: 15, color: c.text, letterSpacing: '-0.02em' }}>
+                Baby<span style={{ color: '#1C6856' }}>Budget</span>
               </span>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
@@ -738,7 +705,7 @@ export default function LandingPage() {
           </div>
           <div style={{ height: 1, background: c.footerLine, marginBottom: 16 }} />
           <p style={{ fontSize: 11, color: '#94A3B8', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
-            Données indicatives basées sur les moyennes nationales françaises (INSEE, CAF, DREES, CREDOC). À titre indicatif uniquement.<br />
+            Les estimations et comparaisons sont indicatives et ne remplacent pas les barèmes officiels en vigueur.<br />
             © {new Date().getFullYear()} BabyBudget — Application gratuite, sans publicité, sans engagement.
           </p>
         </div>
