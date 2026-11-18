@@ -101,6 +101,26 @@ async function main() {
     assert.notEqual(later, initial, 'Slider value must respond to keyboard arrow');
   });
 
+  await check('CAF amounts default to zero and user-entered aids are reflected', async page => {
+    await page.goto(origin + '/budget', { waitUntil: 'domcontentloaded' });
+    const cmg = page.locator('#budget-cmg');
+    const paje = page.locator('#budget-paje');
+    assert.equal(await cmg.inputValue(), '0');
+    assert.equal(await paje.inputValue(), '0');
+    await cmg.fill('120');
+    await paje.fill('80');
+    assert.equal(await cmg.inputValue(), '120');
+    assert.equal(await paje.inputValue(), '80');
+    await page.getByText('PAJE renseignée', { exact: true }).first().waitFor();
+    await page.getByText('CMG saisi', { exact: true }).first().waitFor();
+  });
+
+  await check('Comparison acknowledges illustrative estimates rather than national statistics', async page => {
+    await page.goto(origin + '/comparaison', { waitUntil: 'domcontentloaded' });
+    await page.getByText(/hypothèses budgétaires illustratives/i).first().waitFor();
+    assert.equal(await page.getByText(/vous êtes plus économe que \d+%/i).count(), 0);
+  });
+
   await check('Protected dashboard redirects anonymous visitor to login', async page => {
     await page.goto(origin + '/app', { waitUntil: 'domcontentloaded' });
     await page.waitForURL('**/login', { timeout: 15000 });
