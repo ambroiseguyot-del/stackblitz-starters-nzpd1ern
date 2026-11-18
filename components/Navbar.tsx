@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { BarChart3, BookOpen, Calculator, ChartPie, LayoutDashboard, CalendarRange, LogOut, Menu, Moon, Newspaper, Sun, UserRound, X } from 'lucide-react';
+import { BarChart3, BookOpen, Calculator, ChartPie, LayoutDashboard, CalendarRange, Repeat2, LogOut, Menu, Moon, Newspaper, Sun, UserRound, X } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import ProfilePanel from './ProfilePanel';
 import BrandLogo from './BrandLogo';
@@ -12,13 +12,14 @@ const privateLinks = [
   { href: '/app', label: 'Tableau de bord', short: 'Accueil', icon: LayoutDashboard },
   { href: '/analyse', label: 'Analyse', short: 'Analyse', icon: BarChart3 },
   { href: '/previsions', label: 'Prévisions', short: 'Prévoir', icon: CalendarRange },
+  { href: '/recurrences', label: 'Récurrences', short: 'Échéances', icon: Repeat2 },
   { href: '/budget', label: 'Budget estimé', short: 'Budget', icon: Calculator },
   { href: '/comparaison', label: 'Comparaison', short: 'Comparer', icon: ChartPie },
   { href: '/informations', label: 'Guides', short: 'Guides', icon: BookOpen },
   { href: '/blog', label: 'Blog', short: 'Blog', icon: Newspaper },
 ];
 
-const publicLinks = privateLinks.filter(item => !['/app', '/analyse', '/previsions'].includes(item.href));
+const publicLinks = privateLinks.filter(item => !['/app', '/analyse', '/previsions', '/recurrences'].includes(item.href));
 
 export default function Navbar() {
   const [user, setUser] = useState<{ email?: string } | null>(null);
