@@ -123,11 +123,14 @@ function useExpenses() {
     setLoading(true);
     setWarning(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const uid = session?.user?.id;
-
-      let query = supabase.from("expenses").select("*").limit(1000);
-      if (uid) query = query.eq("user_id", uid);
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        setExpenses([]);
+        setLoading(false);
+        return; // Public comparisons remain available; private data is not queried.
+      }
+      const uid = user.id;
+      const query = supabase.from("expenses").select("*").eq("user_id", uid).limit(1000);
 
       const { data, error: err } = await query;
 
