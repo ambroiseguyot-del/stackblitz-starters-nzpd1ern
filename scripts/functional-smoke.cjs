@@ -66,6 +66,16 @@ async function main() {
     assert.equal(await page.locator('html').evaluate(el => el.classList.contains('dark')), true);
   });
 
+  await check('Dark theme remains active across public navigation', async page => {
+    await page.goto(origin + '/', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'Activer le mode sombre' }).click();
+    for (const route of ['/budget', '/comparaison', '/informations', '/blog', '/login']) {
+      await page.goto(origin + route, { waitUntil: 'domcontentloaded' });
+      assert.equal(await page.locator('html').evaluate(el => el.classList.contains('dark')), true,
+        'Dark theme lost on ' + route);
+    }
+  });
+
   await check('Login email, password, reveal and reset mode', async page => {
     await page.goto(origin + '/login', { waitUntil: 'domcontentloaded' });
     await page.locator('#email').fill('test@example.invalid');
