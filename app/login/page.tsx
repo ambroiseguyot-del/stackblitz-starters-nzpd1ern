@@ -73,7 +73,7 @@ export default function Login() {
         .lr { min-height: 100vh; display: flex; font-family: ${SYSTEM_FONT}; background: #F7F4F0; }
 
         .lr-left {
-          display: none; flex: 1; background: #0F172A; padding: 3rem;
+          display: none; flex: 1; background: #16443D; padding: 3rem;
           flex-direction: column; justify-content: space-between;
           position: relative; overflow: hidden;
         }
@@ -93,7 +93,7 @@ export default function Login() {
         }
 
         .lr-brand { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
-        .lr-brand-icon { width: 38px; height: 38px; background: #6366F1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .lr-brand-icon { width: 38px; height: 38px; background: #1C6856; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         .lr-brand-name { font-weight: 800; font-size: 18px; color: white; letter-spacing: -0.02em; }
 
         .lr-left-content { position: relative; z-index: 1; }
@@ -110,29 +110,29 @@ export default function Login() {
 
         .lr-wrap { width: 100%; max-width: 380px; }
 
-        .lr-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #6366F1; margin: 0 0 8px; }
-        .lr-title { font-weight: 800; font-size: 1.8rem; color: #0F172A; letter-spacing: -0.03em; margin: 0 0 6px; }
-        .lr-sub { font-size: 14px; color: #64748B; margin: 0 0 1.75rem; line-height: 1.5; }
+        .lr-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #1C6856; margin: 0 0 8px; }
+        .lr-title { font-weight: 800; font-size: 1.8rem; color: #16443D; letter-spacing: -0.03em; margin: 0 0 6px; }
+        .lr-sub { font-size: 14px; color: #657A6E; margin: 0 0 1.75rem; line-height: 1.5; }
 
         .lr-field { margin-bottom: 1rem; }
-        .lr-label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+        .lr-label { display: block; font-size: 12px; font-weight: 500; color: #3D5648; margin-bottom: 6px; }
 
         .lr-input-wrap { position: relative; }
         .lr-input {
-          width: 100%; padding: 13px 16px; border: 1.5px solid #E2E8F0; border-radius: 12px;
-          font-size: 14px; font-family: ${SYSTEM_FONT}; background: white; color: #0F172A; outline: none;
+          width: 100%; padding: 13px 16px; border: 1.5px solid #DFE7DE; border-radius: 12px;
+          font-size: 14px; font-family: ${SYSTEM_FONT}; background: white; color: #16443D; outline: none;
           transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .lr-input:focus { border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .lr-input:focus { border-color: #1C6856; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
         .lr-input.pw { padding-right: 48px; }
-        .lr-input:disabled { opacity: 0.5; background: #F8FAFC; }
+        .lr-input:disabled { opacity: 0.5; background: #F8F8F4; }
 
         .lr-eye {
           position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
           background: none; border: none; cursor: pointer; padding: 4px;
           color: #94A3B8; font-size: 15px; line-height: 1; display: flex; align-items: center; transition: color 0.1s;
         }
-        .lr-eye:hover { color: #475569; }
+        .lr-eye:hover { color: #4D6759; }
 
         .lr-error {
           display: flex; align-items: flex-start; gap: 8px; background: #FEF2F2;
@@ -140,33 +140,33 @@ export default function Login() {
           font-size: 13px; color: #991B1B; line-height: 1.4; animation: fadeIn 0.2s ease-out;
         }
         .lr-success {
-          display: flex; align-items: flex-start; gap: 8px; background: #F0FDF4;
+          display: flex; align-items: flex-start; gap: 8px; background: #EEF7EE;
           border: 1px solid #BBF7D0; border-radius: 10px; padding: 10px 14px; margin-bottom: 1rem;
           font-size: 13px; color: #166534; line-height: 1.4; animation: fadeIn 0.2s ease-out;
         }
 
-        .lr-attempts { font-size: 11px; color: #EF4444; text-align: center; margin: 6px 0 0; }
+        .lr-attempts { font-size: 11px; color: #C85B56; text-align: center; margin: 6px 0 0; }
 
         .lr-btn {
-          width: 100%; padding: 14px; margin-top: 0.75rem; background: #0F172A; color: white;
+          width: 100%; padding: 14px; margin-top: 0.75rem; background: #16443D; color: white;
           border: none; border-radius: 12px; font-size: 14px; font-weight: 500;
           font-family: ${SYSTEM_FONT}; cursor: pointer;
           transition: background 0.15s, transform 0.1s; letter-spacing: 0.01em;
         }
-        .lr-btn:hover:not(:disabled) { background: #1E293B; }
+        .lr-btn:hover:not(:disabled) { background: #214C40; }
         .lr-btn:active:not(:disabled) { transform: scale(0.99); }
         .lr-btn:disabled { opacity: 0.45; cursor: not-allowed; }
         .lr-btn.danger { background: #DC2626; }
 
         .lr-footer { margin-top: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .lr-divider { width: 100%; height: 1px; background: #E2E8F0; }
+        .lr-divider { width: 100%; height: 1px; background: #DFE7DE; }
 
         .lr-link {
-          font-size: 13px; color: #64748B; text-decoration: none; background: none;
+          font-size: 13px; color: #657A6E; text-decoration: none; background: none;
           border: none; cursor: pointer; padding: 0; font-family: ${SYSTEM_FONT}; transition: color 0.15s;
         }
-        .lr-link:hover { color: #0F172A; }
-        .lr-link.accent { color: #6366F1; font-weight: 500; }
+        .lr-link:hover { color: #16443D; }
+        .lr-link.accent { color: #1C6856; font-weight: 500; }
         .lr-link.accent:hover { color: #4F46E5; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
@@ -241,7 +241,7 @@ export default function Login() {
                     Mot de passe oublié ?
                   </button>
                   <div className="lr-divider" />
-                  <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
+                  <p style={{ fontSize: 13, color: '#657A6E', margin: 0 }}>
                     Pas encore de compte ?{' '}
                     <Link href="/signup" className="lr-link accent">Créer un compte</Link>
                   </p>
