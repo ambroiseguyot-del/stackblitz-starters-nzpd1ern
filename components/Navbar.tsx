@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { BarChart3, BookOpen, Calculator, ChartPie, LayoutDashboard, LogOut, Menu, Moon, Newspaper, Sun, UserRound, X } from 'lucide-react';
+import { BarChart3, BookOpen, Calculator, ChartPie, LayoutDashboard, CalendarRange, Repeat2, LogOut, Menu, Moon, Newspaper, Sun, UserRound, X } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import ProfilePanel from './ProfilePanel';
 import BrandLogo from './BrandLogo';
@@ -11,13 +11,15 @@ import BrandLogo from './BrandLogo';
 const privateLinks = [
   { href: '/app', label: 'Tableau de bord', short: 'Accueil', icon: LayoutDashboard },
   { href: '/analyse', label: 'Analyse', short: 'Analyse', icon: BarChart3 },
+  { href: '/previsions', label: 'Prévisions', short: 'Prévoir', icon: CalendarRange },
+  { href: '/recurrences', label: 'Récurrences', short: 'Échéances', icon: Repeat2 },
   { href: '/budget', label: 'Budget estimé', short: 'Budget', icon: Calculator },
   { href: '/comparaison', label: 'Comparaison', short: 'Comparer', icon: ChartPie },
   { href: '/informations', label: 'Guides', short: 'Guides', icon: BookOpen },
   { href: '/blog', label: 'Blog', short: 'Blog', icon: Newspaper },
 ];
 
-const publicLinks = privateLinks.filter(item => !['/app', '/analyse'].includes(item.href));
+const publicLinks = privateLinks.filter(item => !['/app', '/analyse', '/previsions', '/recurrences'].includes(item.href));
 
 export default function Navbar() {
   const [user, setUser] = useState<{ email?: string } | null>(null);
@@ -133,7 +135,7 @@ export default function Navbar() {
       )}
       {user && (
         <nav className="bb-bottom-nav" aria-label="Navigation rapide">
-          {privateLinks.slice(0, 4).map(({ href, short, icon: Icon }) => (
+          {privateLinks.filter(item => ['/app', '/analyse', '/previsions', '/budget'].includes(item.href)).map(({ href, short, icon: Icon }) => (
             <Link key={href} href={href} className={'bb-bottom-link' + (active(href) ? ' is-active' : '')} aria-current={active(href) ? 'page' : undefined}>
               <Icon size={21} strokeWidth={1.9} aria-hidden="true"/><span>{short}</span>
             </Link>

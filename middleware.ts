@@ -32,7 +32,7 @@ export async function middleware(req: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     // Protection : si on va sur /app sans session -> direction /login
-    if ((authError || !user) && req.nextUrl.pathname.startsWith('/app')) {
+    if ((authError || !user) && (['/app', '/analyse', '/previsions', '/recurrences'].some(p => req.nextUrl.pathname === p || req.nextUrl.pathname.startsWith(p + '/')))) {
       return NextResponse.redirect(new URL('/login', req.url));
     }
   } catch (error) {
@@ -44,5 +44,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/app/:path*'],
+  matcher: ['/app/:path*', '/analyse/:path*', '/previsions/:path*', '/recurrences/:path*'],
 };
