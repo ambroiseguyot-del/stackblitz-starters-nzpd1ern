@@ -135,7 +135,7 @@ export default function RecurrencesPage() {
       <div className="bb-prediction-intro">
         <span className="bb-kicker">UNE FAMILLE BIEN ORGANISÉE</span>
         <h1>Les dépenses qui reviennent.</h1>
-        <p>Retrouvez vos habitudes mensuelles, vérifiez les échéances et reportez-les en un clic. Aucune dépense n'est créée sans votre confirmation.</p>
+        <p>Retrouvez vos habitudes mensuelles et vérifiez les échéances déjà enregistrées avant d'en confirmer une manquante. Un traitement automatique peut également être actif côté serveur.</p>
       </div>
       <section className="bb-recurring-shell">
         <div className="bb-recurring-header">
