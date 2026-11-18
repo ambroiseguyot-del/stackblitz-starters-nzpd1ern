@@ -53,7 +53,7 @@ const TIMELINE = [
     evenements: [
       { nom: 'Examen du 1er mois obligatoire', type: 'médical', remboursement: '100% Sécu' },
       { nom: 'Déclaration de naissance (72h)', type: 'admin', remboursement: 'Gratuit — mairie' },
-      { nom: 'Ouverture dossier CAF', type: 'admin', remboursement: 'PAJE ~184€/mois selon revenus' },
+      { nom: 'Ouverture dossier CAF', type: 'admin', remboursement: 'PAJE sous conditions' },
     ],
   },
   {
@@ -152,9 +152,9 @@ const GROSSES_DEPENSES = [
 ];
 
 const AIDES = [
-  { nom: 'PAJE — Prime naissance', montant: '1 021 €', condition: 'Sous conditions de ressources', emoji: '🎁', source: 'CAF' },
-  { nom: 'PAJE — Allocation de base', montant: "Jusqu'à 184 €/mois", condition: "Jusqu'aux 3 ans de l'enfant", emoji: '💰', source: 'CAF' },
-  { nom: 'CMG — Complément mode de garde', montant: "Jusqu'à 1 000 €/mois", condition: 'Garde par assistante maternelle', emoji: '👶', source: 'CAF' },
+  { nom: 'PAJE — Prime naissance', montant: 'Selon barème CAF', condition: 'Sous conditions de ressources', emoji: '🎁', source: 'CAF' },
+  { nom: 'PAJE — Allocation de base', montant: 'Selon barème CAF', condition: "Jusqu'aux 3 ans de l'enfant", emoji: '💰', source: 'CAF' },
+  { nom: 'CMG — Complément mode de garde', montant: 'Selon situation familiale', condition: 'Garde par assistante maternelle', emoji: '👶', source: 'CAF' },
   { nom: 'Remboursement maternité', montant: '100% des frais', condition: 'Grossesse + accouchement', emoji: '🏥', source: 'Sécu' },
   { nom: 'Congé paternité', montant: '28 jours indemnisés', condition: 'Depuis juillet 2021', emoji: '👨', source: 'CPAM' },
   { nom: 'Allocations familiales', montant: 'Dès le 2e enfant', condition: 'À partir de 2 enfants', emoji: '👨‍👩‍👧', source: 'CAF' },
