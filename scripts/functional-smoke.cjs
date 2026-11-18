@@ -131,6 +131,36 @@ async function main() {
     assert.equal(await page.getByText(/vous êtes plus économe que \d+%/i).count(), 0);
   });
 
+  await check('Brand identity: SVG symbol, favicon, iPhone and social media assets', async page => {
+    const res = await page.goto(origin + '/', { waitUntil: 'domcontentloaded' });
+    assert.equal(res.status(), 200);
+    const brand = page.getByRole('navigation', { name: 'Navigation principale' }).locator('img.bb-brand-symbol');
+    await brand.waitFor();
+    assert.ok((await brand.getAttribute('src')).includes('/brand-symbol.svg'));
+    const meta = await page.locator('meta[property="og:image"]').getAttribute('content');
+    assert.ok(meta.includes('/og-image.png'), 'Open Graph must use the matching new image');
+    const twitter = await page.locator('meta[name="twitter:image"]').getAttribute('content');
+    assert.ok(twitter.includes('/og-image.png'), 'Twitter image must match Open Graph');
+    for (const path of ['/favicon.ico','/favicon.svg','/apple-touch-icon.png',
+      '/icon-192.png','/icon-512.png','/icon-maskable-512.png','/og-image.png','/og-image.jpg']) {
+      const resource = await page.request.get(origin + path);
+      assert.equal(resource.status(), 200, 'Missing identity asset: ' + path);
+      assert.ok(Number(resource.headers()['content-length'] || 1) > 0);
+    }
+  });
+
+  await check('Updated blog posts reflect official CAF amounts and conservative claims', async page => {
+    await page.goto(origin + '/blog', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('link', { name: /Aides CAF bébé 2026/i }).first().waitFor();
+    await page.goto(origin + '/blog/aides-caf-bebe-2026', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('heading', { name: /Aides CAF pour bébé en 2026/i }).waitFor();
+    assert.ok((await page.locator('article').innerText()).includes('1 093,08 €'));
+    assert.ok((await page.locator('article').innerText()).includes('ne calcule pas automatiquement'));
+    await page.goto(origin + '/blog/cout-bebe-premiere-annee', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('heading', { name: /Combien coûte un bébé la première année/i }).waitFor();
+    assert.ok((await page.locator('article').innerText()).includes('exemple entièrement illustratif'));
+  });
+
   await check('Protected dashboard redirects anonymous visitor to login', async page => {
     await page.goto(origin + '/app', { waitUntil: 'domcontentloaded' });
     await page.waitForURL('**/login', { timeout: 15000 });
