@@ -1,0 +1,32 @@
+name: One-time Baby Budget brand asset generation
+on:
+  push:
+    branches:
+      - fix/brand-onesie-and-editorial-2026
+    paths:
+      - .github/workflows/brand-assets-once.yml
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: fix/brand-onesie-and-editorial-2026
+          persist-credentials: true
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/generate-brand-assets.cjs
+      - name: Commit identity assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/favicon.ico public/favicon-16x16.png public/favicon-32x32.png public/apple-touch-icon.png public/icon-192.png public/icon-512.png public/icon-maskable-512.png public/og-image.png
+          if ! git diff --cached --quiet; then
+            git commit -m "brand(assets): synchronize browser, PWA and social previews"
+            git push origin HEAD:fix/brand-onesie-and-editorial-2026
+          fi
