@@ -26,6 +26,8 @@ const EMOJI_LIST = [
 
 interface UserCategory {
   id: string;
+  user_id: string;
+  use_defaults: boolean;
   name: string;
   icon: string;
 }
