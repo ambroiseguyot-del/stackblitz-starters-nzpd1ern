@@ -62,56 +62,7 @@ export default function ResetPassword() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
-        *, *::before, *::after { box-sizing: border-box; }
-        .rp-root {
-          min-height: 100vh; display: flex; align-items: center; justify-content: center;
-          background: #F7F4F0; font-family: 'DM Sans', sans-serif; padding: 2rem 1.5rem;
-        }
-        .rp-card {
-          width: 100%; max-width: 400px; background: white;
-          border-radius: 24px; border: 1px solid #DFE7DE;
-          padding: 40px 36px; box-shadow: 0 8px 40px rgba(0,0,0,0.06);
-        }
-        .rp-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; }
-        .rp-logo-icon { width: 32px; height: 32px; background: #16443D; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .rp-logo-name { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: #16443D; letter-spacing: -0.02em; }
-        .rp-logo-name span { color: #1C6856; }
-        .rp-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #1C6856; margin: 0 0 8px; }
-        .rp-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; color: #16443D; letter-spacing: -0.03em; margin: 0 0 6px; }
-        .rp-sub { font-size: 14px; color: #657A6E; margin: 0 0 28px; line-height: 1.5; }
-        .rp-field { margin-bottom: 16px; }
-        .rp-label { display: block; font-size: 12px; font-weight: 500; color: #3D5648; margin-bottom: 6px; }
-        .rp-input-wrap { position: relative; }
-        .rp-input {
-          width: 100%; padding: 12px 16px; border: 1.5px solid #DFE7DE; border-radius: 12px;
-          font-size: 14px; font-family: 'DM Sans', sans-serif; color: #16443D;
-          background: white; outline: none; transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        .rp-input:focus { border-color: #1C6856; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-        .rp-input.pw { padding-right: 48px; }
-        .rp-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 4px; color: #94A3B8; font-size: 15px; }
-        .rp-eye:hover { color: #4D6759; }
-        .rp-strength { margin-top: 6px; }
-        .rp-strength-bar { height: 3px; background: #DFE7DE; border-radius: 99px; overflow: hidden; margin-bottom: 3px; }
-        .rp-strength-fill { height: 100%; border-radius: 99px; transition: width 0.3s, background 0.3s; }
-        .rp-strength-label { font-size: 11px; }
-        .rp-mismatch { font-size: 11px; color: #C85B56; margin-top: 4px; }
-        .rp-error { display: flex; align-items: flex-start; gap: 8px; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; color: #991B1B; line-height: 1.4; animation: fadeIn 0.2s ease-out; }
-        .rp-btn { width: 100%; padding: 14px; margin-top: 8px; background: #16443D; color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; }
-        .rp-btn:hover:not(:disabled) { background: #214C40; }
-        .rp-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-        .rp-success { text-align: center; }
-        .rp-success-icon { width: 60px; height: 60px; border-radius: 50%; background: #EEF7EE; border: 2px solid #BBF7D0; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px; }
-        .rp-success-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: #16443D; margin: 0 0 8px; }
-        .rp-success-sub { font-size: 14px; color: #657A6E; line-height: 1.6; margin: 0 0 20px; }
-        .rp-link { font-size: 13px; color: #1C6856; font-weight: 500; text-decoration: none; }
-        .rp-link:hover { color: #4F46E5; }
-        .rp-invalid { text-align: center; padding: 16px 0; }
-        .rp-invalid-icon { font-size: 40px; margin-bottom: 12px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
+      
 
       <div className="rp-root">
         <div className="rp-card">
