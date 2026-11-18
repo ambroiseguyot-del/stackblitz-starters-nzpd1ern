@@ -126,12 +126,19 @@ async function main() {
     await page.waitForURL('**/login', { timeout: 15000 });
   });
 
+  await check('Anonymous visitors cannot access forecasts or recurring payments', async page => {
+    for (const route of ['/analyse', '/previsions', '/recurrences']) {
+      await page.goto(origin + route, { waitUntil: 'domcontentloaded' });
+      await page.waitForURL('**/login', { timeout: 15000 });
+    }
+  });
+
   await check('Nonexistent route presents a 404', async page => {
     const response = await page.goto(origin + '/route-qui-n-existe-pas-9287', { waitUntil: 'domcontentloaded' });
     assert.equal(response.status(), 404);
   });
 
-  for (const route of ['/', '/login', '/signup', '/budget', '/analyse', '/comparaison', '/informations', '/blog']) {
+  for (const route of ['/', '/login', '/signup', '/budget', '/comparaison', '/informations', '/blog']) {
     await check('No horizontal overflow on mobile ' + route, async page => {
       await page.goto(origin + route, { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(250);
