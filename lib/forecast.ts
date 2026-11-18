@@ -1,5 +1,5 @@
 export type ForecastExpense = {
-  date: string; amount: number; category: string; label: string; child_name: string;
+  date: string | null; amount: number | null; category: string | null; label: string | null; child_name: string | null;
   is_recurring?: boolean; recurring_day?: number | null;
 };
 export type ForecastMonth = {
@@ -17,24 +17,24 @@ export function buildForecast(expenses: ForecastExpense[], months = 12, referenc
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
   });
   const recent = expenses.filter(e =>
-    previousMonths.includes(e.date.slice(0, 7)) && Number.isFinite(e.amount) && e.amount > 0);
+    !!e.date && previousMonths.includes(e.date.slice(0, 7)) && Number.isFinite(e.amount) && Number(e.amount) > 0);
   // A recurring amount appears once each month in the model, not once per past occurrence.
   const byRule = new Map<string, ForecastExpense>();
   for (const e of [...expenses].sort((a, b) => a.date.localeCompare(b.date))) {
-    if (e.amount > 0 && Number.isFinite(e.amount)) {
-      const key = [e.child_name, e.category, e.label.toLowerCase().trim()].join('|');
+    if (Number(e.amount) > 0 && Number.isFinite(e.amount) && !!e.label?.trim()) {
+      const key = [e.child_name, e.category, (e.label || '').toLowerCase().trim()].join('|');
       if (e.is_recurring) byRule.set(key, e);
       else byRule.delete(key);
     }
   }
-  const regular = Array.from(byRule.values()).reduce((sum, e) => sum + e.amount, 0);
+  const regular = Array.from(byRule.values()).reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   const recurringKeys = new Set(byRule.keys());
   const variableMonths = previousMonths.map(key => recent
-    .filter(e => e.date.slice(0, 7) === key
-      && !recurringKeys.has([e.child_name, e.category, e.label.toLowerCase().trim()].join('|')))
-    .reduce((sum, e) => sum + e.amount, 0));
+    .filter(e => e.date?.slice(0, 7) === key
+      && !recurringKeys.has([e.child_name, e.category, (e.label || '').toLowerCase().trim()].join('|')))
+    .reduce((sum, e) => sum + (Number(e.amount) || 0), 0));
   // Missing months are unknown, not zero-cost observations: use only months with recorded expenses.
-  const observedMonths = previousMonths.filter(key => recent.some(e => e.date.slice(0, 7) === key)).length;
+  const observedMonths = previousMonths.filter(key => recent.some(e => e.date?.slice(0, 7) === key)).length;
   const variable = observedMonths
     ? variableMonths.reduce((sum, amount) => sum + amount, 0) / observedMonths
     : 0;
