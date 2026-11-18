@@ -604,7 +604,7 @@ export default function UltimateBabyBudget() {
         '--text-muted':  isDark ? '#ADC2B4' : '#657A6E',
       } as React.CSSProperties}
     >
-      <main id="contenu-principal" className="container mx-auto px-5 py-8 max-w-7xl bb-premium-dashboard">
+      <main className="container mx-auto px-5 py-8 max-w-7xl bb-premium-dashboard">
 
         {/* ── BARRE D'OUTILS ── */}
         <div className="flex justify-between items-center mb-8">
