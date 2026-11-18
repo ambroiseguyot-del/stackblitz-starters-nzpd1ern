@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { supabase } from '../../supabaseClient';
 import Onboarding from '../../components/Onboarding';
+import BrandLogo from '../../components/BrandLogo';
 import CategoryManager, { DEFAULT_CATEGORIES } from '../../components/CategoryManager';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
@@ -609,7 +610,7 @@ export default function UltimateBabyBudget() {
         {/* ── BARRE D'OUTILS ── */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
-            <span className="text-3xl select-none">👶</span>
+            <BrandLogo compact />
             <div>
               <h1 className="text-2xl font-black tracking-tight leading-none bb-page-title">Votre tableau de bord</h1>
               <p className="text-xs font-semibold mt-1" style={{ color: "var(--text-muted)" }}>Votre budget familial, en un coup d’œil</p>
