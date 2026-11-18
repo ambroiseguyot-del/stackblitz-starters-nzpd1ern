@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Repères budgétaires pour les familles',
-  description: "Comparez votre budget à des hypothèses illustratives par tranche d'âge et par catégorie.",
+  title: 'Repères de budget bébé — exemples indicatifs',
+  description: "Comparez vos dépenses à des exemples de budget fictifs par âge et par catégorie : il ne s'agit pas de moyennes nationales.",
   alternates: { canonical: '/comparaison' },
 };
 
