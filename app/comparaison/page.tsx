@@ -95,9 +95,9 @@ function generateInsights(
   if (nationalTotal === 0) return insights;
   const diff = ((userTotal - nationalTotal) / nationalTotal) * 100;
   const absDiff = Math.abs(diff);
-  if (diff > 15) insights.push(`Vos dépenses sont ${absDiff.toFixed(0)}% au-dessus du budget de référence illustratif pour cette tranche d'âge.`);
-  else if (diff < -15) insights.push(`Vos dépenses sont ${absDiff.toFixed(0)}% en dessous du budget de référence illustratif — ce montant reste une hypothèse indicative.`);
-  else insights.push(`Vos dépenses sont proches du budget de référence illustratif (écart de ${absDiff.toFixed(0)}%).`);
+  if (diff > 15) insights.push(`Vos dépenses sont ${absDiff.toFixed(0)} % au-dessus du budget de référence illustratif pour cette tranche d'âge.`);
+  else if (diff < -15) insights.push(`Vos dépenses sont ${absDiff.toFixed(0)} % en dessous du budget de référence illustratif — ce montant reste une hypothèse indicative.`);
+  else insights.push(`Vos dépenses sont proches du budget de référence illustratif (écart de ${absDiff.toFixed(0)} %).`);
   const topUserCat = Object.entries(userByCategory).sort((a, b) => b[1] - a[1])[0];
   if (topUserCat) insights.push(`Votre poste principal est "${CATEGORY_LABELS[topUserCat[0]] || topUserCat[0]}" (${fmt(topUserCat[1])}/mois).`);
   const gaps = Object.entries(nationalCategories).map(([cat, natVal]) => ({
@@ -105,7 +105,7 @@ function generateInsights(
   }));
   const maxOverspend = gaps.sort((a, b) => b.gap - a.gap)[0];
   if (maxOverspend && maxOverspend.gap > 20) {
-    insights.push(`Attention : "${CATEGORY_LABELS[maxOverspend.cat] || maxOverspend.cat}" dépasse le repère indicatif de ${maxOverspend.gap.toFixed(0)}% — une piste d'optimisation.`);
+    insights.push(`Attention : "${CATEGORY_LABELS[maxOverspend.cat] || maxOverspend.cat}" dépasse le repère indicatif de ${maxOverspend.gap.toFixed(0)} % — il peut être utile de comparer vos dépenses à vos propres objectifs.`);
   }
   insights.push('Ces repères sont des hypothèses budgétaires illustratives et non des percentiles statistiques.');
   return insights;
@@ -481,8 +481,8 @@ export default function ComparaisonIndicative() {
                 <DiffBadge diff={diff} />
                 <p style={{ fontSize: 12, color: cv.textMuted, margin: 0 }}>
                   {diff <= 0
-                    ? `Votre budget est inférieur de ${fmt(Math.abs(userFiltered - nationalFiltered))} vs le repère indicatif`
-                    : `Vous dépensez ${fmt(Math.abs(userFiltered - nationalFiltered))} au-dessus du repère indicatif`}
+                    ? `Vos dépenses sont inférieures de ${fmt(Math.abs(userFiltered - nationalFiltered))} au repère indicatif`
+                    : `Vos dépenses dépassent le repère indicatif de ${fmt(Math.abs(userFiltered - nationalFiltered))}`}
                 </p>
               </div>
             </div>
