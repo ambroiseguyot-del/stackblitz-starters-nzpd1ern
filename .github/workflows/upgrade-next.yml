@@ -1,4 +1,4 @@
-name: BabyBudget — one-time dependency lockfile regeneration
+name: BabyBudget — secure dependency lockfile regeneration
 
 on:
   push:
