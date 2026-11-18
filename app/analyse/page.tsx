@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "../../supabaseClient";
+import Link from "next/link";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line,
@@ -25,7 +26,7 @@ interface Profile {
 
 // ─── CONSTANTES ───────────────────────────────────────────────────────────────
 
-const PALETTE = ["#1C6856","#1C6856","#2F8A6B","#D89753","#C85B56","#8B5CF6"];
+const PALETTE = ["#1C6856","#D89753","#4977A5","#C85B56","#8B6EAB","#74A88B"];
 const MONTHS_FR = ["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"];
 const FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
 
@@ -197,9 +198,9 @@ export default function AnalysePage() {
 
   // Palette couleurs dark/light
   const cv = useMemo(() => ({
-    bg:          isDark ? '#0B0E14' : '#F8F8F4',
-    card:        isDark ? '#161B26' : '#FFFFFF',
-    border:      isDark ? '#2D364D' : '#DFE7DE',
+    bg:          isDark ? '#101C17' : '#F8F8F4',
+    card:        isDark ? '#1C2C24' : '#FFFFFF',
+    border:      isDark ? '#33483B' : '#DFE7DE',
     borderFaint: isDark ? '#214C40' : '#F0F3EE',
     text:        isDark ? '#F0F3EE' : '#16443D',
     textMuted:   isDark ? '#94A3B8' : '#657A6E',
@@ -273,6 +274,9 @@ export default function AnalysePage() {
   const moyenne = expenses.length ? total / expenses.length : 0;
   const categorieTop = dataCategories[0]?.name ?? "—";
   const categorieTopMontant = dataCategories[0]?.value ?? 0;
+  const mainCategoryShare = total > 0 ? (categorieTopMontant / total) * 100 : 0;
+  const largest = [...expenses].sort((a,b) => b.amount - a.amount)[0];
+  const daysRecorded = new Set(expenses.map(e => e.date).filter(Boolean)).size;
 
   const tooltipProps = { cv };
 
@@ -336,6 +340,31 @@ export default function AnalysePage() {
               <StatCard label="Catégorie principale" value={categorieTop} sub={formatEur(categorieTopMontant)} cv={cv} />
               <StatCard label="Nb d'opérations" value={String(expenses.length)} cv={cv} />
             </div>
+
+            <section className="bb-insights" aria-label="Synthèse personnalisée">
+              <div className="bb-insights-title">
+                <div><span className="bb-kicker">VOTRE BUDGET, EXPLIQUÉ</span><h2>Ce que révèlent vos dépenses</h2></div>
+                <Link href="/previsions">Anticiper la suite →</Link>
+              </div>
+              <div className="bb-insights-grid">
+                <div className="bb-insight-card">
+                  <strong>Votre poste principal</strong>
+                  <p>{categorieTop} représente {mainCategoryShare.toFixed(0)} % des dépenses de cette période.</p>
+                </div>
+                <div className="bb-insight-card">
+                  <strong>Votre achat le plus élevé</strong>
+                  <p>{largest?.label || largest?.category || 'Dépense'} : {formatEurShort(largest?.amount || 0)}.</p>
+                </div>
+                <div className="bb-insight-card">
+                  <strong>Votre rythme de suivi</strong>
+                  <p>{expenses.length} opérations enregistrées sur {daysRecorded} jours distincts.</p>
+                </div>
+              </div>
+              <div className="bb-insights-links">
+                <Link href="/recurrences">Gérer mes échéances →</Link>
+                <Link href="/app">Revenir au tableau de bord →</Link>
+              </div>
+            </section>
 
             {/* Graphiques principaux */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
