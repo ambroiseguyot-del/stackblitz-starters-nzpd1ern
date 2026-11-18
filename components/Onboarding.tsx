@@ -83,13 +83,13 @@ export default function Onboarding({ onComplete }: Props) {
         }
 
         .ob-header {
-          background: #0F172A;
+          background: #16443D;
           padding: 28px 32px 24px;
           position: relative;
         }
 
         .ob-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-        .ob-logo-icon { width: 30px; height: 30px; background: #6366F1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ob-logo-icon { width: 30px; height: 30px; background: #1C6856; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .ob-logo-name { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 15px; color: white; letter-spacing: -0.02em; }
 
         .ob-steps { display: flex; align-items: center; gap: 0; }
@@ -100,8 +100,8 @@ export default function Onboarding({ onComplete }: Props) {
           font-size: 11px; font-weight: 700;
           transition: all 0.2s;
         }
-        .ob-step-dot.active { background: #6366F1; color: white; }
-        .ob-step-dot.done { background: #10B981; color: white; }
+        .ob-step-dot.active { background: #1C6856; color: white; }
+        .ob-step-dot.done { background: #2F8A6B; color: white; }
         .ob-step-dot.pending { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); }
         .ob-step-label { font-size: 11px; font-weight: 500; }
         .ob-step-label.active { color: white; }
@@ -111,38 +111,38 @@ export default function Onboarding({ onComplete }: Props) {
 
         .ob-body { padding: 32px; }
 
-        .ob-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6366F1; margin: 0 0 8px; }
-        .ob-title { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 1.5rem; color: #0F172A; letter-spacing: -0.03em; margin: 0 0 8px; line-height: 1.2; }
-        .ob-sub { font-size: 14px; color: #64748B; margin: 0 0 24px; line-height: 1.6; }
+        .ob-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #1C6856; margin: 0 0 8px; }
+        .ob-title { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; font-weight: 800; font-size: 1.5rem; color: #16443D; letter-spacing: -0.03em; margin: 0 0 8px; line-height: 1.2; }
+        .ob-sub { font-size: 14px; color: #657A6E; margin: 0 0 24px; line-height: 1.6; }
 
-        .ob-label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+        .ob-label { display: block; font-size: 12px; font-weight: 500; color: #3D5648; margin-bottom: 6px; }
         .ob-input-row { display: flex; gap: 8px; }
         .ob-input {
-          flex: 1; padding: 12px 16px; border: 1.5px solid #E2E8F0; border-radius: 12px;
-          font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; color: #0F172A;
+          flex: 1; padding: 12px 16px; border: 1.5px solid #DFE7DE; border-radius: 12px;
+          font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; color: #16443D;
           outline: none; transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .ob-input:focus { border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-        .ob-input:disabled { opacity: 0.5; background: #F8FAFC; }
+        .ob-input:focus { border-color: #1C6856; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .ob-input:disabled { opacity: 0.5; background: #F8F8F4; }
 
         .ob-btn-add {
           padding: 12px 20px; border-radius: 12px; border: none;
-          background: #0F172A; color: white;
+          background: #16443D; color: white;
           font-size: 13px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           cursor: pointer; transition: background 0.15s; white-space: nowrap;
           flex-shrink: 0;
         }
-        .ob-btn-add:hover:not(:disabled) { background: #1E293B; }
+        .ob-btn-add:hover:not(:disabled) { background: #214C40; }
         .ob-btn-add:disabled { opacity: 0.45; cursor: not-allowed; }
-        .ob-btn-add.saved { background: #10B981; }
+        .ob-btn-add.saved { background: #2F8A6B; }
 
-        .ob-saved-msg { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #10B981; font-weight: 500; margin-top: 10px; }
+        .ob-saved-msg { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #2F8A6B; font-weight: 500; margin-top: 10px; }
 
-        .ob-error { font-size: 12px; color: #EF4444; margin-top: 6px; }
+        .ob-error { font-size: 12px; color: #C85B56; margin-top: 6px; }
 
         .ob-btn-next {
           width: 100%; padding: 14px; margin-top: 24px;
-          background: #6366F1; color: white; border: none; border-radius: 12px;
+          background: #1C6856; color: white; border: none; border-radius: 12px;
           font-size: 14px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           cursor: pointer; transition: background 0.15s, transform 0.1s;
           display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -151,21 +151,21 @@ export default function Onboarding({ onComplete }: Props) {
         .ob-btn-next:active { transform: scale(0.99); }
 
         .ob-skip { display: block; text-align: center; margin-top: 12px; font-size: 12px; color: #94A3B8; cursor: pointer; background: none; border: none; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; width: 100%; }
-        .ob-skip:hover { color: #64748B; }
+        .ob-skip:hover { color: #657A6E; }
 
         .ob-feature-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; }
         .ob-feature { display: flex; align-items: flex-start; gap: 12px; }
-        .ob-feature-icon { width: 36px; height: 36px; border-radius: 10px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-        .ob-feature-text strong { display: block; font-size: 14px; font-weight: 600; color: #0F172A; margin-bottom: 2px; }
-        .ob-feature-text span { font-size: 13px; color: #64748B; }
+        .ob-feature-icon { width: 36px; height: 36px; border-radius: 10px; background: #F0F3EE; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .ob-feature-text strong { display: block; font-size: 14px; font-weight: 600; color: #16443D; margin-bottom: 2px; }
+        .ob-feature-text span { font-size: 13px; color: #657A6E; }
 
         .ob-cta {
           width: 100%; padding: 16px; margin-top: 28px;
-          background: #0F172A; color: white; border: none; border-radius: 14px;
+          background: #16443D; color: white; border: none; border-radius: 14px;
           font-size: 15px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
           cursor: pointer; transition: background 0.15s;
         }
-        .ob-cta:hover { background: #1E293B; }
+        .ob-cta:hover { background: #214C40; }
 
         @keyframes obFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes obSlideUp {

@@ -4,6 +4,7 @@ import { supabase } from '../../supabaseClient';
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
 import Link from 'next/link';
+import BrandLogo from '../../components/BrandLogo';
 
 const SYSTEM_FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
 
@@ -67,110 +68,7 @@ export default function Login() {
 
   return (
     <>
-      <style>{`
-        *, *::before, *::after { box-sizing: border-box; }
-
-        .lr { min-height: 100vh; display: flex; font-family: ${SYSTEM_FONT}; background: #F7F4F0; }
-
-        .lr-left {
-          display: none; flex: 1; background: #0F172A; padding: 3rem;
-          flex-direction: column; justify-content: space-between;
-          position: relative; overflow: hidden;
-        }
-        @media (min-width: 860px) { .lr-left { display: flex; } }
-
-        .lr-left-bg {
-          position: absolute; inset: 0;
-          background:
-            radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.18) 0%, transparent 60%),
-            radial-gradient(ellipse at 85% 15%, rgba(16,185,129,0.12) 0%, transparent 50%),
-            radial-gradient(ellipse at 60% 85%, rgba(99,102,241,0.08) 0%, transparent 40%);
-        }
-        .lr-left-grid {
-          position: absolute; inset: 0;
-          background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-          background-size: 44px 44px;
-        }
-
-        .lr-brand { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
-        .lr-brand-icon { width: 38px; height: 38px; background: #6366F1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .lr-brand-name { font-weight: 800; font-size: 18px; color: white; letter-spacing: -0.02em; }
-
-        .lr-left-content { position: relative; z-index: 1; }
-        .lr-left-title { font-weight: 800; font-size: 2.5rem; color: white; line-height: 1.12; letter-spacing: -0.03em; margin: 0 0 1rem; }
-        .lr-left-title span { color: #818CF8; }
-        .lr-left-sub { font-size: 15px; color: rgba(255,255,255,0.4); line-height: 1.65; margin: 0; max-width: 300px; }
-
-        .lr-stats { position: relative; z-index: 1; display: flex; gap: 2.5rem; }
-        .lr-stat-val { font-weight: 800; font-size: 1.6rem; color: white; letter-spacing: -0.02em; }
-        .lr-stat-lbl { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 3px; letter-spacing: 0.03em; }
-
-        .lr-right { flex: 0 0 100%; display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
-        @media (min-width: 860px) { .lr-right { flex: 0 0 460px; } }
-
-        .lr-wrap { width: 100%; max-width: 380px; }
-
-        .lr-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #6366F1; margin: 0 0 8px; }
-        .lr-title { font-weight: 800; font-size: 1.8rem; color: #0F172A; letter-spacing: -0.03em; margin: 0 0 6px; }
-        .lr-sub { font-size: 14px; color: #64748B; margin: 0 0 1.75rem; line-height: 1.5; }
-
-        .lr-field { margin-bottom: 1rem; }
-        .lr-label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 6px; }
-
-        .lr-input-wrap { position: relative; }
-        .lr-input {
-          width: 100%; padding: 13px 16px; border: 1.5px solid #E2E8F0; border-radius: 12px;
-          font-size: 14px; font-family: ${SYSTEM_FONT}; background: white; color: #0F172A; outline: none;
-          transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        .lr-input:focus { border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-        .lr-input.pw { padding-right: 48px; }
-        .lr-input:disabled { opacity: 0.5; background: #F8FAFC; }
-
-        .lr-eye {
-          position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-          background: none; border: none; cursor: pointer; padding: 4px;
-          color: #94A3B8; font-size: 15px; line-height: 1; display: flex; align-items: center; transition: color 0.1s;
-        }
-        .lr-eye:hover { color: #475569; }
-
-        .lr-error {
-          display: flex; align-items: flex-start; gap: 8px; background: #FEF2F2;
-          border: 1px solid #FECACA; border-radius: 10px; padding: 10px 14px; margin-bottom: 1rem;
-          font-size: 13px; color: #991B1B; line-height: 1.4; animation: fadeIn 0.2s ease-out;
-        }
-        .lr-success {
-          display: flex; align-items: flex-start; gap: 8px; background: #F0FDF4;
-          border: 1px solid #BBF7D0; border-radius: 10px; padding: 10px 14px; margin-bottom: 1rem;
-          font-size: 13px; color: #166534; line-height: 1.4; animation: fadeIn 0.2s ease-out;
-        }
-
-        .lr-attempts { font-size: 11px; color: #EF4444; text-align: center; margin: 6px 0 0; }
-
-        .lr-btn {
-          width: 100%; padding: 14px; margin-top: 0.75rem; background: #0F172A; color: white;
-          border: none; border-radius: 12px; font-size: 14px; font-weight: 500;
-          font-family: ${SYSTEM_FONT}; cursor: pointer;
-          transition: background 0.15s, transform 0.1s; letter-spacing: 0.01em;
-        }
-        .lr-btn:hover:not(:disabled) { background: #1E293B; }
-        .lr-btn:active:not(:disabled) { transform: scale(0.99); }
-        .lr-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-        .lr-btn.danger { background: #DC2626; }
-
-        .lr-footer { margin-top: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .lr-divider { width: 100%; height: 1px; background: #E2E8F0; }
-
-        .lr-link {
-          font-size: 13px; color: #64748B; text-decoration: none; background: none;
-          border: none; cursor: pointer; padding: 0; font-family: ${SYSTEM_FONT}; transition: color 0.15s;
-        }
-        .lr-link:hover { color: #0F172A; }
-        .lr-link.accent { color: #6366F1; font-weight: 500; }
-        .lr-link.accent:hover { color: #4F46E5; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
+      
 
       <div className="lr">
 
@@ -178,8 +76,7 @@ export default function Login() {
           <div className="lr-left-bg" />
           <div className="lr-left-grid" />
           <div className="lr-brand">
-            <div className="lr-brand-icon">👶</div>
-            <span className="lr-brand-name">BabyBudget</span>
+            <BrandLogo light />
           </div>
           <div className="lr-left-content">
             <h2 className="lr-left-title">
@@ -241,7 +138,7 @@ export default function Login() {
                     Mot de passe oublié ?
                   </button>
                   <div className="lr-divider" />
-                  <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
+                  <p style={{ fontSize: 13, color: '#657A6E', margin: 0 }}>
                     Pas encore de compte ?{' '}
                     <Link href="/signup" className="lr-link accent">Créer un compte</Link>
                   </p>

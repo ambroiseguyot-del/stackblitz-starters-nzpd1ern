@@ -42,7 +42,7 @@ const TIMELINE = [
   },
   {
     id: 'm0', label: '0 – 1 mois', emoji: '🍼', months: 0,
-    budget: '400 – 700 €/mois', color: '#0070F3',
+    budget: '400 – 700 €/mois', color: '#1C6856',
     description: 'Le mois le plus intense en dépenses courantes.',
     depenses: [
       { nom: 'Couches (5-8/jour)', fourchette: '50 – 80 €/mois', priorite: 'haute', note: 'Taille 1 très courte — ne pas sur-stocker' },
@@ -58,7 +58,7 @@ const TIMELINE = [
   },
   {
     id: 'm2', label: '2 – 3 mois', emoji: '💉', months: 2,
-    budget: '350 – 600 €/mois', color: '#0070F3',
+    budget: '350 – 600 €/mois', color: '#1C6856',
     description: 'Les vaccins obligatoires commencent — bien les planifier.',
     depenses: [
       { nom: 'Couches taille 2', fourchette: '45 – 75 €/mois', priorite: 'haute' },
@@ -74,7 +74,7 @@ const TIMELINE = [
   },
   {
     id: 'm4', label: '4 – 6 mois', emoji: '🥣', months: 4,
-    budget: '350 – 550 €/mois', color: '#10B981',
+    budget: '350 – 550 €/mois', color: '#2F8A6B',
     description: 'Début de la diversification alimentaire — nouvelles dépenses à prévoir.',
     depenses: [
       { nom: 'Petits pots / purées maison', fourchette: '40 – 80 €/mois', priorite: 'haute', note: 'Blender mixeur ~30-80€ si fait maison' },
@@ -91,7 +91,7 @@ const TIMELINE = [
   },
   {
     id: 'm9', label: '7 – 12 mois', emoji: '🚶', months: 7,
-    budget: '400 – 650 €/mois', color: '#F59E0B',
+    budget: '400 – 650 €/mois', color: '#D89753',
     description: 'Grande mobilité — sécuriser la maison et prévoir le changement de poussette.',
     depenses: [
       { nom: 'Barrières de sécurité escalier', fourchette: '30 – 80 €', priorite: 'haute', note: 'À prévoir dès les premiers crawls' },
@@ -108,7 +108,7 @@ const TIMELINE = [
   },
   {
     id: 'm12', label: '1 an', emoji: '🎂', months: 12,
-    budget: '350 – 600 €/mois', color: '#EF4444',
+    budget: '350 – 600 €/mois', color: '#C85B56',
     description: 'Cap symbolique — le budget se stabilise mais les postes évoluent.',
     depenses: [
       { nom: 'Lait de croissance (1-3 ans)', fourchette: '40 – 80 €/mois', priorite: 'moyenne' },
@@ -124,7 +124,7 @@ const TIMELINE = [
   },
   {
     id: 'm18', label: '18 mois – 2 ans', emoji: '🧒', months: 18,
-    budget: '300 – 500 €/mois', color: '#6366F1',
+    budget: '300 – 500 €/mois', color: '#1C6856',
     description: "Autonomie croissante — préparer l'entrée à la crèche et l'apprentissage.",
     depenses: [
       { nom: 'Apprentissage de la propreté (pot, culottes)', fourchette: '20 – 50 €', priorite: 'moyenne', note: 'En moyenne vers 24-30 mois' },
@@ -170,30 +170,30 @@ export default function InformationsPage() {
   const [showAll, setShowAll] = useState(false);
 
   const cv = useMemo(() => ({
-    bg:           isDark ? '#0B0E14' : '#F8FAFC',
+    bg:           isDark ? '#0B0E14' : '#F8F8F4',
     card:         isDark ? '#161B26' : '#FFFFFF',
-    border:       isDark ? '#2D364D' : '#E2E8F0',
-    borderFaint:  isDark ? '#1E293B' : '#F1F5F9',
-    text:         isDark ? '#F1F5F9' : '#0F172A',
-    textMuted:    isDark ? '#94A3B8' : '#64748B',
-    textSub:      isDark ? '#CBD5E1' : '#475569',
-    accentBg:     isDark ? '#1E2D4A' : '#EFF6FF',
+    border:       isDark ? '#2D364D' : '#DFE7DE',
+    borderFaint:  isDark ? '#214C40' : '#F0F3EE',
+    text:         isDark ? '#F0F3EE' : '#16443D',
+    textMuted:    isDark ? '#94A3B8' : '#657A6E',
+    textSub:      isDark ? '#B9D0BF' : '#4D6759',
+    accentBg:     isDark ? '#1E2D4A' : '#E7F1EA',
     selectorBg:   isDark ? 'rgba(22,27,38,0.95)' : 'rgba(255,255,255,0.95)',
     stageBtnBg:   isDark ? '#161B26' : '#FFFFFF',
-    stageBtnActive: isDark ? '#F1F5F9' : '#0F172A',
-    stageBtnActiveBg: isDark ? '#374151' : '#0F172A',
-    budgetBg:     isDark ? '#161B26' : '#0F172A',
-    budgetText:   '#60A5FA',
-    budgetMuted:  isDark ? '#64748B' : '#475569',
+    stageBtnActive: isDark ? '#F0F3EE' : '#16443D',
+    stageBtnActiveBg: isDark ? '#3D5648' : '#16443D',
+    budgetBg:     isDark ? '#161B26' : '#16443D',
+    budgetText:   '#9FCDB1',
+    budgetMuted:  isDark ? '#657A6E' : '#4D6759',
     budgetDesc:   isDark ? '#94A3B8' : '#94A3B8',
-    rowHover:     isDark ? '#1E293B' : '#F8FAFC',
-    tagMedBg:     isDark ? '#1E2D4A' : '#EFF6FF',
-    tagMedColor:  isDark ? '#60A5FA' : '#1D4ED8',
-    tagAdmBg:     isDark ? '#0D2218' : '#F0FDF4',
+    rowHover:     isDark ? '#214C40' : '#F8F8F4',
+    tagMedBg:     isDark ? '#1E2D4A' : '#E7F1EA',
+    tagMedColor:  isDark ? '#9FCDB1' : '#1C6856',
+    tagAdmBg:     isDark ? '#0D2218' : '#EEF7EE',
     tagAdmColor:  isDark ? '#34D399' : '#166534',
-    grosseHover:  isDark ? '#1E293B' : 'rgba(0,0,0,0)',
-    aideBg:       isDark ? '#1E2D4A' : '#EFF6FF',
-    ctaBg:        isDark ? '#161B26' : '#0F172A',
+    grosseHover:  isDark ? '#214C40' : 'rgba(0,0,0,0)',
+    aideBg:       isDark ? '#1E2D4A' : '#E7F1EA',
+    ctaBg:        isDark ? '#161B26' : '#16443D',
     ctaBorder:    isDark ? '#2D364D' : 'transparent',
   }), [isDark]);
 
@@ -203,7 +203,7 @@ export default function InformationsPage() {
   );
 
   const dotColor = (p: string) =>
-    p === 'haute' ? '#EF4444' : p === 'moyenne' ? '#F59E0B' : '#10B981';
+    p === 'haute' ? '#C85B56' : p === 'moyenne' ? '#D89753' : '#2F8A6B';
 
   return (
     <div style={{ minHeight: '100vh', background: cv.bg, fontFamily: FONT, color: cv.text }}>
@@ -221,7 +221,7 @@ export default function InformationsPage() {
       `}</style>
 
       {/* ── HERO ── */}
-      <div style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', padding: '60px 24px 48px', textAlign: 'center' }}>
+      <div style={{ background: 'linear-gradient(135deg, #16443D 0%, #214C40 100%)', padding: '60px 24px 48px', textAlign: 'center' }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
           background: 'rgba(99,102,241,0.15)', color: '#A5B4FC',
@@ -252,8 +252,8 @@ export default function InformationsPage() {
               style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
                 padding: '10px 16px', borderRadius: 14,
-                border: `1.5px solid ${selectedId === stage.id ? (isDark ? '#6366F1' : '#0F172A') : cv.border}`,
-                background: selectedId === stage.id ? (isDark ? '#374151' : '#0F172A') : cv.stageBtnBg,
+                border: `1.5px solid ${selectedId === stage.id ? (isDark ? '#1C6856' : '#16443D') : cv.border}`,
+                background: selectedId === stage.id ? (isDark ? '#3D5648' : '#16443D') : cv.stageBtnBg,
                 color: selectedId === stage.id ? 'white' : cv.textMuted,
                 cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
                 transition: 'all 0.15s', minWidth: 100,
@@ -298,9 +298,9 @@ export default function InformationsPage() {
             </p>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 12 }}>
               {[
-                { label: 'Indispensable', color: '#EF4444' },
-                { label: 'Important', color: '#F59E0B' },
-                { label: 'Optionnel', color: '#10B981' },
+                { label: 'Indispensable', color: '#C85B56' },
+                { label: 'Important', color: '#D89753' },
+                { label: 'Optionnel', color: '#2F8A6B' },
               ].map(({ label, color }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: cv.textMuted, fontWeight: 500 }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
@@ -343,7 +343,7 @@ export default function InformationsPage() {
                 </span>
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 500, color: cv.text, margin: '0 0 2px' }}>{e.nom}</p>
-                  <p style={{ fontSize: 11, color: '#10B981', fontWeight: 600, margin: 0 }}>{e.remboursement}</p>
+                  <p style={{ fontSize: 11, color: '#2F8A6B', fontWeight: 600, margin: 0 }}>{e.remboursement}</p>
                 </div>
               </div>
             ))}
@@ -352,7 +352,7 @@ export default function InformationsPage() {
 
         {/* ── GROSSES DÉPENSES ── */}
         <div style={{ margin: '48px 0 24px' }}>
-          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6366F1', margin: '0 0 8px' }}>Planification</p>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', margin: '0 0 8px' }}>Planification</p>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: cv.text, letterSpacing: '-0.5px', margin: '0 0 8px' }}>Les grosses dépenses à anticiper</h2>
           <p style={{ fontSize: 14, color: cv.textMuted, margin: 0, lineHeight: 1.6 }}>Les achats importants à prévoir bien à l'avance pour éviter les mauvaises surprises.</p>
         </div>
@@ -368,7 +368,7 @@ export default function InformationsPage() {
             >
               <span style={{ fontSize: 28, marginBottom: 12, display: 'block' }}>{g.emoji}</span>
               <p style={{ fontSize: 14, fontWeight: 700, color: cv.text, margin: '0 0 4px' }}>{g.nom}</p>
-              <p style={{ fontSize: 11, color: '#6366F1', fontWeight: 600, margin: '0 0 8px' }}>📅 {g.quand}</p>
+              <p style={{ fontSize: 11, color: '#1C6856', fontWeight: 600, margin: '0 0 8px' }}>📅 {g.quand}</p>
               <p style={{ fontSize: 16, fontWeight: 800, color: cv.text, margin: '0 0 8px' }}>{g.fourchette}</p>
               <p style={{ fontSize: 11, color: cv.textMuted, lineHeight: 1.5, margin: 0 }}>💡 {g.conseil}</p>
             </div>
@@ -394,7 +394,7 @@ export default function InformationsPage() {
 
         {/* ── AIDES ── */}
         <div style={{ margin: '48px 0 24px' }}>
-          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6366F1', margin: '0 0 8px' }}>À ne pas manquer</p>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', margin: '0 0 8px' }}>À ne pas manquer</p>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: cv.text, letterSpacing: '-0.5px', margin: '0 0 8px' }}>Aides et remboursements disponibles</h2>
           <p style={{ fontSize: 14, color: cv.textMuted, margin: 0, lineHeight: 1.6 }}>Les principales aides auxquelles vous avez droit en France. Pensez à faire vos demandes rapidement.</p>
         </div>
@@ -411,7 +411,7 @@ export default function InformationsPage() {
               }}>{a.emoji}</div>
               <div>
                 <p style={{ fontSize: 14, fontWeight: 700, color: cv.text, margin: '0 0 4px' }}>{a.nom}</p>
-                <p style={{ fontSize: 16, fontWeight: 800, color: '#6366F1', margin: '0 0 4px' }}>{a.montant}</p>
+                <p style={{ fontSize: 16, fontWeight: 800, color: '#1C6856', margin: '0 0 4px' }}>{a.montant}</p>
                 <p style={{ fontSize: 12, color: cv.textMuted, margin: '0 0 4px' }}>{a.condition}</p>
                 <p style={{ fontSize: 10, fontWeight: 700, color: cv.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Source : {a.source}</p>
               </div>
@@ -425,7 +425,7 @@ export default function InformationsPage() {
           background: cv.ctaBg, border: `1px solid ${cv.ctaBorder}`,
           borderRadius: 24, textAlign: 'center',
         }}>
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6366F1', marginBottom: 12 }}>
+          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 12 }}>
             Passez à l'action
           </p>
           <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white', letterSpacing: '-0.5px', marginBottom: 12 }}>
@@ -436,7 +436,7 @@ export default function InformationsPage() {
           </p>
           <Link href="/app" style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: '#6366F1', color: 'white', textDecoration: 'none',
+            background: '#1C6856', color: 'white', textDecoration: 'none',
             padding: '14px 28px', borderRadius: 12, fontSize: 14, fontWeight: 600,
           }}>
             Aller au dashboard →

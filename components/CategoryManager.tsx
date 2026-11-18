@@ -116,12 +116,12 @@ export default function CategoryManager({ onCategoriesChange }: CategoryManagerP
         .cm-btn {
           display: inline-flex; align-items: center; gap: 6px;
           padding: 8px 14px; border-radius: 12px;
-          border: 1.5px dashed #DDE3F5;
+          border: 1.5px dashed #DFE7DE;
           background: transparent; color: #94A3B8;
           font-size: 12px; font-weight: 700; font-family: inherit;
           cursor: pointer; transition: all 0.15s;
         }
-        .cm-btn:hover { border-color: #002395; color: #002395; }
+        .cm-btn:hover { border-color: #1C6856; color: #1C6856; }
 
         .cm-modal-overlay {
           position: fixed; inset: 0; z-index: 4000;
@@ -189,7 +189,7 @@ export default function CategoryManager({ onCategoriesChange }: CategoryManagerP
           font-size: 13px; opacity: 0.3; transition: opacity 0.15s;
           padding: 2px 6px; border-radius: 6px;
         }
-        .cm-cat-del:hover { opacity: 1; color: #EF4444; }
+        .cm-cat-del:hover { opacity: 1; color: #C85B56; }
         .cm-default-badge {
           font-size: 9px; font-weight: 700; text-transform: uppercase;
           opacity: 0.3; letter-spacing: 0.05em;
@@ -234,7 +234,7 @@ export default function CategoryManager({ onCategoriesChange }: CategoryManagerP
         .cm-emoji-opt:hover { background: var(--border); }
         .cm-emoji-opt.selected { background: var(--france-blue); }
 
-        .cm-error { font-size: 12px; color: #EF4444; }
+        .cm-error { font-size: 12px; color: #C85B56; }
 
         @keyframes cmFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes cmSlide {

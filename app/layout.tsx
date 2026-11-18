@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     default: 'BabyBudget — Suivez les dépenses de votre bébé',
     template: '%s | BabyBudget',
   },
-  description: 'Suivez et anticipez les dépenses de votre bébé. Comparez-vous à la moyenne nationale INSEE/CAF, calculez vos aides et pilotez votre budget familial. Gratuit, sans publicité.',
+  description: 'Suivez les dépenses de votre enfant, anticipez votre budget familial et visualisez vos habitudes en toute simplicité. Application gratuite et sans publicité.',
 
   // ── Mots-clés ────────────────────────────────────────────────────────────
   keywords: [
@@ -37,10 +37,10 @@ export const metadata: Metadata = {
     url: 'https://www.babybudget.fr',
     siteName: 'BabyBudget',
     title: 'BabyBudget — Suivez les dépenses de votre bébé',
-    description: 'Suivez et anticipez les dépenses de votre bébé. Comparez-vous à la moyenne nationale INSEE/CAF et pilotez votre budget familial. Gratuit, sans publicité.',
+    description: 'Un espace clair et pratique pour suivre les dépenses et anticiper votre budget familial. Gratuit, sans publicité.',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'BabyBudget — Tableau de bord des dépenses bébé',
@@ -53,14 +53,14 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'BabyBudget — Suivez les dépenses de votre bébé',
     description: 'Suivez et anticipez les dépenses de votre bébé. Comparez-vous à la moyenne nationale. Gratuit.',
-    images: ['/og-image.png'],
+    images: ['/og-image.jpg'],
   },
 
   // ── Icônes ───────────────────────────────────────────────────────────────
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
   },
 
   // ── Vérification Google Search Console ───────────────────────────────────
@@ -77,7 +77,7 @@ export default function RootLayout({
     <html lang="fr">
       <body>
         <Navbar />
-        {children}
+        <div id="contenu-principal" tabIndex={-1}>{children}</div>
       </body>
     </html>
   );

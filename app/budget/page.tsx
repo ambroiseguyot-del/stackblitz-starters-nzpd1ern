@@ -44,11 +44,11 @@ const EMOJI_MODE: Record<ModeGarde, string> = {
 };
 
 const COLORS_MODE: Record<ModeGarde, string> = {
-  creche:     '#6366F1',
-  assistante: '#0070F3',
-  domicile:   '#EF4444',
-  parents:    '#10B981',
-  halte:      '#F59E0B',
+  creche:     '#1C6856',
+  assistante: '#1C6856',
+  domicile:   '#C85B56',
+  parents:    '#2F8A6B',
+  halte:      '#D89753',
 };
 
 // ─── BARÈMES CAF 2024 ─────────────────────────────────────────────────────────
@@ -146,13 +146,13 @@ function SliderInput({ label, sublabel, value, min, max, step = 100, unit = '€
           <p style={{ fontSize: 14, fontWeight: 600, color: cv.text, margin: 0 }}>{label}</p>
           {sublabel && <p style={{ fontSize: 11, color: cv.textMuted, margin: '2px 0 0' }}>{sublabel}</p>}
         </div>
-        <span style={{ fontSize: 16, fontWeight: 700, color: '#0070F3' }}>
+        <span style={{ fontSize: 16, fontWeight: 700, color: '#1C6856' }}>
           {value.toLocaleString('fr-FR')} {unit}
         </span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
         onChange={e => onChange(Number(e.target.value))}
-        style={{ width: '100%', accentColor: '#0070F3', cursor: 'pointer' }}
+        style={{ width: '100%', accentColor: '#1C6856', cursor: 'pointer' }}
       />
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: cv.textMuted, marginTop: 4 }}>
         <span>{min.toLocaleString('fr-FR')} {unit}</span>
@@ -185,7 +185,7 @@ function ResultCard({ mode, coutGarde, depenses, paje, selected, onClick, cv }: 
       onMouseLeave={() => setHovered(false)}
       style={{
         background: selected ? cv.accentBg : hovered ? cv.rowHover : cv.card,
-        border: `2px solid ${selected ? '#0070F3' : hovered ? cv.borderHover : cv.border}`,
+        border: `2px solid ${selected ? '#1C6856' : hovered ? cv.borderHover : cv.border}`,
         borderRadius: 16, padding: '16px 20px', cursor: 'pointer',
         transition: 'all 0.15s', position: 'relative',
         transform: hovered && !selected ? 'translateY(-1px)' : 'none',
@@ -195,7 +195,7 @@ function ResultCard({ mode, coutGarde, depenses, paje, selected, onClick, cv }: 
       {selected && (
         <div style={{
           position: 'absolute', top: -8, right: 12,
-          background: '#0070F3', color: 'white', fontSize: 10,
+          background: '#1C6856', color: 'white', fontSize: 10,
           fontWeight: 700, padding: '2px 8px', borderRadius: 99,
           textTransform: 'uppercase', letterSpacing: '0.06em',
         }}>Sélectionné</div>
@@ -205,15 +205,15 @@ function ResultCard({ mode, coutGarde, depenses, paje, selected, onClick, cv }: 
           <span style={{ fontSize: 20 }}>{EMOJI_MODE[mode]}</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: cv.text }}>{LABELS_MODE[mode]}</span>
         </div>
-        <span style={{ fontSize: 20, fontWeight: 800, color: total === 0 ? '#10B981' : cv.text }}>
+        <span style={{ fontSize: 20, fontWeight: 800, color: total === 0 ? '#2F8A6B' : cv.text }}>
           {total.toLocaleString('fr-FR')} €
         </span>
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <Tag label="Garde" value={`${coutGarde.net} €`} color="#0070F3" cv={cv} />
-        {coutGarde.aide > 0 && <Tag label="CMG déduit" value={`-${coutGarde.aide} €`} color="#10B981" cv={cv} />}
-        <Tag label="Dépenses" value={`${depenses} €`} color="#6366F1" cv={cv} />
-        {paje > 0 && <Tag label="PAJE déduite" value={`-${paje} €`} color="#10B981" cv={cv} />}
+        <Tag label="Garde" value={`${coutGarde.net} €`} color="#1C6856" cv={cv} />
+        {coutGarde.aide > 0 && <Tag label="CMG déduit" value={`-${coutGarde.aide} €`} color="#2F8A6B" cv={cv} />}
+        <Tag label="Dépenses" value={`${depenses} €`} color="#1C6856" cv={cv} />
+        {paje > 0 && <Tag label="PAJE déduite" value={`-${paje} €`} color="#2F8A6B" cv={cv} />}
       </div>
     </div>
   );
@@ -255,28 +255,28 @@ export default function BudgetPrevisionnelPage() {
 
   // Palette couleurs dark/light
   const cv = useMemo(() => ({
-    bg:           isDark ? '#0B0E14' : '#F8FAFC',
+    bg:           isDark ? '#0B0E14' : '#F8F8F4',
     card:         isDark ? '#161B26' : '#FFFFFF',
-    border:       isDark ? '#2D364D' : '#E2E8F0',
-    borderFaint:  isDark ? '#1E293B' : '#F1F5F9',
-    borderHover:  isDark ? '#6366F1' : '#BFDBFE',
-    text:         isDark ? '#F1F5F9' : '#0F172A',
-    textMuted:    isDark ? '#94A3B8' : '#64748B',
-    textSub:      isDark ? '#CBD5E1' : '#475569',
-    accentBg:     isDark ? '#1E2D4A' : '#EFF6FF',
-    accentBorder: isDark ? '#1D4ED8' : '#BFDBFE',
-    rowHover:     isDark ? '#1E293B' : '#F8FAFC',
-    tagBg:        isDark ? '#1E293B' : '#F8FAFC',
+    border:       isDark ? '#2D364D' : '#DFE7DE',
+    borderFaint:  isDark ? '#214C40' : '#F0F3EE',
+    borderHover:  isDark ? '#1C6856' : '#B9D8C3',
+    text:         isDark ? '#F0F3EE' : '#16443D',
+    textMuted:    isDark ? '#94A3B8' : '#657A6E',
+    textSub:      isDark ? '#B9D0BF' : '#4D6759',
+    accentBg:     isDark ? '#1E2D4A' : '#E7F1EA',
+    accentBorder: isDark ? '#1C6856' : '#B9D8C3',
+    rowHover:     isDark ? '#214C40' : '#F8F8F4',
+    tagBg:        isDark ? '#214C40' : '#F8F8F4',
     // Bloc résultat sélectionné — clair en light, sombre en dark
-    resultBg:     isDark ? '#0F172A' : '#F1F5F9',
-    resultBorder: isDark ? '#1E293B' : '#E2E8F0',
-    resultText:   isDark ? '#F1F5F9' : '#0F172A',
-    resultMuted:  isDark ? '#94A3B8' : '#64748B',
-    resultValue:  isDark ? '#60A5FA' : '#0070F3',
-    resultLine:   isDark ? '#1E293B' : '#E2E8F0',
-    resultLabelC: isDark ? '#FCA5A5' : '#EF4444',
-    resultLabelG: isDark ? '#6EE7B7' : '#10B981',
-    resultLabelP: isDark ? '#C4B5FD' : '#6366F1',
+    resultBg:     isDark ? '#16443D' : '#F0F3EE',
+    resultBorder: isDark ? '#214C40' : '#DFE7DE',
+    resultText:   isDark ? '#F0F3EE' : '#16443D',
+    resultMuted:  isDark ? '#94A3B8' : '#657A6E',
+    resultValue:  isDark ? '#9FCDB1' : '#1C6856',
+    resultLine:   isDark ? '#214C40' : '#DFE7DE',
+    resultLabelC: isDark ? '#FCA5A5' : '#C85B56',
+    resultLabelG: isDark ? '#6EE7B7' : '#2F8A6B',
+    resultLabelP: isDark ? '#C4B5FD' : '#1C6856',
   }), [isDark]);
 
   const tranche = getRevenuTranche(revenu);
@@ -302,15 +302,15 @@ export default function BudgetPrevisionnelPage() {
     <div style={{ minHeight: '100vh', background: cv.bg, fontFamily: FONT, color: cv.text }}>
 
       {/* ── HERO ── */}
-      <div style={{ background: '#0F172A', padding: '48px 24px 40px', textAlign: 'center' }}>
-        <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6366F1', marginBottom: 12 }}>
+      <div style={{ background: '#16443D', padding: '48px 24px 40px', textAlign: 'center' }}>
+        <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 12 }}>
           Outil gratuit
         </p>
         <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, color: 'white', letterSpacing: '-1.5px', lineHeight: 1.1, marginBottom: 12 }}>
-          Calculateur de budget bébé
+          Préparez votre budget bébé
         </h1>
         <p style={{ fontSize: 15, color: '#94A3B8', maxWidth: 520, margin: '0 auto 20px', lineHeight: 1.7 }}>
-          Estimez votre budget mensuel réel selon vos revenus et votre mode de garde — aides CAF déduites automatiquement.
+          Explorez différents scénarios de dépenses et de garde. Les montants sont des estimations indicatives basées sur les hypothèses de cet outil.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           {[
@@ -319,7 +319,7 @@ export default function BudgetPrevisionnelPage() {
             { label: 'Service-public.fr CMG', href: 'https://www.service-public.fr/particuliers/vosdroits/F345' },
           ].map(s => (
             <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" style={{
-              fontSize: 11, color: '#475569', background: 'rgba(255,255,255,0.06)',
+              fontSize: 11, color: '#4D6759', background: 'rgba(255,255,255,0.06)',
               padding: '4px 12px', borderRadius: 99, textDecoration: 'none',
               border: '1px solid rgba(255,255,255,0.1)',
             }}>📎 {s.label}</a>
@@ -328,6 +328,9 @@ export default function BudgetPrevisionnelPage() {
       </div>
 
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px 80px' }}>
+        <aside className="bb-data-notice" role="note">
+          <strong>Simulation indicative</strong> — Certaines hypothèses et barèmes de ce calculateur datent de 2024. Vérifiez les montants applicables sur caf.fr avant toute décision financière.
+        </aside>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
 
           {/* ── COLONNE GAUCHE ── */}
@@ -345,11 +348,11 @@ export default function BudgetPrevisionnelPage() {
                 onChange={setRevenu} cv={cv}
               />
               <div style={{
-                background: tranche === 'basse' ? '#F0FDF4' : tranche === 'moyenne' ? '#EFF6FF' : '#FEF2F2',
-                border: `1px solid ${tranche === 'basse' ? '#BBF7D0' : tranche === 'moyenne' ? '#BFDBFE' : '#FECACA'}`,
+                background: tranche === 'basse' ? '#EEF7EE' : tranche === 'moyenne' ? '#E7F1EA' : '#FEF2F2',
+                border: `1px solid ${tranche === 'basse' ? '#BBF7D0' : tranche === 'moyenne' ? '#B9D8C3' : '#FECACA'}`,
                 borderRadius: 10, padding: '10px 14px',
               }}>
-                <p style={{ fontSize: 12, fontWeight: 600, color: tranche === 'basse' ? '#166534' : tranche === 'moyenne' ? '#1D4ED8' : '#991B1B', margin: 0 }}>
+                <p style={{ fontSize: 12, fontWeight: 600, color: tranche === 'basse' ? '#166534' : tranche === 'moyenne' ? '#1C6856' : '#991B1B', margin: 0 }}>
                   {tranche === 'basse' && '🟢 Tranche basse — PAJE pleine + CMG maximum'}
                   {tranche === 'moyenne' && '🔵 Tranche moyenne — PAJE réduite + CMG partiel'}
                   {tranche === 'haute' && '🔴 Tranche haute — Pas de PAJE, CMG minimum'}
@@ -358,7 +361,7 @@ export default function BudgetPrevisionnelPage() {
                   PAJE allocation de base : <strong>{paje} €/mois</strong>
                   {' · '}
                   <a href="https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance/la-prestation-d-accueil-du-jeune-enfant-paje/l-allocation-de-base"
-                    target="_blank" rel="noopener noreferrer" style={{ color: '#0070F3', fontSize: 10 }}>
+                    target="_blank" rel="noopener noreferrer" style={{ color: '#1C6856', fontSize: 10 }}>
                     Source CAF →
                   </a>
                 </p>
@@ -375,7 +378,7 @@ export default function BudgetPrevisionnelPage() {
                 style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   padding: '12px 14px', borderRadius: 12, cursor: 'pointer',
-                  background: allaitement ? (isDark ? '#0D2218' : '#F0FDF4') : cv.bg,
+                  background: allaitement ? (isDark ? '#0D2218' : '#EEF7EE') : cv.bg,
                   border: `1px solid ${allaitement ? '#BBF7D0' : cv.border}`,
                   transition: 'all 0.15s',
                 }}
@@ -386,7 +389,7 @@ export default function BudgetPrevisionnelPage() {
                 </div>
                 <div style={{
                   width: 40, height: 22, borderRadius: 99, position: 'relative',
-                  background: allaitement ? '#10B981' : cv.border, transition: 'background 0.2s', flexShrink: 0,
+                  background: allaitement ? '#2F8A6B' : cv.border, transition: 'background 0.2s', flexShrink: 0,
                 }}>
                   <div style={{
                     position: 'absolute', top: 2, left: allaitement ? 20 : 2,
@@ -424,7 +427,7 @@ export default function BudgetPrevisionnelPage() {
               ))}
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0 0', marginTop: 4 }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: cv.text }}>Total dépenses courantes</span>
-                <span style={{ fontSize: 14, fontWeight: 800, color: '#6366F1' }}>{depenses.total} €</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: '#1C6856' }}>{depenses.total} €</span>
               </div>
             </div>
           </div>
@@ -511,14 +514,14 @@ export default function BudgetPrevisionnelPage() {
 
             {/* CTA */}
             <div style={{ background: cv.accentBg, border: `1px solid ${cv.accentBorder}`, borderRadius: 16, padding: '20px', textAlign: 'center' }}>
-              <p style={{ fontSize: 14, fontWeight: 700, color: isDark ? '#60A5FA' : '#1D4ED8', margin: '0 0 6px' }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: isDark ? '#9FCDB1' : '#1C6856', margin: '0 0 6px' }}>
                 Suivez vos vraies dépenses
               </p>
-              <p style={{ fontSize: 13, color: isDark ? '#93C5FD' : '#3B82F6', margin: '0 0 16px', lineHeight: 1.5 }}>
+              <p style={{ fontSize: 13, color: isDark ? '#93C5FD' : '#418A74', margin: '0 0 16px', lineHeight: 1.5 }}>
                 Comparez votre budget estimé avec vos dépenses réelles dans le dashboard BabyBudget.
               </p>
               <Link href="/app" style={{
-                display: 'inline-block', background: '#0F172A', color: 'white',
+                display: 'inline-block', background: '#16443D', color: 'white',
                 padding: '10px 24px', borderRadius: 10, fontSize: 13, fontWeight: 600, textDecoration: 'none',
               }}>
                 Accéder au dashboard →

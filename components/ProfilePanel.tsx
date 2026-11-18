@@ -39,7 +39,7 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
     <div style={{
       position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)",
       zIndex: 2000, padding: "12px 20px", borderRadius: 12,
-      background: type === "success" ? "#0F172A" : "#DC2626",
+      background: type === "success" ? "#16443D" : "#DC2626",
       color: "white", fontSize: 13, fontWeight: 500,
       boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
       whiteSpace: "nowrap",
@@ -54,7 +54,7 @@ function Field({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", color: "#94A3B8" }}>{label}</span>
-      <span style={{ fontSize: 14, color: "#0F172A", fontWeight: 500 }}>{value}</span>
+      <span style={{ fontSize: 14, color: "#16443D", fontWeight: 500 }}>{value}</span>
     </div>
   );
 }
@@ -67,19 +67,19 @@ function InputField({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label htmlFor={id} style={{ fontSize: 12, fontWeight: 500, color: "#374151" }}>{label}</label>
+      <label htmlFor={id} style={{ fontSize: 12, fontWeight: 500, color: "#3D5648" }}>{label}</label>
       <input
         id={id} type={type} value={value} placeholder={placeholder}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
         style={{
-          padding: "11px 14px", borderRadius: 10, border: "1.5px solid #E2E8F0",
-          fontSize: 14, fontFamily: "DM Sans, sans-serif", color: "#0F172A",
-          background: disabled ? "#F8FAFC" : "white", outline: "none",
+          padding: "11px 14px", borderRadius: 10, border: "1.5px solid #DFE7DE",
+          fontSize: 14, fontFamily: "DM Sans, sans-serif", color: "#16443D",
+          background: disabled ? "#F8F8F4" : "white", outline: "none",
           transition: "border-color 0.15s",
         }}
-        onFocus={(e) => (e.target.style.borderColor = "#6366F1")}
-        onBlur={(e) => (e.target.style.borderColor = "#E2E8F0")}
+        onFocus={(e) => (e.target.style.borderColor = "#1C6856")}
+        onBlur={(e) => (e.target.style.borderColor = "#DFE7DE")}
       />
     </div>
   );
@@ -234,7 +234,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
         .pp-panel {
           position: fixed; top: 0; right: 0; bottom: 0;
           width: 100%; max-width: 420px;
-          background: #F8FAFC;
+          background: #F8F8F4;
           box-shadow: -8px 0 48px rgba(0,0,0,0.12);
           display: flex; flex-direction: column;
           z-index: 501;
@@ -244,7 +244,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
         }
 
         .pp-header {
-          background: #0F172A;
+          background: #16443D;
           padding: 28px 24px 24px;
           flex-shrink: 0;
         }
@@ -262,7 +262,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
         .pp-avatar-wrap { position: relative; display: inline-block; margin-bottom: 16px; }
         .pp-avatar {
           width: 60px; height: 60px; border-radius: 16px;
-          background: linear-gradient(135deg, #6366F1, #8B5CF6);
+          background: linear-gradient(135deg, #1C6856, #8B5CF6);
           display: flex; align-items: center; justify-content: center;
           font-family: 'Syne', sans-serif; font-weight: 800;
           font-size: 22px; color: white;
@@ -270,7 +270,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
         .pp-online {
           position: absolute; bottom: -2px; right: -2px;
           width: 14px; height: 14px; border-radius: 50%;
-          background: #10B981; border: 2px solid #0F172A;
+          background: #2F8A6B; border: 2px solid #16443D;
         }
 
         .pp-name {
@@ -290,7 +290,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
 
         .pp-tabs {
           display: flex; background: white;
-          border-bottom: 1px solid #E2E8F0; flex-shrink: 0;
+          border-bottom: 1px solid #DFE7DE; flex-shrink: 0;
         }
         .pp-tab {
           flex: 1; padding: 12px 8px; border: none; background: none;
@@ -299,8 +299,8 @@ export default function ProfilePanel({ open, onClose }: Props) {
           align-items: center; gap: 4px;
           border-bottom: 2px solid transparent; transition: color 0.15s;
         }
-        .pp-tab:hover { color: #475569; }
-        .pp-tab.active { color: #6366F1; border-bottom-color: #6366F1; }
+        .pp-tab:hover { color: #4D6759; }
+        .pp-tab.active { color: #1C6856; border-bottom-color: #1C6856; }
         .pp-tab-icon { font-size: 16px; }
 
         .pp-body {
@@ -310,7 +310,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
 
         .pp-card {
           background: white; border-radius: 14px;
-          border: 1px solid #E2E8F0; padding: 20px;
+          border: 1px solid #DFE7DE; padding: 20px;
           display: flex; flex-direction: column; gap: 16px;
         }
 
@@ -320,7 +320,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
           margin: 0;
         }
 
-        .pp-divider { height: 1px; background: #F1F5F9; margin: 0 -20px; }
+        .pp-divider { height: 1px; background: #F0F3EE; margin: 0 -20px; }
 
         .pp-btn {
           padding: 11px 20px; border-radius: 10px; border: none;
@@ -331,8 +331,8 @@ export default function ProfilePanel({ open, onClose }: Props) {
         .pp-btn:active { transform: scale(0.98); }
         .pp-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-        .pp-btn-primary { background: #0F172A; color: white; }
-        .pp-btn-primary:hover:not(:disabled) { background: #1E293B; }
+        .pp-btn-primary { background: #16443D; color: white; }
+        .pp-btn-primary:hover:not(:disabled) { background: #214C40; }
 
         .pp-btn-danger { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
         .pp-btn-danger:hover:not(:disabled) { background: #FEE2E2; }
@@ -347,11 +347,11 @@ export default function ProfilePanel({ open, onClose }: Props) {
 
         .pp-info-row {
           display: flex; justify-content: space-between; align-items: center;
-          padding: 10px 0; border-bottom: 1px solid #F1F5F9;
+          padding: 10px 0; border-bottom: 1px solid #F0F3EE;
         }
         .pp-info-row:last-child { border-bottom: none; padding-bottom: 0; }
         .pp-info-label { font-size: 12px; color: #94A3B8; font-weight: 500; }
-        .pp-info-value { font-size: 13px; color: #0F172A; font-weight: 500; text-align: right; max-width: 200px; word-break: break-all; }
+        .pp-info-value { font-size: 13px; color: #16443D; font-weight: 500; text-align: right; max-width: 200px; word-break: break-all; }
 
         @keyframes ppFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes ppSlideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
@@ -456,7 +456,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
                   placeholder="vous@exemple.fr"
                 />
                 {email !== user?.email && (
-                  <p style={{ fontSize: 11, color: "#F59E0B", margin: 0 }}>
+                  <p style={{ fontSize: 11, color: "#D89753", margin: 0 }}>
                     ⚠ Un email de confirmation sera envoyé à la nouvelle adresse.
                   </p>
                 )}
@@ -475,7 +475,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
           {tab === "password" && (
             <div className="pp-card">
               <p className="pp-card-title">Changer le mot de passe</p>
-              <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#657A6E", margin: 0, lineHeight: 1.6 }}>
                 Votre nouveau mot de passe doit contenir au moins 6 caractères.
               </p>
               <InputField
@@ -495,7 +495,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
                 placeholder="••••••••"
               />
               {confirmPwd.length > 0 && confirmPwd !== newPwd && (
-                <p style={{ fontSize: 11, color: "#EF4444", margin: 0 }}>
+                <p style={{ fontSize: 11, color: "#C85B56", margin: 0 }}>
                   Les mots de passe ne correspondent pas
                 </p>
               )}
@@ -542,7 +542,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
                 <p className="pp-card-title">Autres actions</p>
                 <button
                   className="pp-btn"
-                  style={{ background: "#F8FAFC", color: "#475569", border: "1px solid #E2E8F0" }}
+                  style={{ background: "#F8F8F4", color: "#4D6759", border: "1px solid #DFE7DE" }}
                   onClick={async () => {
                     await supabase.auth.signOut();
                     onClose();

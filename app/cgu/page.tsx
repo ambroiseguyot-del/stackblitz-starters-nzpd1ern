@@ -7,9 +7,9 @@ export const metadata = {
 
 export default function CGU() {
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px', fontFamily: 'DM Sans, sans-serif', color: '#0F172A', lineHeight: 1.75 }}>
+    <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px', fontFamily: 'DM Sans, sans-serif', color: '#16443D', lineHeight: 1.75 }}>
 
-      <Link href="/" style={{ fontSize: 13, color: '#6366F1', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 40 }}>
+      <Link href="/" style={{ fontSize: 13, color: '#1C6856', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 40 }}>
         ← Retour à l'accueil
       </Link>
 
@@ -20,7 +20,7 @@ export default function CGU() {
       <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.03em', marginBottom: 8, lineHeight: 1.1 }}>
         Conditions générales d'utilisation
       </h1>
-      <p style={{ color: '#64748B', marginBottom: 48 }}>
+      <p style={{ color: '#657A6E', marginBottom: 48 }}>
         En utilisant BabyBudget, vous acceptez les présentes conditions. Veuillez les lire attentivement.
       </p>
 
@@ -80,8 +80,8 @@ export default function CGU() {
         <p>Pour toute question : <strong>contact@babybudget.fr</strong></p>
       </Section>
 
-      <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid #E2E8F0', display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-        <Link href="/confidentialite" style={{ fontSize: 13, color: '#6366F1', textDecoration: 'none' }}>Politique de confidentialité →</Link>
+      <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid #DFE7DE', display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+        <Link href="/confidentialite" style={{ fontSize: 13, color: '#1C6856', textDecoration: 'none' }}>Politique de confidentialité →</Link>
         <Link href="/" style={{ fontSize: 13, color: '#94A3B8', textDecoration: 'none' }}>Retour à l'accueil</Link>
       </div>
     </div>
@@ -91,10 +91,10 @@ export default function CGU() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 40 }}>
-      <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.1rem', color: '#0F172A', marginBottom: 16, letterSpacing: '-0.01em' }}>
+      <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.1rem', color: '#16443D', marginBottom: 16, letterSpacing: '-0.01em' }}>
         {title}
       </h2>
-      <div style={{ color: '#374151', fontSize: 15 }}>{children}</div>
+      <div style={{ color: '#3D5648', fontSize: 15 }}>{children}</div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { supabase } from '../../supabaseClient';
 import Onboarding from '../../components/Onboarding';
+import BrandLogo from '../../components/BrandLogo';
 import CategoryManager, { DEFAULT_CATEGORIES } from '../../components/CategoryManager';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement,
@@ -39,7 +40,7 @@ type SortKey = 'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc';
 
 // categoryIcons est maintenant dynamique — géré via le state categories
 
-const categoryColors = ['#002395', '#ED2939', '#5C7CFA', '#FF6B6B', '#2D364D', '#10B981', '#F59E0B', '#6366F1', '#EC4899'];
+const categoryColors = ['#1C6856', '#C85B56', '#5C7CFA', '#FF6B6B', '#2D364D', '#2F8A6B', '#D89753', '#1C6856', '#EC4899'];
 
 const formatEuro = (amount: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
@@ -425,8 +426,8 @@ export default function UltimateBabyBudget() {
       datasets: [{
         label: 'Dépenses',
         data: labels.map(i => dataPoints[i.toString()] || 0),
-        borderColor: isDark ? '#5C7CFA' : '#002395',
-        backgroundColor: isDark ? 'rgba(92, 124, 250, 0.1)' : 'rgba(0, 35, 149, 0.05)',
+        borderColor: isDark ? '#88CAA5' : '#1C6856',
+        backgroundColor: isDark ? 'rgba(136, 202, 165, 0.12)' : 'rgba(28, 104, 86, 0.06)',
         tension: 0.4, fill: true, pointRadius: 2
       }]
     };
@@ -441,10 +442,10 @@ export default function UltimateBabyBudget() {
       isEmpty,
       data: {
         labels: Object.keys(categoryIcons),
-        datasets: [{ data: isEmpty ? [1] : values, backgroundColor: isEmpty ? ['#E2E8F0'] : categoryColors, borderWidth: 0 }]
+        datasets: [{ data: isEmpty ? [1] : values, backgroundColor: isEmpty ? ['#DFE7DE'] : categoryColors, borderWidth: 0 }]
       }
     };
-  }, [filteredExpenses]);
+  }, [filteredExpenses, categoryIcons]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
 
@@ -594,25 +595,25 @@ export default function UltimateBabyBudget() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-[#0B0E14] text-[#F1F5F9]' : 'bg-[#F0F4FF] text-[#0F172A]'}`}
+      className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-[#0B0E14] text-[#F0F3EE]' : 'bg-[#F8F8F4] text-[#16443D]'}`}
       style={{
-        '--france-blue': isDark ? '#5C7CFA' : '#002395',
-        '--france-red':  isDark ? '#FF6B6B' : '#ED2939',
-        '--bg-card':     isDark ? '#161B26' : '#FFFFFF',
-        '--bg-input':    isDark ? '#1F2633' : '#EEF2FF',
-        '--border':      isDark ? '#2D364D' : '#DDE3F5',
-        '--text-muted':  isDark ? 'rgba(241,245,249,0.45)' : 'rgba(15,23,42,0.4)',
+        '--france-blue': isDark ? '#88CAA5' : '#1C6856',
+        '--france-red':  isDark ? '#FF6B6B' : '#C85B56',
+        '--bg-card':     isDark ? '#1C2C24' : '#FFFFFF',
+        '--bg-input':    isDark ? '#243A2E' : '#EDF3EC',
+        '--border':      isDark ? '#33483B' : '#DFE7DE',
+        '--text-muted':  isDark ? '#ADC2B4' : '#657A6E',
       } as React.CSSProperties}
     >
-      <main className="container mx-auto px-5 py-8 max-w-7xl">
+      <main className="container mx-auto px-5 py-8 max-w-7xl bb-premium-dashboard">
 
         {/* ── BARRE D'OUTILS ── */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
-            <span className="text-3xl select-none">👶</span>
+            <BrandLogo compact />
             <div>
-              <h1 className="text-xl font-black tracking-tight leading-none">Baby Budget</h1>
-              <p className="text-[10px] font-bold uppercase opacity-40 tracking-widest mt-0.5">Suivi des dépenses</p>
+              <h1 className="text-2xl font-black tracking-tight leading-none bb-page-title">Votre tableau de bord</h1>
+              <p className="text-xs font-semibold mt-1" style={{ color: "var(--text-muted)" }}>Votre budget familial, en un coup d’œil</p>
             </div>
           </div>
           <div className="flex bg-[var(--bg-card)] p-1 rounded-xl border border-[var(--border)] shadow-sm">
@@ -693,7 +694,30 @@ export default function UltimateBabyBudget() {
           </div>
         )}
 
-        {/* ── CONTENU PRINCIPAL ── */}
+        {/* Vue d'ensemble — aucune requête ou calcul supplémentaire */}
+        {!isInitialLoading && !dataError && (
+          <div className="bb-dashboard-overview" aria-label="Vue d'ensemble de la période">
+            <div className="bb-overview-primary">
+              <span className="bb-kicker">VOTRE PÉRIODE</span>
+              <p className="bb-overview-label">Dépenses enregistrées</p>
+              <strong className="bb-overview-value">{formatEuro(totalAmount)}</strong>
+              <p className="bb-overview-help">Une vue claire de toutes vos opérations</p>
+            </div>
+            <div className="bb-overview-secondary">
+              <div className="bb-overview-tile">
+                <span>Opérations</span>
+                <strong>{filteredExpenses.length}</strong>
+                <small>Pour la période sélectionnée</small>
+              </div>
+              <div className="bb-overview-tile">
+                <span>Budget restant</span>
+                <strong>{budgetIsDefined ? formatEuro(remaining) : '—'}</strong>
+                <small>{budgetIsDefined ? 'Selon votre objectif' : 'Définissez un budget ci-dessous'}</small>
+              </div>
+            </div>
+          </div>
+        )}
+                {/* ── CONTENU PRINCIPAL ── */}
         {!isInitialLoading && !dataError && (
           <>
             {/* ── BUDGET & PROJECTION ── */}
