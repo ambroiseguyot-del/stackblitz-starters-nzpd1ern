@@ -559,3 +559,15 @@ html.dark [class*="bg-[var(--france-blue)]"][class*="text-white"] { color:#122C2
 .bb-forecast-chart { overflow-x:auto; }
 .bb-forecast-column { min-width:21px; }
 @media(max-width:680px) { .bb-recurring-amount { margin-left:auto; } }
+
+/* Personal financial insights */
+.bb-insights { padding:24px; background:var(--bg-card); border:1px solid var(--border); border-radius:22px; box-shadow:var(--bb-shadow); }
+.bb-insights-title { display:flex; align-items:end; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.bb-insights-title h2 { margin:6px 0 0; letter-spacing:-.045em; font-size:20px; font-weight:850; color:var(--text-main); }
+.bb-insights-title a,.bb-insights-links a { color:var(--bb-green); font-size:12px; text-decoration:none; font-weight:700; }
+.bb-insights-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px; margin-top:20px; }
+.bb-insight-card { padding:17px; border:1px solid var(--border); border-radius:14px; background:var(--bg-input); }
+.bb-insight-card strong { font-size:12px; font-weight:800; }
+.bb-insight-card p { color:var(--text-muted); font-size:12px; line-height:1.6; margin:7px 0 0; }
+.bb-insights-links { display:flex; gap:16px; flex-wrap:wrap; margin-top:18px; }
+@media(max-width:720px) { .bb-insights { padding:17px; } .bb-insights-grid { grid-template-columns:1fr; } }
