@@ -27,12 +27,12 @@ export default function NotFound() {
   }, []);
 
   const cv = {
-    bg:       isDark ? '#0B0E14' : '#F8FAFC',
+    bg:       isDark ? '#0B0E14' : '#F8F8F4',
     card:     isDark ? '#161B26' : '#FFFFFF',
-    border:   isDark ? '#2D364D' : '#E2E8F0',
-    text:     isDark ? '#F1F5F9' : '#0F172A',
-    textMuted:isDark ? '#94A3B8' : '#64748B',
-    accent:   '#6366F1',
+    border:   isDark ? '#2D364D' : '#DFE7DE',
+    text:     isDark ? '#F0F3EE' : '#16443D',
+    textMuted:isDark ? '#94A3B8' : '#657A6E',
+    accent:   '#1C6856',
   };
 
   const links = [
@@ -63,7 +63,7 @@ export default function NotFound() {
         .fade-2 { animation: fadeUp 0.5s ease-out 0.25s both; }
         .fade-3 { animation: fadeUp 0.5s ease-out 0.4s both; }
         .fade-4 { animation: fadeUp 0.5s ease-out 0.55s both; }
-        .nav-link:hover { border-color: #6366F1 !important; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,0.15); }
+        .nav-link:hover { border-color: #1C6856 !important; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,0.15); }
         .nav-link { transition: all 0.15s !important; }
         .home-btn:hover { background: #4F46E5 !important; transform: translateY(-1px); }
         .home-btn { transition: all 0.15s !important; }
