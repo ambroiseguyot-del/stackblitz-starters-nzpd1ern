@@ -46,9 +46,15 @@ export default function CategoryManager({ onCategoriesChange }: CategoryManagerP
 
   // Charge les catégories utilisateur
   const fetchCategories = useCallback(async () => {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      setUserCategories([]);
+      return;
+    }
     const { data } = await supabase
       .from("categories")
       .select("*")
+      .eq("user_id", user.id)
       .order("created_at", { ascending: true });
 
     if (data && data.length > 0) {
@@ -79,7 +85,7 @@ export default function CategoryManager({ onCategoriesChange }: CategoryManagerP
       await supabase
         .from("categories")
         .update({ use_defaults: val })
-        .eq("user_id", userCategories[0].id); // approximation — le trigger gère user_id
+        .eq("user_id", userCategories[0].user_id);
     }
     // Si pas de catégories custom encore, on stocke le préférence dans une ligne fantôme
   };
