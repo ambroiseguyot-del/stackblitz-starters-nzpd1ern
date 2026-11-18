@@ -7,9 +7,9 @@ export const metadata = {
 
 export default function Confidentialite() {
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px', fontFamily: 'DM Sans, sans-serif', color: '#0F172A', lineHeight: 1.75 }}>
+    <div style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px', fontFamily: 'DM Sans, sans-serif', color: '#16443D', lineHeight: 1.75 }}>
 
-      <Link href="/" style={{ fontSize: 13, color: '#6366F1', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 40 }}>
+      <Link href="/" style={{ fontSize: 13, color: '#1C6856', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 40 }}>
         ← Retour à l'accueil
       </Link>
 
@@ -20,7 +20,7 @@ export default function Confidentialite() {
       <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.03em', marginBottom: 8, lineHeight: 1.1 }}>
         Politique de confidentialité
       </h1>
-      <p style={{ color: '#64748B', marginBottom: 48 }}>
+      <p style={{ color: '#657A6E', marginBottom: 48 }}>
         BabyBudget s'engage à protéger vos données personnelles. Ce document explique quelles données nous collectons, pourquoi, et comment vous pouvez les contrôler.
       </p>
 
@@ -40,7 +40,7 @@ export default function Confidentialite() {
           ['Date d\'inscription', 'Gestion du compte', 'Intérêt légitime'],
           ['Dernière connexion', 'Sécurité du compte', 'Intérêt légitime'],
         ]} headers={['Donnée', 'Utilisation', 'Base légale']} />
-        <p style={{ color: '#64748B', fontSize: 14 }}>Nous ne collectons pas de données de localisation, de numéro de téléphone, ni aucune donnée sensible au sens du RGPD.</p>
+        <p style={{ color: '#657A6E', fontSize: 14 }}>Nous ne collectons pas de données de localisation, de numéro de téléphone, ni aucune donnée sensible au sens du RGPD.</p>
       </Section>
 
       <Section title="3. Comment vos données sont-elles utilisées ?">
@@ -92,8 +92,8 @@ export default function Confidentialite() {
         <p>Nous pouvons mettre à jour cette politique. En cas de modification importante, vous serez informé par email. La date de dernière mise à jour est indiquée en haut de cette page.</p>
       </Section>
 
-      <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid #E2E8F0', display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-        <Link href="/cgu" style={{ fontSize: 13, color: '#6366F1', textDecoration: 'none' }}>Conditions générales d'utilisation →</Link>
+      <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid #DFE7DE', display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+        <Link href="/cgu" style={{ fontSize: 13, color: '#1C6856', textDecoration: 'none' }}>Conditions générales d'utilisation →</Link>
         <Link href="/" style={{ fontSize: 13, color: '#94A3B8', textDecoration: 'none' }}>Retour à l'accueil</Link>
       </div>
     </div>
@@ -103,10 +103,10 @@ export default function Confidentialite() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 40 }}>
-      <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.1rem', color: '#0F172A', marginBottom: 16, letterSpacing: '-0.01em' }}>
+      <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.1rem', color: '#16443D', marginBottom: 16, letterSpacing: '-0.01em' }}>
         {title}
       </h2>
-      <div style={{ color: '#374151', fontSize: 15 }}>{children}</div>
+      <div style={{ color: '#3D5648', fontSize: 15 }}>{children}</div>
     </div>
   );
 }
@@ -116,9 +116,9 @@ function Table({ rows, headers }: { rows: string[][]; headers: string[] }) {
     <div style={{ overflowX: 'auto', marginBottom: 16 }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
         <thead>
-          <tr style={{ background: '#F8FAFC' }}>
+          <tr style={{ background: '#F8F8F4' }}>
             {headers.map(h => (
-              <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 600, color: '#64748B', fontSize: 12, letterSpacing: '0.04em', textTransform: 'uppercase', borderBottom: '1px solid #E2E8F0' }}>
+              <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 600, color: '#657A6E', fontSize: 12, letterSpacing: '0.04em', textTransform: 'uppercase', borderBottom: '1px solid #DFE7DE' }}>
                 {h}
               </th>
             ))}
@@ -126,9 +126,9 @@ function Table({ rows, headers }: { rows: string[][]; headers: string[] }) {
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i} style={{ borderBottom: '1px solid #F1F5F9' }}>
+            <tr key={i} style={{ borderBottom: '1px solid #F0F3EE' }}>
               {row.map((cell, j) => (
-                <td key={j} style={{ padding: '10px 14px', color: j === 0 ? '#0F172A' : '#64748B', fontWeight: j === 0 ? 500 : 400 }}>
+                <td key={j} style={{ padding: '10px 14px', color: j === 0 ? '#16443D' : '#657A6E', fontWeight: j === 0 ? 500 : 400 }}>
                   {cell}
                 </td>
               ))}
