@@ -69,7 +69,7 @@ const CATEGORY_MAP: Record<string, string> = {
   autre: "autres", autres: "autres",
 };
 
-const PIE_COLORS = ["#6366F1","#8B5CF6","#A78BFA","#C4B5FD","#DDD6FE","#EDE9FE"];
+const PIE_COLORS = ["#1C6856","#8B5CF6","#A78BFA","#C4B5FD","#DDD6FE","#EDE9FE"];
 const MONTHS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
 // ─── UTILS ────────────────────────────────────────────────────────────────────
@@ -230,7 +230,7 @@ function DiffBadge({ diff }: { diff: number }) {
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 4,
       padding: '4px 12px', borderRadius: 99, fontSize: 13, fontWeight: 700,
-      background: isGood ? '#F0FDF4' : '#FEF2F2',
+      background: isGood ? '#EEF7EE' : '#FEF2F2',
       color: isGood ? '#166534' : '#991B1B',
     }}>
       {isGood ? "▼" : "▲"} {fmtPct(diff)}
@@ -252,14 +252,14 @@ function ComparisonBar({ label, userVal, nationalVal, cv }: {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <span style={{ fontSize: 13, fontWeight: 500, color: cv.text }}>{CATEGORY_LABELS[label] || label}</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#6366F1' }}>{fmt(userVal)}</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#1C6856' }}>{fmt(userVal)}</span>
           <span style={{ fontSize: 12, color: cv.textMuted }}>/ {fmt(nationalVal)}</span>
-          {nationalVal > 0 && <span style={{ fontSize: 12, fontWeight: 600, color: isOver ? '#EF4444' : '#10B981' }}>{fmtPct(diff)}</span>}
+          {nationalVal > 0 && <span style={{ fontSize: 12, fontWeight: 600, color: isOver ? '#C85B56' : '#2F8A6B' }}>{fmtPct(diff)}</span>}
         </div>
       </div>
       <div style={{ position: 'relative', height: 8, background: cv.border, borderRadius: 99, overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${natPct}%`, background: cv.textMuted, borderRadius: 99, opacity: 0.4 }} />
-        <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${userPct}%`, background: isOver ? '#EF4444' : '#6366F1', borderRadius: 99, opacity: 0.85 }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${userPct}%`, background: isOver ? '#C85B56' : '#1C6856', borderRadius: 99, opacity: 0.85 }} />
       </div>
     </div>
   );
@@ -279,11 +279,11 @@ function FilterPill({ label, active, onClick, cv }: { label: string; active: boo
   return (
     <button onClick={onClick} style={{
       padding: '7px 16px', borderRadius: 99, fontSize: 13, fontWeight: 600,
-      border: `1.5px solid ${active ? '#6366F1' : cv.border}`,
-      background: active ? '#6366F1' : cv.card,
+      border: `1.5px solid ${active ? '#1C6856' : cv.border}`,
+      background: active ? '#1C6856' : cv.card,
       color: active ? 'white' : cv.textMuted,
       cursor: 'pointer', transition: 'all 0.15s',
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
+      fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     }}>
       {label}
     </button>
@@ -293,7 +293,7 @@ function FilterPill({ label, active, onClick, cv }: { label: string; active: boo
 function SectionTitle({ children, cv }: { children: React.ReactNode; cv: any }) {
   return (
     <h2 style={{ fontSize: 15, fontWeight: 700, color: cv.text, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ width: 4, height: 20, borderRadius: 2, background: '#6366F1', display: 'inline-block', flexShrink: 0 }} />
+      <span style={{ width: 4, height: 20, borderRadius: 2, background: '#1C6856', display: 'inline-block', flexShrink: 0 }} />
       {children}
     </h2>
   );
@@ -315,19 +315,19 @@ export default function ComparaisonNationale() {
 
   // Palette couleurs dark/light
   const cv = useMemo(() => ({
-    bg:            isDark ? '#0B0E14' : '#F8FAFC',
+    bg:            isDark ? '#0B0E14' : '#F8F8F4',
     card:          isDark ? '#161B26' : '#FFFFFF',
-    border:        isDark ? '#2D364D' : '#E2E8F0',
-    borderFaint:   isDark ? '#1E293B' : '#F1F5F9',
-    text:          isDark ? '#F1F5F9' : '#0F172A',
-    textMuted:     isDark ? '#94A3B8' : '#64748B',
-    textSecondary: isDark ? '#CBD5E1' : '#475569',
-    accentBg:      isDark ? '#1E2D4A' : '#EFF6FF',
-    accentBorder:  isDark ? '#1D4ED8' : '#BFDBFE',
-    accent:        isDark ? '#60A5FA' : '#1D4ED8',
+    border:        isDark ? '#2D364D' : '#DFE7DE',
+    borderFaint:   isDark ? '#214C40' : '#F0F3EE',
+    text:          isDark ? '#F0F3EE' : '#16443D',
+    textMuted:     isDark ? '#94A3B8' : '#657A6E',
+    textSecondary: isDark ? '#B9D0BF' : '#4D6759',
+    accentBg:      isDark ? '#1E2D4A' : '#E7F1EA',
+    accentBorder:  isDark ? '#1C6856' : '#B9D8C3',
+    accent:        isDark ? '#9FCDB1' : '#1C6856',
     headerBg:      isDark ? 'rgba(22,27,38,0.95)' : 'rgba(255,255,255,0.95)',
-    skColor:       isDark ? '#1E293B' : '#E2E8F0',
-    barNat:        isDark ? '#2D364D' : '#E2E8F0',
+    skColor:       isDark ? '#214C40' : '#DFE7DE',
+    barNat:        isDark ? '#2D364D' : '#DFE7DE',
   }), [isDark]);
 
   const national = nationalData[ageSlice];
@@ -389,14 +389,14 @@ export default function ComparaisonNationale() {
       }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '12px 24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div>
-            <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6366F1', margin: '0 0 2px' }}>Budget Bébé</p>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: cv.text, margin: 0, letterSpacing: '-0.5px' }}>Comparaison Nationale</h1>
+            <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1C6856', margin: '0 0 2px' }}>Budget Bébé</p>
+            <h1 style={{ fontSize: 20, fontWeight: 800, color: cv.text, margin: 0, letterSpacing: '-0.5px' }}>Votre comparaison budgétaire</h1>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: cv.card, border: `1px solid ${cv.border}`, borderRadius: 16, padding: '8px 12px' }}>
             <button onClick={goPrev} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', background: 'none', cursor: 'pointer', color: cv.textMuted, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FONT }} aria-label="Mois précédent">❮</button>
             <div style={{ textAlign: 'center', minWidth: 140 }}>
               <p style={{ fontSize: 14, fontWeight: 800, color: cv.text, margin: 0, textTransform: 'capitalize' }}>{MONTHS_FR[selectedDate.month]} {selectedDate.year}</p>
-              {isCurrentMonth && <p style={{ fontSize: 11, color: '#6366F1', fontWeight: 600, margin: 0 }}>Mois en cours</p>}
+              {isCurrentMonth && <p style={{ fontSize: 11, color: '#1C6856', fontWeight: 600, margin: 0 }}>Mois en cours</p>}
             </div>
             <button onClick={goNext} disabled={isCurrentMonth} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', background: 'none', cursor: isCurrentMonth ? 'not-allowed' : 'pointer', color: cv.textMuted, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isCurrentMonth ? 0.3 : 1, fontFamily: FONT }} aria-label="Mois suivant">❯</button>
           </div>
@@ -407,6 +407,9 @@ export default function ComparaisonNationale() {
       </div>
 
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px 80px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <aside className="bb-data-notice" role="note">
+          <strong>À propos des comparaisons</strong> — Les références nationales sont des estimations illustratives, et non un classement statistique officiel. Leur méthodologie et leur actualisation restent à consolider.
+        </aside>
 
         {/* ── FILTRES ── */}
         <div style={{ background: cv.card, border: `1px solid ${cv.border}`, borderRadius: 20, padding: '20px 24px' }}>
@@ -464,7 +467,7 @@ export default function ComparaisonNationale() {
                   <span style={{ fontSize: 22 }}>📈</span>
                   <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: cv.textMuted }}>Votre écart</span>
                 </div>
-                <p style={{ fontSize: 28, fontWeight: 800, color: diff <= 0 ? '#10B981' : '#EF4444', margin: 0, letterSpacing: '-1px' }}>{fmtPct(diff)}</p>
+                <p style={{ fontSize: 28, fontWeight: 800, color: diff <= 0 ? '#2F8A6B' : '#C85B56', margin: 0, letterSpacing: '-1px' }}>{fmtPct(diff)}</p>
                 <DiffBadge diff={diff} />
                 <p style={{ fontSize: 12, color: cv.textMuted, margin: 0 }}>
                   {diff <= 0
@@ -516,7 +519,7 @@ export default function ComparaisonNationale() {
                         <YAxis tickFormatter={v => fmt(v)} tick={{ fontSize: 10, fill: cv.textMuted }} axisLine={false} tickLine={false} width={64} />
                         <Tooltip content={(props: any) => <CustomTooltip {...props} cardBg={cv.card} border={cv.border} text={cv.text} />} cursor={{ fill: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }} />
                         <Legend formatter={value => <span style={{ fontSize: 12, color: cv.textSecondary }}>{value}</span>} />
-                        <Bar dataKey="Vous" fill="#6366F1" radius={[6,6,0,0]} maxBarSize={40} />
+                        <Bar dataKey="Vous" fill="#1C6856" radius={[6,6,0,0]} maxBarSize={40} />
                         <Bar dataKey="Nationale" fill={cv.barNat} stroke={cv.textMuted} strokeWidth={1} radius={[6,6,0,0]} maxBarSize={40} />
                       </BarChart>
                     </ResponsiveContainer>
@@ -551,7 +554,7 @@ export default function ComparaisonNationale() {
                         <PolarGrid stroke={cv.border} />
                         <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: cv.textMuted }} />
                         <Radar name="Nationale" dataKey="Nationale" stroke={cv.textMuted} fill={cv.barNat} fillOpacity={0.5} />
-                        <Radar name="Vous" dataKey="Vous" stroke="#6366F1" fill="#6366F1" fillOpacity={0.3} />
+                        <Radar name="Vous" dataKey="Vous" stroke="#1C6856" fill="#1C6856" fillOpacity={0.3} />
                         <Legend formatter={value => <span style={{ fontSize: 12, color: cv.textSecondary, fontWeight: 500 }}>{value}</span>} />
                         <Tooltip formatter={(value: any, name: any) => [`Score ${Number(value) || 0}/100`, String(name)]} contentStyle={{ background: cv.card, border: `1px solid ${cv.border}`, borderRadius: 12, fontFamily: FONT }} />
                       </RadarChart>
@@ -573,9 +576,9 @@ export default function ComparaisonNationale() {
                 </div>
                 <div style={{ display: 'flex', gap: 20, marginTop: 16, flexWrap: 'wrap' }}>
                   {[
-                    { color: '#6366F1', label: 'Vos dépenses', opacity: 1 },
+                    { color: '#1C6856', label: 'Vos dépenses', opacity: 1 },
                     { color: cv.textMuted, label: 'Moyenne nationale', opacity: 0.4 },
-                    { color: '#EF4444', label: 'Au-dessus de la moyenne', opacity: 0.85 },
+                    { color: '#C85B56', label: 'Au-dessus de la moyenne', opacity: 0.85 },
                   ].map(({ color, label, opacity }) => (
                     <span key={label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: cv.textMuted }}>
                       <span style={{ width: 12, height: 8, borderRadius: 99, background: color, display: 'inline-block', opacity }} />
