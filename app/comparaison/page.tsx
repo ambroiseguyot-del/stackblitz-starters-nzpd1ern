@@ -42,15 +42,15 @@ function useGlobalDark(): boolean {
 
 const nationalData: Record<AgeSlice, NationalSlice> = {
   "0-1": {
-    total: 700,
+    total: 510,
     categories: { couches: 60, alimentation: 80, sante: 70, vetements: 50, equipement: 150, autres: 100 },
   },
   "1-3": {
-    total: 550,
+    total: 450,
     categories: { couches: 30, alimentation: 120, sante: 60, vetements: 60, equipement: 80, autres: 100 },
   },
   "3-6": {
-    total: 450,
+    total: 400,
     categories: { alimentation: 150, sante: 50, vetements: 70, education: 50, loisirs: 80 },
   },
 };
@@ -95,9 +95,9 @@ function generateInsights(
   if (nationalTotal === 0) return insights;
   const diff = ((userTotal - nationalTotal) / nationalTotal) * 100;
   const absDiff = Math.abs(diff);
-  if (diff > 15) insights.push(`Vous dépensez ${absDiff.toFixed(0)}% de plus que la moyenne nationale pour cette tranche d'âge.`);
-  else if (diff < -15) insights.push(`Bravo ! Vous dépensez ${absDiff.toFixed(0)}% de moins que la moyenne nationale — vous faites partie des parents les plus économes.`);
-  else insights.push(`Vos dépenses sont proches de la moyenne nationale (écart de ${absDiff.toFixed(0)}%).`);
+  if (diff > 15) insights.push(`Vous dépensez ${absDiff.toFixed(0)}% au-dessus du budget de référence illustratif pour cette tranche d'âge.`);
+  else if (diff < -15) insights.push(`Bravo ! Vous dépensez ${absDiff.toFixed(0)}% en dessous du budget de référence illustratif — vous faites partie des parents les plus économes.`);
+  else insights.push(`Vos dépenses sont proches du budget de référence illustratif (écart de ${absDiff.toFixed(0)}%).`);
   const topUserCat = Object.entries(userByCategory).sort((a, b) => b[1] - a[1])[0];
   if (topUserCat) insights.push(`Votre poste principal est "${CATEGORY_LABELS[topUserCat[0]] || topUserCat[0]}" (${fmt(topUserCat[1])}/mois).`);
   const gaps = Object.entries(nationalCategories).map(([cat, natVal]) => ({
@@ -105,10 +105,9 @@ function generateInsights(
   }));
   const maxOverspend = gaps.sort((a, b) => b.gap - a.gap)[0];
   if (maxOverspend && maxOverspend.gap > 20) {
-    insights.push(`Attention : "${CATEGORY_LABELS[maxOverspend.cat] || maxOverspend.cat}" dépasse la moyenne de ${maxOverspend.gap.toFixed(0)}% — une piste d'optimisation.`);
+    insights.push(`Attention : "${CATEGORY_LABELS[maxOverspend.cat] || maxOverspend.cat}" dépasse le repère indicatif de ${maxOverspend.gap.toFixed(0)}% — une piste d'optimisation.`);
   }
-  const percentile = diff < 0 ? Math.min(95, 50 + Math.abs(diff)) : Math.max(5, 50 - diff);
-  insights.push(`Vous êtes plus économe que ${percentile.toFixed(0)}% des parents sur cette tranche d'âge (estimation).`);
+  insights.push('Ces repères sont des hypothèses budgétaires illustratives et non des percentiles statistiques.');
   return insights;
 }
 
@@ -404,7 +403,7 @@ export default function ComparaisonNationale() {
             <button onClick={goNext} disabled={isCurrentMonth} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', background: 'none', cursor: isCurrentMonth ? 'not-allowed' : 'pointer', color: cv.textMuted, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isCurrentMonth ? 0.3 : 1, fontFamily: FONT }} aria-label="Mois suivant">❯</button>
           </div>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 99, background: cv.accentBg, color: cv.accent, fontSize: 12, fontWeight: 600, border: `1px solid ${cv.accentBorder}` }}>
-            🇫🇷 Données INSEE · CAF · DREES
+            Hypothèses illustratives · non officielles
           </span>
         </div>
       </div>
@@ -462,7 +461,7 @@ export default function ComparaisonNationale() {
                   ? `Aucune dépense — ${MONTHS_FR[selectedDate.month]} ${selectedDate.year}`
                   : `${monthlyExpenses.length} opération${monthlyExpenses.length > 1 ? "s" : ""} · ${MONTHS_FR[selectedDate.month]}`}
               />
-              <KPICard icon="🇫🇷" label="Moyenne nationale" value={fmt(nationalFiltered)} cv={cv}
+              <KPICard icon="🇫🇷" label="Repère indicatif" value={fmt(nationalFiltered)} cv={cv}
                 sub={`Tranche ${ageSlice} an${ageSlice === "0-1" ? "" : "s"}`}
               />
               <div style={{ background: cv.card, border: `1px solid ${cv.border}`, borderRadius: 20, padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -512,7 +511,7 @@ export default function ComparaisonNationale() {
 
                 <div style={{ background: cv.card, border: `1px solid ${cv.border}`, borderRadius: 20, padding: '20px 24px' }}>
                   <p style={{ fontSize: 13, fontWeight: 700, color: cv.text, margin: '0 0 16px' }}>
-                    Vous vs Moyenne {selectedCategory !== "toutes" ? `— ${CATEGORY_LABELS[selectedCategory] || selectedCategory}` : "(par catégorie)"}
+                    Vous vs Repère {selectedCategory !== "toutes" ? `— ${CATEGORY_LABELS[selectedCategory] || selectedCategory}` : "(par catégorie)"}
                   </p>
                   <div style={{ height: 240 }}>
                     <ResponsiveContainer width="100%" height="100%">
@@ -595,7 +594,7 @@ export default function ComparaisonNationale() {
             {/* FOOTER SOURCE */}
             <div style={{ textAlign: 'center', padding: '16px 0' }}>
               <p style={{ fontSize: 12, color: cv.textMuted, maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
-                📄 Données indicatives basées sur des moyennes nationales (INSEE, CAF, DREES). Les chiffres représentent des estimations moyennes et peuvent varier selon la région, la situation familiale et le mode de garde.
+                📄 Hypothèses budgétaires illustratives, non issues d'une enquête statistique représentative. Elles ne permettent pas de classer les familles ni de déduire vos droits aux aides.
               </p>
             </div>
 
