@@ -305,21 +305,18 @@ export default function UltimateBabyBudget() {
   const fetchData = useCallback(async (isFirst = false) => {
     try {
       setDataError(null);
-      const { data: { session } } = await supabase.auth.getSession();
-      const uid = session?.user?.id;
-
-      // Construit les requêtes — filtre user_id si disponible
-      const expQuery = uid
-        ? supabase.from('expenses').select('*').eq('user_id', uid).order('date', { ascending: true })
-        : supabase.from('expenses').select('*').order('date', { ascending: true });
-
-      const profQuery = uid
-        ? supabase.from('profiles').select('*').eq('user_id', uid).order('name', { ascending: true })
-        : supabase.from('profiles').select('*').order('name', { ascending: true });
-
-      const settQuery = uid
-        ? supabase.from('settings').select('*').eq('key', 'monthly_budget').eq('user_id', uid).maybeSingle()
-        : supabase.from('settings').select('*').eq('key', 'monthly_budget').maybeSingle();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        setExpenses([]);
+        setProfiles([]);
+        setDataError('Votre session a expiré. Reconnectez-vous pour accéder à vos données.');
+        return;
+      }
+      const uid = user.id;
+      // Defense in depth: never issue a private request without an authenticated owner.
+      const expQuery = supabase.from('expenses').select('*').eq('user_id', uid).order('date', { ascending: true });
+      const profQuery = supabase.from('profiles').select('*').eq('user_id', uid).order('name', { ascending: true });
+      const settQuery = supabase.from('settings').select('*').eq('key', 'monthly_budget').eq('user_id', uid).maybeSingle();
 
       const [expRes, profRes, settRes] = await Promise.all([expQuery, profQuery, settQuery]);
 
