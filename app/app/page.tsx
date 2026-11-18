@@ -51,7 +51,7 @@ const parseDateLocal = (dateStr: string): Date => {
   return new Date(year, month - 1, day);
 };
 
-const getTodayISO = () => new Date().toISOString().split('T')[0];
+const getTodayISO = () => { const now = new Date(); const y = now.getFullYear(); const m = String(now.getMonth() + 1).padStart(2, '0'); const d = String(now.getDate()).padStart(2, '0'); return `${y}-${m}-${d}`; };
 
 // ─── Hook dark mode — observe la classe sur <html> posée par la Navbar ────────
 
@@ -231,7 +231,7 @@ function EditModal({ expense, profiles, categoryIcons, onSave, onCancel }: EditM
             <input type="checkbox" id="edit-recurring" checked={form.is_recurring}
               onChange={e => setForm(f => ({ ...f, is_recurring: e.target.checked }))}
               className="w-5 h-5 accent-[var(--france-blue)]" />
-            <label htmlFor="edit-recurring" className="text-sm font-bold opacity-50">Dépense récurrente 🔁</label>
+            <label htmlFor="edit-recurring" className="text-sm font-bold opacity-50">Dépense récurrente (suivi manuel) 🔁</label>
           </div>
           <div className="flex gap-3 sm:col-span-2 mt-2">
             <button type="button" onClick={onCancel}
@@ -417,7 +417,7 @@ export default function UltimateBabyBudget() {
       const key = viewScope === 'month' ? d.getDate().toString() : (d.getMonth() + 1).toString();
       dataPoints[key] = (dataPoints[key] || 0) + e.amount;
     });
-    const labels = Array.from({ length: viewScope === 'month' ? 31 : 12 }, (_, i) => i + 1);
+    const labels = Array.from({ length: viewScope === 'month' ? new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate() : 12 }, (_, i) => i + 1);
     return {
       labels: labels.map(i => viewScope === 'month' ? i : new Date(2000, i - 1).toLocaleDateString('fr-FR', { month: 'short' })),
       datasets: [{
@@ -428,7 +428,7 @@ export default function UltimateBabyBudget() {
         tension: 0.4, fill: true, pointRadius: 2
       }]
     };
-  }, [filteredExpenses, viewScope, isDark]);
+  }, [filteredExpenses, viewScope, isDark, currentDate]);
 
   const doughnutData = useMemo(() => {
     const values = Object.keys(categoryIcons).map(cat =>
@@ -538,10 +538,11 @@ export default function UltimateBabyBudget() {
     const val = parseFloat(tempBudget);
     if (isNaN(val) || val < 0) { showToast("Budget invalide", 'error'); return; }
     try {
-      await supabase.from('settings').upsert(
+      const { error } = await supabase.from('settings').upsert(
         { key: 'monthly_budget', value: tempBudget },
         { onConflict: 'key,user_id' }
       );
+      if (error) throw error;
       setMonthlyBudget(val);
       setIsEditingBudget(false);
       showToast("Budget mis à jour ✓");
@@ -551,7 +552,8 @@ export default function UltimateBabyBudget() {
   const addProfile = async () => {
     if (!newProfileName.trim()) return;
     try {
-      await supabase.from('profiles').insert([{ name: newProfileName.trim() }]);
+      const { error } = await supabase.from('profiles').insert([{ name: newProfileName.trim() }]);
+      if (error) throw error;
       setNewProfileName('');
       fetchData();
       showToast("Enfant ajouté ✓");
@@ -564,7 +566,8 @@ export default function UltimateBabyBudget() {
       onConfirm: async () => {
         setConfirmModal(null);
         try {
-          await supabase.from('profiles').delete().eq('id', id);
+          const { error } = await supabase.from('profiles').delete().eq('id', id);
+          if (error) throw error;
           if (filterChild === name) setFilterChild('all');
           fetchData();
           showToast("Profil supprimé");
@@ -871,7 +874,7 @@ export default function UltimateBabyBudget() {
                     </div>
                     <div className="flex items-center gap-3 px-2 pt-3">
                       <input type="checkbox" name="recurring" id="rec" className="w-5 h-5 accent-[var(--france-blue)]" />
-                      <label htmlFor="rec" className="text-sm font-bold opacity-40">Récurrente 🔁</label>
+                      <label htmlFor="rec" className="text-sm font-bold opacity-40">Récurrente (suivi manuel) 🔁</label>
                     </div>
                     <div className="md:col-span-2">
                       <CategoryManager onCategoriesChange={setCategories} />
