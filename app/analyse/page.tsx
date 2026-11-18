@@ -25,7 +25,7 @@ interface Profile {
 
 // ─── CONSTANTES ───────────────────────────────────────────────────────────────
 
-const PALETTE = ["#6366F1","#0070F3","#10B981","#F59E0B","#EF4444","#8B5CF6"];
+const PALETTE = ["#1C6856","#1C6856","#2F8A6B","#D89753","#C85B56","#8B5CF6"];
 const MONTHS_FR = ["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"];
 const FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
 
@@ -182,7 +182,7 @@ function MonthNav({ selectedDate, onPrev, onNext, isCurrentMonth, cv }: {
         <p style={{ fontSize: 14, fontWeight: 700, color: cv.text, margin: 0, textTransform: 'capitalize' }}>
           {MONTHS_FR[selectedDate.month]} {selectedDate.year}
         </p>
-        {isCurrentMonth && <p style={{ fontSize: 11, color: '#6366F1', fontWeight: 600, margin: 0 }}>Mois en cours</p>}
+        {isCurrentMonth && <p style={{ fontSize: 11, color: '#1C6856', fontWeight: 600, margin: 0 }}>Mois en cours</p>}
       </div>
       <button onClick={onNext} disabled={isCurrentMonth} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', background: 'none', cursor: isCurrentMonth ? 'not-allowed' : 'pointer', color: cv.textMuted, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isCurrentMonth ? 0.3 : 1, fontFamily: FONT }}>❯</button>
     </div>
@@ -196,21 +196,21 @@ export default function AnalysePage() {
 
   // Palette couleurs dark/light
   const cv = useMemo(() => ({
-    bg:          isDark ? '#0B0E14' : '#F8FAFC',
+    bg:          isDark ? '#0B0E14' : '#F8F8F4',
     card:        isDark ? '#161B26' : '#FFFFFF',
-    border:      isDark ? '#2D364D' : '#E2E8F0',
-    borderFaint: isDark ? '#1E293B' : '#F1F5F9',
-    text:        isDark ? '#F1F5F9' : '#0F172A',
-    textMuted:   isDark ? '#94A3B8' : '#64748B',
-    textSub:     isDark ? '#CBD5E1' : '#374151',
-    accentBg:    isDark ? '#1E2D4A' : '#EFF6FF',
-    accentBorder:isDark ? '#1D4ED8' : '#BFDBFE',
-    accent:      isDark ? '#60A5FA' : '#1E40AF',
-    skColor:     isDark ? '#1E293B' : '#E2E8F0',
-    rowHover:    isDark ? '#1E293B' : '#F8FAFC',
-    tagBg:       isDark ? '#1E2D4A' : '#EFF6FF',
-    tagColor:    isDark ? '#60A5FA' : '#1E40AF',
-    tableHead:   isDark ? '#111827' : '#F8FAFC',
+    border:      isDark ? '#2D364D' : '#DFE7DE',
+    borderFaint: isDark ? '#214C40' : '#F0F3EE',
+    text:        isDark ? '#F0F3EE' : '#16443D',
+    textMuted:   isDark ? '#94A3B8' : '#657A6E',
+    textSub:     isDark ? '#B9D0BF' : '#3D5648',
+    accentBg:    isDark ? '#1E2D4A' : '#E7F1EA',
+    accentBorder:isDark ? '#1C6856' : '#B9D8C3',
+    accent:      isDark ? '#9FCDB1' : '#16443D',
+    skColor:     isDark ? '#214C40' : '#DFE7DE',
+    rowHover:    isDark ? '#214C40' : '#F8F8F4',
+    tagBg:       isDark ? '#1E2D4A' : '#E7F1EA',
+    tagColor:    isDark ? '#9FCDB1' : '#16443D',
+    tableHead:   isDark ? '#111827' : '#F8F8F4',
   }), [isDark]);
 
   // Navigation par mois (cohérent avec comparaison)
@@ -283,14 +283,14 @@ export default function AnalysePage() {
         <header style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'flex-end', justifyContent: 'space-between' }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', color: cv.textMuted, textTransform: 'uppercase', margin: '0 0 4px' }}>Budget familial</p>
-            <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0, color: cv.text, letterSpacing: '-0.5px' }}>Analyse détaillée</h1>
+            <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0, color: cv.text, letterSpacing: '-0.5px' }}>Comprendre vos dépenses</h1>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <button
               onClick={() => setShowAll(!showAll)}
               style={{
-                padding: '8px 16px', borderRadius: 10, border: `1.5px solid ${showAll ? '#6366F1' : cv.border}`,
-                background: showAll ? '#6366F1' : cv.card, color: showAll ? 'white' : cv.textMuted,
+                padding: '8px 16px', borderRadius: 10, border: `1.5px solid ${showAll ? '#1C6856' : cv.border}`,
+                background: showAll ? '#1C6856' : cv.card, color: showAll ? 'white' : cv.textMuted,
                 fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: FONT, transition: 'all 0.15s',
               }}
             >
@@ -310,7 +310,7 @@ export default function AnalysePage() {
           <div style={{ background: cv.card, borderRadius: 16, border: `1px solid ${cv.border}`, padding: '48px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
             <span style={{ fontSize: 40 }}>⚠️</span>
             <p style={{ fontSize: 15, fontWeight: 600, color: cv.text, margin: 0 }}>{error}</p>
-            <button onClick={refetch} style={{ padding: '10px 24px', borderRadius: 10, border: 'none', background: '#6366F1', color: 'white', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: FONT }}>Réessayer</button>
+            <button onClick={refetch} style={{ padding: '10px 24px', borderRadius: 10, border: 'none', background: '#1C6856', color: 'white', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: FONT }}>Réessayer</button>
           </div>
         )}
 
@@ -358,7 +358,7 @@ export default function AnalysePage() {
                     <XAxis dataKey="name" tick={{ fontSize: 11, fill: cv.textMuted }} axisLine={false} tickLine={false} />
                     <YAxis tickFormatter={formatEurShort} tick={{ fontSize: 10, fill: cv.textMuted }} axisLine={false} tickLine={false} width={60} />
                     <Tooltip content={(props: any) => <CustomTooltip {...props} {...tooltipProps} />} cursor={{ fill: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }} />
-                    <Bar dataKey="value" fill="#6366F1" radius={[6,6,0,0]} maxBarSize={52} />
+                    <Bar dataKey="value" fill="#1C6856" radius={[6,6,0,0]} maxBarSize={52} />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartCard>
@@ -373,8 +373,8 @@ export default function AnalysePage() {
                     <XAxis dataKey="month" tick={{ fontSize: 11, fill: cv.textMuted }} axisLine={false} tickLine={false} />
                     <YAxis tickFormatter={formatEurShort} tick={{ fontSize: 11, fill: cv.textMuted }} axisLine={false} tickLine={false} width={60} />
                     <Tooltip content={(props: any) => <CustomTooltip {...props} {...tooltipProps} />} />
-                    <Line type="monotone" dataKey="total" stroke="#6366F1" strokeWidth={2.5}
-                      dot={{ r: 4, fill: "#6366F1", strokeWidth: 0 }}
+                    <Line type="monotone" dataKey="total" stroke="#1C6856" strokeWidth={2.5}
+                      dot={{ r: 4, fill: "#1C6856", strokeWidth: 0 }}
                       activeDot={{ r: 6, fill: "#818CF8" }} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -390,7 +390,7 @@ export default function AnalysePage() {
                     <XAxis type="number" tickFormatter={formatEurShort} tick={{ fontSize: 11, fill: cv.textMuted }} axisLine={false} tickLine={false} />
                     <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: cv.textSub }} axisLine={false} tickLine={false} width={80} />
                     <Tooltip content={(props: any) => <CustomTooltip {...props} {...tooltipProps} />} cursor={{ fill: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)' }} />
-                    <Bar dataKey="total" fill="#0070F3" radius={[0,6,6,0]} maxBarSize={28} />
+                    <Bar dataKey="total" fill="#1C6856" radius={[0,6,6,0]} maxBarSize={28} />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartCard>
