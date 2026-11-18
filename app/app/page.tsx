@@ -426,8 +426,8 @@ export default function UltimateBabyBudget() {
       datasets: [{
         label: 'Dépenses',
         data: labels.map(i => dataPoints[i.toString()] || 0),
-        borderColor: isDark ? '#5C7CFA' : '#1C6856',
-        backgroundColor: isDark ? 'rgba(92, 124, 250, 0.1)' : 'rgba(0, 35, 149, 0.05)',
+        borderColor: isDark ? '#88CAA5' : '#1C6856',
+        backgroundColor: isDark ? 'rgba(136, 202, 165, 0.12)' : 'rgba(28, 104, 86, 0.06)',
         tension: 0.4, fill: true, pointRadius: 2
       }]
     };
@@ -445,7 +445,7 @@ export default function UltimateBabyBudget() {
         datasets: [{ data: isEmpty ? [1] : values, backgroundColor: isEmpty ? ['#DFE7DE'] : categoryColors, borderWidth: 0 }]
       }
     };
-  }, [filteredExpenses]);
+  }, [filteredExpenses, categoryIcons]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
 
