@@ -1,343 +1,102 @@
-'use client';
-
 import Link from 'next/link';
+import BlogArticleFrame from '../../../components/BlogArticleFrame';
 
-const FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
-
-const SOURCES = [
-  { id: 1, label: 'Avis Parents — Coût réel d\'un bébé la première année 2026 (490-750 €/mois hors garde)', href: 'https://www.avis-parents.com/vie-famille/budget-famille/cout-bebe-premiere-annee/' },
-  { id: 8, label: 'INSEE — Lancement nouvelle enquête Budget de famille 2026', href: 'https://www.insee.fr/fr/information/8719834' },
-  { id: 2, label: 'CAF.fr — Barème PAJE et aides à la petite enfance 2026', href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
-  { id: 3, label: 'CREDOC — Enquête sur les dépenses des familles avec jeunes enfants 2022', href: 'https://www.credoc.fr' },
-  { id: 4, label: 'CNAF — Observatoire national de la petite enfance, Rapport 2023', href: 'https://www.caf.fr/sites/default/files/cnaf/Documents/Dossiers_documentaires/ONPE/Rapport_ONPE_2023.pdf' },
-  { id: 5, label: 'Service-public.fr — Complément de Mode de Garde (CMG)', href: 'https://www.service-public.fr/particuliers/vosdroits/F345' },
-  { id: 6, label: 'FEPEM — Baromètre des emplois de la famille 2024', href: 'https://www.fepem.fr' },
-  { id: 7, label: 'Mon-enfant.fr — Trouver un mode de garde', href: 'https://www.mon-enfant.fr' },
+const sources = [
+  { organization: 'Insee', title: 'Enquête Budget de famille : objectif et champ statistique', url: 'https://www.insee.fr/fr/information/7652980' },
+  { organization: 'Insee', title: 'Lancement de l’enquête Budget de famille 2026', url: 'https://www.insee.fr/fr/information/8719834' },
+  { organization: 'CAF', title: 'Aides et démarches concernant la petite enfance', url: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
+  { organization: 'Urssaf', title: 'Calculateur du reste à charge pour le CMG emploi direct', url: 'https://www.urssaf.fr/accueil/outils-documentation/simulateurs/calculer-reste-a-charge-cmg-pe.html' },
+  { organization: 'Service-Public', title: 'Devenir parent : démarches et aides financières', url: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F16225' },
 ];
 
-function Ref({ id }: { id: number }) {
-  return (
-    <sup>
-      <a href={`#source-${id}`} style={{ color: '#1C6856', textDecoration: 'none', fontSize: '0.75em', fontWeight: 600 }}>
-        [{id}]
-      </a>
-    </sup>
-  );
-}
+const sample = [
+  { name: 'Couches et change', perMonth: 45, description: 'Achats de produits de change' },
+  { name: 'Alimentation', perMonth: 70, description: 'Lait, diversification ou besoins spécifiques' },
+  { name: 'Vêtements', perMonth: 30, description: 'Renouvellement des tailles' },
+  { name: 'Santé et hygiène', perMonth: 25, description: 'Produits non remboursés et soins du quotidien' },
+  { name: 'Équipement', perMonth: 55, description: 'Provision pour les achats ponctuels' },
+  { name: 'Éveil et sorties', perMonth: 20, description: 'Livres, jouets et activités' },
+];
+const total = sample.reduce((sum, row) => sum + row.perMonth, 0);
 
-export default function ArticleCoutBebe() {
-  return (
-    <div style={{ minHeight: '100vh', background: '#F8F8F4', fontFamily: FONT, color: '#16443D' }}>
-
-      {/* ── HERO ARTICLE ── */}
-      <div style={{ background: 'linear-gradient(135deg, #16443D 0%, #214C40 100%)', padding: '56px 24px 48px' }}>
-        <div style={{ maxWidth: 760, margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-            <Link href="/blog" style={{ fontSize: 12, color: '#94A3B8', textDecoration: 'none' }}>Blog</Link>
-            <span style={{ color: '#4D6759', fontSize: 12 }}>›</span>
-            <span style={{ fontSize: 12, color: '#1C6856', fontWeight: 600 }}>Budget & finances</span>
-          </div>
-          <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: 'white', letterSpacing: '-1.5px', lineHeight: 1.15, margin: '0 0 16px' }}>
-            Combien coûte un bébé la première année ?
-          </h1>
-          <p style={{ fontSize: 16, color: '#94A3B8', lineHeight: 1.7, margin: '0 0 24px', maxWidth: 620 }}>
-            Couches, lait, mode de garde, équipement... Le budget réel d'un enfant la première année dépasse souvent les estimations. Chiffres, postes de dépenses et aides disponibles — tout ce qu'il faut savoir avant l'arrivée de bébé.
-          </p>
-          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 12, color: '#657A6E' }}>📅 Mis à jour en 2026</span>
-            <span style={{ fontSize: 12, color: '#657A6E' }}>⏱ 8 min de lecture</span>
-            <span style={{ fontSize: 12, color: '#657A6E' }}>✅ Sources INSEE · CAF · CREDOC</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── CONTENU ── */}
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '48px 24px 80px' }}>
-
-        {/* Intro */}
-        <div style={{ background: '#E7F1EA', border: '1px solid #B9D8C3', borderRadius: 16, padding: '20px 24px', marginBottom: 40 }}>
-          <p style={{ fontSize: 15, color: '#1C6856', fontWeight: 600, margin: '0 0 8px' }}>💡 À retenir</p>
-          <p style={{ fontSize: 14, color: '#16443D', lineHeight: 1.7, margin: 0 }}>
-            Selon l'INSEE, un bébé coûte en moyenne <strong>700 € par mois</strong> la première année, soit <strong>8 400 € sur 12 mois</strong><Ref id={1} />. 
-            Les dépenses courantes mensuelles hors garde s'élèvent désormais à <strong>490 – 750 €/mois</strong> selon les choix de la famille. Mais 40 % des parents sous-estiment ce budget de moitié avant la naissance<Ref id={3} />.
-          </p>
-        </div>
-
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 24 }}>
-          L'arrivée d'un enfant est l'un des événements les plus transformateurs d'une vie — et l'un des plus coûteux. Pourtant, rares sont les futurs parents qui anticipent avec précision ce que va réellement représenter cette première année sur le plan financier. Entre les achats d'équipement avant la naissance, les dépenses courantes mensuelles et le poste mode de garde qui peut à lui seul dépasser 1 000 € par mois, le budget se construit par strates successives.
-        </p>
-
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 40 }}>
-          Cet article vous propose un tour d'horizon complet et sourcé des dépenses à prévoir, poste par poste, avec les aides auxquelles vous avez droit pour alléger la facture.
-        </p>
-
-        {/* Section 1 */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', margin: '0 0 16px', paddingTop: 8 }}>
-          Le coût global : que disent les chiffres ?
-        </h2>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 16 }}>
-          L'enquête Budget des familles de l'INSEE<Ref id={1} /> évalue le surcoût mensuel lié à l'arrivée d'un premier enfant à <strong>700 € en moyenne</strong> sur la première année. Ce chiffre recouvre des réalités très différentes selon les choix de mode de garde, le recours ou non à l'allaitement, et la propension à acheter neuf ou d'occasion.
-        </p>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 16 }}>
-          L'Observatoire national de la petite enfance (CNAF) estime quant à lui que le budget total sur les 12 premiers mois peut dépasser <strong>10 000 €</strong> lorsqu'on intègre les achats d'équipement réalisés avant la naissance<Ref id={4} />. À l'inverse, des parents optant pour l'allaitement, la garde par un parent et les achats d'occasion peuvent contenir ce budget autour de 4 000 à 5 000 €.
-        </p>
-
-        {/* Encadré chiffres clés */}
-        <div style={{ background: '#F8F8F4', border: '1px solid #DFE7DE', borderRadius: 16, padding: '24px', marginBottom: 40 }}>
-          <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#94A3B8', margin: '0 0 16px' }}>Chiffres clés — première année</p>
-          {[
-            { label: 'Coût mensuel moyen', value: '700 €/mois', source: 1, color: '#1C6856' },
-            { label: 'Budget total estimé', value: '8 400 – 12 000 €', source: 4, color: '#1C6856' },
-            { label: 'Parents qui dépassent leur budget', value: '40 %', source: 3, color: '#C85B56' },
-            { label: 'Mois où le budget dérape en moyenne', value: '3e mois', source: 4, color: '#D89753' },
-          ].map(({ label, value, source, color }) => (
-            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #F0F3EE' }}>
-              <span style={{ fontSize: 14, color: '#4D6759' }}>{label} <Ref id={source} /></span>
-              <span style={{ fontSize: 16, fontWeight: 800, color }}>{value}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Section 2 */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', margin: '0 0 16px' }}>
-          Les achats avant la naissance : le premier grand poste
-        </h2>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 16 }}>
-          Avant même l'arrivée de bébé, les dépenses d'équipement représentent un investissement initial de <strong>2 000 à 4 000 €</strong> en moyenne<Ref id={1} />. Ce poste concentre les achats les plus importants, souvent réalisés en une seule fois, ce qui peut créer un effet de surprise budgétaire.
-        </p>
-
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#16443D', margin: '24px 0 12px' }}>Les incontournables</h3>
-        <div style={{ marginBottom: 24 }}>
-          {[
-            { item: 'Poussette ou système de voyage', fourchette: '300 – 1 200 €', note: "Le poste le plus variable selon les marques. L'occasion permet d'économiser jusqu'à 50 %." },
-            { item: 'Siège auto groupe 0+', fourchette: '80 – 400 €', note: "Obligatoire dès la sortie de maternité. À ne jamais acheter d'occasion — la sécurité n'est pas négociable." },
-            { item: 'Lit bébé + matelas', fourchette: '150 – 600 €', note: 'Normes NF EN 716 obligatoires. Le matelas ne s\'achète pas d\'occasion pour des raisons hygiéniques.' },
-            { item: 'Table à langer', fourchette: '50 – 200 €', note: 'Peut être remplacée par un tapis à langer posé sur une surface stable.' },
-            { item: 'Vêtements naissance', fourchette: '100 – 300 €', note: 'La taille naissance ne dure que quelques semaines — ne pas sur-investir.' },
-          ].map(({ item, fourchette, note }) => (
-            <div key={item} style={{ borderLeft: '3px solid #1C6856', paddingLeft: 16, marginBottom: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, flexWrap: 'wrap', gap: 8 }}>
-                <span style={{ fontSize: 15, fontWeight: 600, color: '#16443D' }}>{item}</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#1C6856' }}>{fourchette}</span>
-              </div>
-              <p style={{ fontSize: 13, color: '#657A6E', margin: 0, lineHeight: 1.5 }}>{note}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Section 3 */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', margin: '32px 0 16px' }}>
-          Les dépenses courantes : 490 à 750 € par mois hors mode de garde
-        </h2>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 16 }}>
-          Une fois bébé arrivé, les dépenses récurrentes mensuelles s'installent durablement. Hors mode de garde, les dépenses récurrentes s'établissent en 2026 entre <strong>490 et 750 € par mois</strong> selon les choix de la famille — allaitement ou lait infantile, couches jetables ou lavables, petits pots ou cuisine maison<Ref id={1} />.
-        </p>
-
-        <div style={{ background: '#F8F8F4', border: '1px solid #DFE7DE', borderRadius: 16, overflow: 'hidden', marginBottom: 32 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-            <thead>
-              <tr style={{ background: '#16443D' }}>
-                <th style={{ padding: '12px 16px', textAlign: 'left', color: 'white', fontWeight: 600, fontSize: 12, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Poste de dépense</th>
-                <th style={{ padding: '12px 16px', textAlign: 'right', color: 'white', fontWeight: 600, fontSize: 12, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Coût mensuel moyen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { poste: 'Couches (5 à 8 changes/jour)', cout: '55 €', note: '' },
-                { poste: 'Lait infantile 1er âge', cout: '90 €', note: '(si non allaitement)' },
-                { poste: 'Alimentation (diversification dès 6 mois)', cout: '80 €', note: '' },
-                { poste: 'Soins & hygiène (liniment, crème, coton)', cout: '40 €', note: '' },
-                { poste: 'Vêtements (renouvellement fréquent)', cout: '50 €', note: '' },
-                { poste: 'Santé (consultations, médicaments non remboursés)', cout: '35 €', note: '' },
-                { poste: 'Loisirs & éveil', cout: '25 €', note: '' },
-              ].map(({ poste, cout, note }, i) => (
-                <tr key={poste} style={{ borderBottom: '1px solid #DFE7DE', background: i % 2 === 0 ? 'white' : '#F8F8F4' }}>
-                  <td style={{ padding: '12px 16px', color: '#3D5648' }}>{poste} {note && <span style={{ color: '#94A3B8', fontSize: 12 }}>{note}</span>}</td>
-                  <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: '#16443D' }}>{cout}</td>
-                </tr>
-              ))}
-              <tr style={{ background: '#E7F1EA' }}>
-                <td style={{ padding: '12px 16px', fontWeight: 700, color: '#1C6856' }}>Total mensuel estimé <Ref id={1} /></td>
-                <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#1C6856', fontSize: 16 }}>375 €</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p style={{ fontSize: 14, color: '#94A3B8', margin: '0 0 32px', fontStyle: 'italic' }}>
-          Note : si vous allaitez, économisez 80 à 120 €/mois sur le lait. Si vous optez pour des couches lavables (investissement initial ~400 €), vous économisez jusqu'à 400 €/an. Le budget peut descendre autour de 400 €/mois hors mode de garde avec ces deux ajustements.
-        </p>
-
-        {/* Section 4 */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', margin: '0 0 16px' }}>
-          Le mode de garde : le poste qui fait tout basculer
-        </h2>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 16 }}>
-          C'est le poste qui génère le plus d'écart entre familles. Selon le mode de garde choisi, la participation financière mensuelle peut aller de <strong>0 € (garde par un parent) à plus de 1 500 €</strong> pour une garde à domicile à temps plein, avant déduction des aides<Ref id={5} />.
-        </p>
-
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#16443D', margin: '24px 0 12px' }}>Comparatif des modes de garde (coût net après aides CAF)</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
-          {[
-            { mode: 'Crèche municipale', cout: '160 – 600 €/mois', detail: "Calculé selon le barème PSU de la CAF en fonction des revenus du foyer", color: '#1C6856', pct: 45 },
-            { mode: 'Assistante maternelle agréée', cout: '200 – 800 €/mois', detail: "Après déduction du CMG (jusqu'à 1 018 €/mois selon revenus)", color: '#1C6856', pct: 60 },
-            { mode: 'Garde à domicile', cout: '500 – 1 500 €/mois', detail: "Après déduction du CMG (jusqu'à 2 085 €/mois selon revenus)", color: '#C85B56', pct: 90 },
-            { mode: 'Halte-garderie', cout: '90 – 240 €/mois', detail: "Tarif horaire variable selon la structure (1,50 à 4 €/h)", color: '#D89753', pct: 30 },
-            { mode: 'Garde par un parent (congé parental)', cout: '0 €', detail: "Perte de salaire à compenser, CLCA possible selon conditions", color: '#2F8A6B', pct: 0 },
-          ].map(({ mode, cout, detail, color, pct }) => (
-            <div key={mode} style={{ background: 'white', border: '1px solid #DFE7DE', borderRadius: 14, padding: '16px 20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
-                <span style={{ fontSize: 14, fontWeight: 600, color: '#16443D' }}>{mode}</span>
-                <span style={{ fontSize: 15, fontWeight: 800, color }}>{cout}</span>
-              </div>
-              <p style={{ fontSize: 12, color: '#657A6E', margin: '0 0 10px' }}>{detail} <Ref id={5} /></p>
-              {pct > 0 && (
-                <div style={{ height: 5, background: '#F0F3EE', borderRadius: 99, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: 99, opacity: 0.7 }} />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Section 5 */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', margin: '32px 0 16px' }}>
-          Les aides disponibles : jusqu'à 1 200 € par mois
-        </h2>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 24 }}>
-          La France est l'un des pays européens qui soutient le plus financièrement les familles avec jeunes enfants. L'ensemble des aides auxquelles vous pouvez avoir droit peut représenter plusieurs centaines d'euros par mois<Ref id={2} />.
-        </p>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
-          {[
-            { aide: 'Prime de naissance (PAJE)', montant: '1 084,43 €', timing: 'Versement unique au 7e mois de grossesse', condition: 'Sous conditions de ressources' },
-            { aide: 'Allocation de base (PAJE)', montant: 'Jusqu\'à 196,60 €/mois', timing: 'Pendant 3 ans', condition: 'Sous conditions de ressources' },
-            { aide: 'CMG — Complément Mode de Garde', montant: 'Jusqu\'à 2 085 €/mois', timing: 'Tant que l\'enfant est gardé', condition: 'Selon revenus et mode de garde' },
-            { aide: 'Crédit d\'impôt frais de garde', montant: '50 % des dépenses', timing: 'Sur la déclaration annuelle', condition: "Plafonné à 2 300 € d'avantage fiscal" },
-            { aide: 'Congé paternité indemnisé', montant: '28 jours', timing: 'À la naissance', condition: 'Indemnisé par la CPAM' },
-          ].map(({ aide, montant, timing, condition }) => (
-            <div key={aide} style={{ background: '#EEF7EE', border: '1px solid #BBF7D0', borderRadius: 14, padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 600, color: '#16443D', margin: '0 0 4px' }}>{aide} <Ref id={2} /></p>
-                <p style={{ fontSize: 12, color: '#657A6E', margin: '0 0 2px' }}>{timing}</p>
-                <p style={{ fontSize: 12, color: '#94A3B8', margin: 0, fontStyle: 'italic' }}>{condition}</p>
-              </div>
-              <span style={{ fontSize: 16, fontWeight: 800, color: '#166534', whiteSpace: 'nowrap' }}>{montant}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Section 6 — Simulation */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', margin: '0 0 16px' }}>
-          Exemple concret : budget réel selon le mode de garde
-        </h2>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 24 }}>
-          Pour illustrer concrètement ce que représente ce budget, prenons un foyer avec <strong>3 500 € de revenus nets mensuels</strong> (tranche CAF moyenne) et un enfant de moins d'un an.
-        </p>
-
-        <div style={{ background: 'white', border: '1px solid #DFE7DE', borderRadius: 16, overflow: 'hidden', marginBottom: 32 }}>
-          <div style={{ background: '#16443D', padding: '14px 20px' }}>
-            <p style={{ fontSize: 13, fontWeight: 600, color: '#94A3B8', margin: 0 }}>Foyer type — 3 500 € nets/mois — Enfant 0-12 mois</p>
-          </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-            <thead>
-              <tr style={{ background: '#F8F8F4' }}>
-                {['Mode de garde', 'Garde (net)', 'Dépenses courantes', 'PAJE déduite', 'Total mensuel'].map(h => (
-                  <th key={h} style={{ padding: '10px 14px', textAlign: h === 'Mode de garde' ? 'left' : 'right', fontWeight: 600, color: '#657A6E', fontSize: 12, borderBottom: '1px solid #DFE7DE' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { mode: 'Crèche', garde: '280 €', dep: '490 €', paje: '-98 €', total: '672 €', highlight: false },
-                { mode: 'Assistante mat.', garde: '311 €', dep: '490 €', paje: '-98 €', total: '703 €', highlight: false },
-                { mode: 'Garde à domicile', garde: '1 118 €', dep: '490 €', paje: '-98 €', total: '1 510 €', highlight: false },
-                { mode: 'Parent (congé)', garde: '0 €', dep: '490 €', paje: '-98 €', total: '392 €', highlight: true },
-              ].map(({ mode, garde, dep, paje, total, highlight }) => (
-                <tr key={mode} style={{ borderBottom: '1px solid #F0F3EE', background: highlight ? '#EEF7EE' : 'white' }}>
-                  <td style={{ padding: '12px 14px', fontWeight: 600, color: '#16443D' }}>{mode}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'right', color: '#C85B56', fontWeight: 500 }}>{garde}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'right', color: '#1C6856', fontWeight: 500 }}>{dep}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'right', color: '#2F8A6B', fontWeight: 500 }}>{paje}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 800, color: highlight ? '#166534' : '#16443D', fontSize: 15 }}>{total}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p style={{ fontSize: 11, color: '#94A3B8', padding: '10px 14px', margin: 0, fontStyle: 'italic' }}>
-            Simulation à titre indicatif. Basée sur les barèmes CAF 2026 <Ref id={2} /> et les données de l'étude Avis Parents 2026 <Ref id={1} />.
-          </p>
-        </div>
-
-        {/* Section 7 — Conseils */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', margin: '0 0 16px' }}>
-          5 conseils pour maîtriser ce budget
-        </h2>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 40 }}>
-          {[
-            { num: '01', titre: 'Anticipez les achats d\'équipement dès le 6e mois', texte: "Les grosses dépenses (poussette, siège auto, lit) doivent être planifiées bien en amont. Commencez à constituer une épargne dédiée dès l'annonce de la grossesse." },
-            { num: '02', titre: "Ouvrez votre dossier CAF sans attendre", texte: "La prime de naissance PAJE est versée sous conditions de ressources, mais la demande doit être faite avant les 6 mois de l'enfant. Ne tardez pas." },
-            { num: '03', titre: "Pensez à l'occasion pour l'équipement non-sécurité", texte: "Poussette, vêtements, jouets, transat — le marché de l'occasion permet d'économiser 40 à 60 %. En revanche, jamais d'occasion pour un siège auto ou un matelas." },
-            { num: '04', titre: "Suivez vos dépenses mois par mois", texte: "Les familles qui notent leurs dépenses identifient rapidement les postes qui débordent. Dès le 3e mois, les petits achats non planifiés s'accumulent sans qu'on s'en rende compte." },
-            { num: '05', titre: "Comparez vos dépenses à la moyenne nationale", texte: "Savoir si vous êtes au-dessus ou en dessous de la moyenne nationale pour chaque poste vous permet d'identifier où optimiser sans vous priver de l'essentiel." },
-          ].map(({ num, titre, texte }) => (
-            <div key={num} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: '#16443D', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, color: '#1C6856', flexShrink: 0 }}>{num}</div>
-              <div>
-                <p style={{ fontSize: 15, fontWeight: 700, color: '#16443D', margin: '0 0 6px' }}>{titre}</p>
-                <p style={{ fontSize: 14, color: '#657A6E', lineHeight: 1.7, margin: 0 }}>{texte}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA BabyBudget */}
-        <div style={{ background: 'linear-gradient(135deg, #16443D 0%, #214C40 100%)', borderRadius: 20, padding: '36px 32px', marginBottom: 56, textAlign: 'center' }}>
-          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 10 }}>Passez à l'action</p>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', letterSpacing: '-0.5px', marginBottom: 12 }}>
-            Calculez votre budget bébé personnalisé
-          </h3>
-          <p style={{ fontSize: 14, color: '#94A3B8', marginBottom: 24, lineHeight: 1.7, maxWidth: 480, margin: '0 auto 24px' }}>
-            BabyBudget vous permet de simuler votre budget selon vos revenus et votre mode de garde, avec les aides CAF déduites automatiquement — et de suivre vos dépenses réelles mois par mois.
-          </p>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/budget" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#1C6856', color: 'white', padding: '12px 24px', borderRadius: 12, fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>
-              Calculer mon budget →
-            </Link>
-            <Link href="/signup" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: '#94A3B8', padding: '12px 24px', borderRadius: 12, fontSize: 14, fontWeight: 500, textDecoration: 'none', border: '1px solid #2D364D' }}>
-              Créer un compte gratuit
-            </Link>
-          </div>
-        </div>
-
-        {/* Conclusion */}
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', margin: '0 0 16px' }}>
-          En résumé
-        </h2>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 16 }}>
-          Le coût d'un bébé la première année tourne autour de <strong>700 € par mois en moyenne</strong><Ref id={1} />, mais ce chiffre cache des réalités très contrastées. Le mode de garde est le facteur de variation le plus important : il peut à lui seul représenter entre 0 et 1 500 € de dépense mensuelle nette. Les aides de l'État — PAJE, CMG, crédit d'impôt — permettent d'alléger significativement la facture pour les familles qui les demandent à temps.
-        </p>
-        <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D5648', marginBottom: 40 }}>
-          Ce qui distingue les familles qui maîtrisent leur budget de celles qui le subissent, c'est avant tout l'anticipation : prévoir les achats d'équipement en amont, ouvrir les dossiers d'aide rapidement, et se donner une visibilité mensuelle sur ce que coûte réellement leur enfant.
-        </p>
-
-        {/* Sources */}
-        <div style={{ borderTop: '1px solid #DFE7DE', paddingTop: 32 }}>
-          <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#94A3B8', marginBottom: 16 }}>Sources</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {SOURCES.map(({ id, label, href }) => (
-              <div key={id} id={`source-${id}`} style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#1C6856', flexShrink: 0, minWidth: 24 }}>[{id}]</span>
-                <a href={href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#657A6E', textDecoration: 'none', lineHeight: 1.5, borderBottom: '1px solid #DFE7DE' }}>
-                  {label}
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
+export default function CoutBebePremiereAnnee() {
+  return <BlogArticleFrame
+    category="Budget & dépenses"
+    title="Combien coûte un bébé la première année ? Construire un budget réaliste"
+    introduction="Couches, alimentation, équipement, frais de garde : découvrez comment estimer le coût de la première année sans confondre exemples de budget et moyennes statistiques officielles."
+    updated="18 novembre 2026"
+    readTime="8 min"
+    sources={sources}
+  >
+    <div className="bb-blog-highlight">
+      <strong>Ce qu’il faut savoir avant de chiffrer</strong>
+      <p>Il n’existe pas un montant mensuel unique représentant le coût de tous les bébés. Les dépenses dépendent notamment du mode de garde, des achats neufs ou d’occasion, de l’alimentation, du logement et des aides perçues. Nous présentons ici une <strong>méthode de calcul</strong> et un <strong>exemple entièrement illustratif</strong>, pas une « moyenne nationale » officielle.</p>
     </div>
-  );
+
+    <h2>1. Distinguer les dépenses de démarrage et le budget mensuel</h2>
+    <p>Une grande partie des achats survient avant la naissance ou pendant les premiers mois : couchage, poussette, siège-auto, vêtements et petit matériel. Ces achats ne se répètent pas tous les mois. Les additionner à un budget récurrent sans les distinguer peut donner une vision erronée du coût de la première année.</p>
+    <p>Commencez donc par deux enveloppes : <strong>l’équipement initial</strong> d’une part, et <strong>les dépenses mensuelles</strong> d’autre part. Ajoutez une réserve pour les dépenses imprévues. Les frais de garde méritent une enveloppe séparée, car ils varient fortement selon la situation.</p>
+    <h3>Avant la naissance : inventorier avant d’acheter</h3>
+    <p>Classez les achats en trois groupes : indispensables dès le départ, utiles plus tard et facultatifs. Pour chaque équipement, comparez le neuf, l’occasion et la possibilité d’emprunter. Pour les équipements de sécurité, notamment le siège-auto, vérifiez systématiquement l’état, l’historique et la conformité.</p>
+
+    <h2>2. Exemple de budget mensuel détaillé</h2>
+    <p>Voici une simulation librement construite pour expliquer la méthode. <strong>Ces montants ne proviennent pas d’une enquête représentative ni d’un barème de prix.</strong> Ils servent uniquement à montrer comment répartir ses propres dépenses.</p>
+    <div className="bb-blog-table-wrap">
+      <table>
+        <caption>Exemple fictif d’un budget mensuel, hors mode de garde</caption>
+        <thead><tr><th>Poste</th><th>Hypothèse mensuelle</th><th>Ce que l’enveloppe recouvre</th></tr></thead>
+        <tbody>
+          {sample.map(row => (
+            <tr key={row.name}>
+              <td>{row.name}</td><td>{row.perMonth} €</td><td>{row.description}</td>
+            </tr>
+          ))}
+          <tr className="bb-blog-total"><td>Total de l’exemple</td><td>{total} €/mois</td><td>Hors frais de garde et aides sociales</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Dans cet exemple, les 55 € d’équipement sont une <em>provision</em> pour les achats ponctuels : ce n’est pas nécessairement un achat de 55 € chaque mois. Sur douze mois, <strong>{total} € × 12 = {total * 12} €</strong>, à condition de supposer, à des fins de simulation, les mêmes dépenses tous les mois.</p>
+    <p className="bb-blog-caveat">Exemple fictif et non prévision individualisée. Le coût réel peut être inférieur ou supérieur. Le budget de garde, les dépenses exceptionnelles, les aides et la fiscalité ne sont pas intégrés.</p>
+
+    <h2>3. Le mode de garde peut transformer le budget familial</h2>
+    <p>Crèche, assistante maternelle, garde à domicile ou organisation familiale : le coût dépend du nombre d’heures, de la commune, du revenu du foyer, du contrat de garde et des aides éventuelles.</p>
+    <p>Pour comparer les solutions, ne retenez pas seulement un tarif horaire. Prenez en compte les heures réellement facturées, les repas, les indemnités, les congés, les frais de transport et, le cas échéant, les cotisations et obligations d’employeur.</p>
+    <p>Pour l’emploi direct, le calcul du <strong>CMG a changé depuis septembre 2025</strong>. Le <a href="https://www.urssaf.fr/accueil/outils-documentation/simulateurs/calculer-reste-a-charge-cmg-pe.html" target="_blank" rel="noopener noreferrer">simulateur officiel de l’Urssaf</a> est la bonne référence pour estimer le reste à charge avant fiscalité.</p>
+    <p>Une fois votre reste à charge estimé, vous pouvez l’ajouter à <Link href="/budget">votre simulation Baby Budget</Link>. Notre outil ne détermine pas automatiquement vos droits : il vous permet de travailler avec les montants que vous avez vérifiés.</p>
+
+    <h2>4. Les dépenses changent avec l’âge</h2>
+    <h3>Les premiers mois : l’installation</h3>
+    <p>Le budget peut être marqué par les achats initiaux et l’organisation du quotidien. L’alimentation dépend du choix et des possibilités d’allaitement ou de lait infantile. Inutile d’acheter toutes les tailles de vêtements dès le départ.</p>
+    <h3>Vers la diversification alimentaire</h3>
+    <p>L’évolution de l’alimentation peut modifier la répartition entre lait, courses alimentaires et petit matériel. Le montant réel dépendra des habitudes du foyer et des besoins de l’enfant, et non d’une progression automatique.</p>
+    <h3>À l’arrivée d’un mode de garde</h3>
+    <p>Le passage en crèche ou auprès d’une assistante maternelle peut avoir un effet beaucoup plus important sur le budget que les petits achats du quotidien. Prévoyez une transition avec plusieurs scénarios plutôt qu’un seul chiffre.</p>
+
+    <h2>5. Préparer la trésorerie familiale sur douze mois</h2>
+    <p>Un budget annuel doit tenir compte du <strong>moment où l’argent sort réellement</strong>. Une dépense d’équipement réglée en janvier n’équivaut pas à douze petites dépenses réparties dans l’année. Pour conserver une épargne de sécurité, identifiez les mois de dépenses élevées.</p>
+    <ol>
+      <li><strong>Répertoriez les frais déjà connus :</strong> achats d’équipement, mensualités de garde, abonnements, assurances éventuelles.</li>
+      <li><strong>Définissez des enveloppes flexibles :</strong> couches, alimentation, habillement, santé et loisirs.</li>
+      <li><strong>Ajoutez les aides confirmées :</strong> sans les supposer acquises avant notification. Consultez notre <Link href="/blog/aides-caf-bebe-2026">guide des aides CAF 2026</Link>.</li>
+      <li><strong>Prévoyez un scénario plus coûteux :</strong> garde plus importante, équipement non anticipé ou diminution des revenus.</li>
+      <li><strong>Actualisez le suivi :</strong> comparez les dépenses réellement engagées aux hypothèses, mois après mois.</li>
+    </ol>
+    <div className="bb-blog-highlight bb-blog-highlight-green">
+      <strong>Une méthode simple avec Baby Budget</strong>
+      <p>Ajoutez vos dépenses par enfant, renseignez les échéances régulières et consultez vos <Link href="/signup">analyses personnalisées</Link> une fois connecté. Les prévisions sont des estimations construites sur votre historique : elles doivent être ajustées pour les changements futurs que le logiciel ne connaît pas encore.</p>
+    </div>
+
+    <h2>6. Peut-on parler d’un « coût moyen d’un bébé » ?</h2>
+    <p>L’Insee étudie les dépenses des ménages à travers l’<a href="https://www.insee.fr/fr/information/7652980" rel="noopener noreferrer" target="_blank">enquête Budget de famille</a>. Cette enquête aide à comprendre la structure de la consommation des foyers. Elle ne fournit pas, à elle seule, une facture universelle qu’il suffirait d’appliquer à chaque enfant.</p>
+    <p>Attribuer une part des dépenses du logement, des transports ou de l’alimentation commune à un bébé nécessite des conventions méthodologiques. C’est pourquoi les comparaisons entre articles internet sont parfois très différentes, même lorsqu’elles paraissent présenter des chiffres « officiels ».</p>
+    <p>Pour décider combien épargner ou dépenser, votre <strong>budget propre</strong> est généralement plus pertinent qu’une moyenne isolée du contexte.</p>
+
+    <h2>Questions fréquentes</h2>
+    <h3>Combien prévoir avant la naissance ?</h3>
+    <p>Faites la liste des équipements nécessaires et des achats déjà disponibles, puis demandez des devis ou comparez des prix réellement proposés. Prévoir une enveloppe par objet est plus fiable qu’un total unique trouvé dans un article.</p>
+    <h3>Les aides CAF réduisent-elles automatiquement le budget ?</h3>
+    <p>Non. Elles dépendent de conditions individuelles. Pour éviter de surestimer le revenu disponible, partez de zéro pour les aides non confirmées et utilisez les simulateurs des organismes compétents.</p>
+    <h3>Comment anticiper les mois de dépenses élevées ?</h3>
+    <p>Enregistrez les dépenses régulières, puis ajoutez séparément les achats exceptionnels à leur date probable. Vérifiez que votre budget et votre épargne restent suffisants même dans un scénario moins favorable.</p>
+  </BlogArticleFrame>;
 }

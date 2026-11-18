@@ -1,175 +1,70 @@
-'use client';
-
+import Image from 'next/image';
 import Link from 'next/link';
 
-const FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
-
-const ARTICLES = [
+const articles = [
   {
-    slug: 'cout-bebe-premiere-annee',
-    titre: 'Combien coûte un bébé la première année ?',
-    description: "Couches, lait, mode de garde, équipement... Le budget réel d'un enfant la première année dépasse souvent les estimations. Chiffres INSEE, postes de dépenses et aides disponibles — tout ce qu'il faut savoir.",
-    categorie: 'budget',
-    categorieLabel: 'Budget & finances',
-    date: '2024',
-    lecture: '8 min',
-    sources: ['INSEE 2023', 'CAF 2024', 'CREDOC 2022'],
-    featured: true,
-    emoji: '💰',
+    href: '/blog/cout-bebe-premiere-annee',
+    category: 'Budget & dépenses',
+    title: 'Combien coûte un bébé la première année ?',
+    desc: 'Une méthode concrète pour anticiper les achats, le budget mensuel et les frais de garde, avec un exemple clairement identifié comme illustratif.',
+    duration: '8 min',
+    tag: 'GUIDE BUDGET',
   },
   {
-    slug: 'aides-caf-bebe-2026',
-    titre: 'Aides CAF bébé 2026 : tout ce à quoi vous avez droit',
-    description: "Prime de naissance, allocation de base, CMG, congé supplémentaire de naissance... Guide complet des aides revalorisées au 1er avril 2026 avec les montants officiels.",
-    categorie: 'aides',
-    categorieLabel: 'Aides & CAF',
-    date: '2026',
-    lecture: '10 min',
-    sources: ['CAF 2026', 'Service-public', 'Ameli'],
-    featured: false,
-    emoji: '🎁',
+    href: '/blog/aides-caf-bebe-2026',
+    category: 'Aides & démarches',
+    title: 'Aides CAF bébé 2026 : prime, PAJE et CMG',
+    desc: 'Montants officiels vérifiés, conditions de ressources, réforme du CMG et liens vers les simulateurs CAF et Urssaf.',
+    duration: '7 min',
+    tag: 'RÈGLES 2026',
   },
-];
-
-const ARTICLES_A_VENIR = [
-  { titre: 'Crèche, nounou ou garde à domicile : quel mode de garde choisir ?', categorie: 'Mode de garde', emoji: '🏠' },
-  { titre: 'Liste des achats indispensables avant la naissance de bébé', categorie: 'Équipement', emoji: '🛒' },
-  { titre: "Budget bébé mois par mois : à quoi s'attendre ?", categorie: 'Budget & finances', emoji: '📅' },
-  { titre: 'Combien coûte une assistante maternelle en 2026 ?', categorie: 'Mode de garde', emoji: '👶' },
-  { titre: 'Avoir un bébé à Paris vs province : les vraies différences de coût', categorie: 'Budget & finances', emoji: '🗺️' },
 ];
 
 export default function BlogPage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#F8F8F4', fontFamily: FONT, color: '#16443D' }}>
-
-      {/* ── HERO ── */}
-      <div style={{ background: 'linear-gradient(135deg, #16443D 0%, #214C40 100%)', padding: '56px 24px 48px', textAlign: 'center' }}>
-        <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 12 }}>
-          Ressources gratuites
-        </p>
-        <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, color: 'white', letterSpacing: '-1.5px', lineHeight: 1.1, marginBottom: 12 }}>
-          Le journal BabyBudget
-        </h1>
-        <p style={{ fontSize: 15, color: '#94A3B8', maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
-          Des repères concrets pour comprendre les dépenses de la petite enfance et mieux planifier votre budget familial.
-        </p>
-      </div>
-
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 24px 80px' }}>
-
-        {/* ── ARTICLE À LA UNE ── */}
-        {ARTICLES.filter(a => a.featured).map(article => (
-          <Link key={article.slug} href={`/blog/${article.slug}`} style={{ textDecoration: 'none', display: 'block', marginBottom: 40 }}>
-            <div style={{
-              background: '#16443D', borderRadius: 24, padding: '36px',
-              transition: 'transform 0.15s',
-              position: 'relative', overflow: 'hidden',
-            }}
-              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.transform = 'none'}
-            >
-              <div style={{ position: 'absolute', top: -60, right: -60, width: 200, height: 200, background: 'radial-gradient(circle, rgba(99,102,241,0.2), transparent)', borderRadius: '50%', pointerEvents: 'none' }} />
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 99, background: 'rgba(99,102,241,0.2)', color: '#A5B4FC', letterSpacing: '0.06em', textTransform: 'uppercase' }}>À la une</span>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 99, background: 'rgba(255,255,255,0.08)', color: '#657A6E' }}>{article.categorieLabel}</span>
-              </div>
-              <h2 style={{ fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', fontWeight: 800, color: 'white', letterSpacing: '-0.5px', lineHeight: 1.2, marginBottom: 14 }}>
-                {article.emoji} {article.titre}
-              </h2>
-              <p style={{ fontSize: 14, color: '#94A3B8', lineHeight: 1.7, marginBottom: 24, maxWidth: 600 }}>{article.description}</p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {article.sources.map(s => (
-                    <span key={s} style={{ fontSize: 11, padding: '3px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.06)', color: '#4D6759', border: '1px solid rgba(255,255,255,0.08)' }}>📎 {s}</span>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <span style={{ fontSize: 12, color: '#657A6E' }}>⏱ {article.lecture} de lecture</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1C6856' }}>Lire l'article →</span>
-                </div>
-              </div>
-            </div>
-          </Link>
-        ))}
-
-        {/* ── GRILLE ARTICLES ── */}
-        <div style={{ marginBottom: 48 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px' }}>Tous les articles</h2>
-            <span style={{ fontSize: 13, color: '#94A3B8' }}>{ARTICLES.length} article{ARTICLES.length > 1 ? 's' : ''} disponible{ARTICLES.length > 1 ? 's' : ''}</span>
+    <main className="bb-blog-page">
+      <section className="bb-blog-hero">
+        <div className="bb-blog-container bb-blog-hero-content">
+          <div>
+            <span className="bb-blog-kicker">LES GUIDES BABY BUDGET</span>
+            <h1>Des réponses claires pour <em>bien grandir</em> financièrement.</h1>
+            <p>Coût d’un enfant, aides CAF, modes de garde : des ressources pratiques, des sources officielles et des hypothèses transparentes.</p>
+            <Link href="/budget" className="bb-blog-cta bb-blog-cta-light">Essayer notre simulateur de budget <span aria-hidden="true">→</span></Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-            {ARTICLES.map(article => (
-              <Link key={article.slug} href={`/blog/${article.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
-                <div style={{
-                  background: 'white', borderRadius: 20, border: '1px solid #DFE7DE',
-                  padding: '24px', height: '100%',
-                  transition: 'all 0.15s', display: 'flex', flexDirection: 'column',
-                }}
-                  onMouseEnter={e => { const el = e.currentTarget as HTMLDivElement; el.style.borderColor = '#1C6856'; el.style.transform = 'translateY(-2px)'; el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.06)'; }}
-                  onMouseLeave={e => { const el = e.currentTarget as HTMLDivElement; el.style.borderColor = '#DFE7DE'; el.style.transform = 'none'; el.style.boxShadow = 'none'; }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                    <span style={{ fontSize: 28 }}>{article.emoji}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 99, background: '#E7F1EA', color: '#1C6856' }}>{article.categorieLabel}</span>
-                  </div>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: '#16443D', lineHeight: 1.3, marginBottom: 10, flex: 1 }}>{article.titre}</h3>
-                  <p style={{ fontSize: 13, color: '#657A6E', lineHeight: 1.6, marginBottom: 16 }}>{article.description.substring(0, 120)}...</p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTop: '1px solid #F0F3EE' }}>
-                    <span style={{ fontSize: 11, color: '#94A3B8' }}>⏱ {article.lecture}</span>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1C6856' }}>Lire →</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <div className="bb-blog-hero-visual" aria-hidden="true">
+            <Image src="/brand-symbol.svg" width={210} height={210} alt="" unoptimized />
           </div>
         </div>
+      </section>
 
-        {/* ── PROCHAINEMENT ── */}
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px' }}>Prochainement</h2>
-            <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 99, background: '#F0F3EE', color: '#657A6E' }}>Bientôt disponible</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {ARTICLES_A_VENIR.map((article, i) => (
-              <div key={i} style={{
-                background: 'white', border: '1px solid #DFE7DE', borderRadius: 14,
-                padding: '16px 20px', display: 'flex', justifyContent: 'space-between',
-                alignItems: 'center', gap: 16, opacity: 0.7,
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: 20 }}>{article.emoji}</span>
-                  <span style={{ fontSize: 14, fontWeight: 500, color: '#16443D' }}>{article.titre}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 99, background: '#F8F8F4', color: '#94A3B8', border: '1px solid #DFE7DE' }}>{article.categorie}</span>
-                  <span style={{ fontSize: 11, color: '#94A3B8' }}>À venir</span>
-                </div>
+      <section className="bb-blog-container bb-blog-index-section" aria-labelledby="articles-heading">
+        <div className="bb-blog-section-heading">
+          <div><span className="bb-blog-section-kicker">CONSEILS ET MÉTHODES</span><h2 id="articles-heading">Les premiers guides</h2></div>
+          <span className="bb-blog-count">{articles.length} articles vérifiés</span>
+        </div>
+        <div className="bb-blog-card-grid">
+          {articles.map((article, index) => (
+            <Link href={article.href} className="bb-blog-card" key={article.href}>
+              <div className="bb-blog-card-top">
+                <span className="bb-blog-category">{article.category}</span>
+                <span className="bb-blog-number">0{index + 1}</span>
               </div>
-            ))}
-          </div>
+              <span className="bb-blog-card-tag">{article.tag}</span>
+              <h3>{article.title}</h3>
+              <p>{article.desc}</p>
+              <div className="bb-blog-card-bottom"><span>{article.duration} de lecture</span><strong>Lire le guide <span aria-hidden="true">→</span></strong></div>
+            </Link>
+          ))}
         </div>
+      </section>
 
-        {/* ── CTA ── */}
-        <div style={{ marginTop: 56, background: '#E7F1EA', border: '1px solid #B9D8C3', borderRadius: 20, padding: '32px', textAlign: 'center' }}>
-          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 10 }}>Restez informé</p>
-          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#16443D', letterSpacing: '-0.5px', marginBottom: 10 }}>Un nouvel article chaque semaine</h3>
-          <p style={{ fontSize: 14, color: '#16443D', marginBottom: 24, lineHeight: 1.6 }}>
-            Guides pratiques, chiffres mis à jour et conseils budgétaires — directement dans votre dashboard BabyBudget.
-          </p>
-          <Link href="/signup" style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: '#16443D', color: 'white',
-            padding: '12px 28px', borderRadius: 12,
-            fontSize: 14, fontWeight: 600, textDecoration: 'none',
-          }}>
-            Créer un compte gratuit →
-          </Link>
+      <section className="bb-blog-container bb-blog-promo">
+        <div><span className="bb-blog-section-kicker">UN OUTIL POUR PASSER À L'ACTION</span>
+          <h2>Un budget familial qui vous ressemble.</h2>
+          <p>Les guides donnent des repères. Avec Baby Budget, vous suivez les dépenses réelles de vos enfants, par catégorie et par mois.</p>
         </div>
-
-      </div>
-    </div>
+        <Link href="/signup" className="bb-blog-cta">Créer mon compte gratuit <span aria-hidden="true">→</span></Link>
+      </section>
+    </main>
   );
 }

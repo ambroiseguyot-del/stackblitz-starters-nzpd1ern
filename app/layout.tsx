@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   // ── Titre & description ──────────────────────────────────────────────────
   title: {
-    default: 'BabyBudget — Suivez les dépenses de votre bébé',
+    default: 'Baby Budget — Suivez les dépenses de votre bébé',
     template: '%s | BabyBudget',
   },
   description: 'Suivez les dépenses de votre enfant, anticipez votre budget familial et visualisez vos habitudes en toute simplicité. Application gratuite et sans publicité.',
@@ -35,15 +35,15 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'fr_FR',
     url: 'https://www.babybudget.fr',
-    siteName: 'BabyBudget',
+    siteName: 'Baby Budget',
     title: 'BabyBudget — Suivez les dépenses de votre bébé',
     description: 'Un espace clair et pratique pour suivre les dépenses et anticiper votre budget familial. Gratuit, sans publicité.',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'BabyBudget — Tableau de bord des dépenses bébé',
+        alt: 'Baby Budget — Body et graphique de croissance, suivez et anticipez les dépenses de votre enfant',
       },
     ],
   },
@@ -52,15 +52,20 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'BabyBudget — Suivez les dépenses de votre bébé',
-    description: 'Suivez et anticipez les dépenses de votre bébé. Comparez-vous à la moyenne nationale. Gratuit.',
-    images: ['/og-image.jpg'],
+    description: 'Suivez les dépenses et anticipez votre budget familial. Gratuit, sans publicité.',
+    images: ['/og-image.png'],
   },
 
   // ── Icônes ───────────────────────────────────────────────────────────────
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
 
   // ── Vérification Google Search Console ───────────────────────────────────
