@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import BrandLogo from '../../components/BrandLogo';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
@@ -117,8 +118,7 @@ export default function ResetPassword() {
 
           {/* Logo */}
           <div className="rp-logo">
-            <div className="rp-logo-icon">👶</div>
-            <span className="rp-logo-name">Baby<span>Budget</span></span>
+            <BrandLogo />
           </div>
 
           {/* Chargement — vérifie la session */}
