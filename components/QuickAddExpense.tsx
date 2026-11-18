@@ -23,6 +23,7 @@ const todayLocal = () => {
 export default function QuickAddExpense({ open, onClose, onSaved, profiles, categories, recent }: Props) {
   const formId = useId();
   const amountRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
   const [amount, setAmount] = useState('');
   const [label, setLabel] = useState('');
   const [category, setCategory] = useState('');
@@ -45,12 +46,33 @@ export default function QuickAddExpense({ open, onClose, onSaved, profiles, cate
     if (!open) return;
     setError('');
     setDate(todayLocal());
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const focus = window.setTimeout(() => amountRef.current?.focus(), 50);
+    return () => {
+      document.body.style.overflow = previous;
+      window.clearTimeout(focus);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && !busy) onClose();
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+      const available = Array.from(dialogRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href]'
+      ));
+      if (!available.length) return;
+      const first = available[0], last = available[available.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
-    const focus = window.setTimeout(() => amountRef.current?.focus(), 50);
-    return () => { window.removeEventListener('keydown', onKey); window.clearTimeout(focus); };
+    return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose, busy]);
 
   if (!open) return null;
@@ -79,7 +101,7 @@ export default function QuickAddExpense({ open, onClose, onSaved, profiles, cate
     <div className="bb-quick-overlay" role="presentation" onMouseDown={event => {
       if (event.target === event.currentTarget && !busy) onClose();
     }}>
-      <section className="bb-quick-dialog" role="dialog" aria-modal="true" aria-labelledby={formId + '-title'}>
+      <section ref={dialogRef} className="bb-quick-dialog" role="dialog" aria-modal="true" aria-labelledby={formId + '-title'}>
         <div className="bb-quick-header">
           <div><span className="bb-kicker">SAISIE EXPRESS</span>
             <h2 id={formId + '-title'}>Ajouter une dépense</h2>
@@ -128,7 +150,7 @@ export default function QuickAddExpense({ open, onClose, onSaved, profiles, cate
           <input id={formId + '-date'} type="date" value={date} onChange={event => setDate(event.target.value)} required/>
           <label className="bb-quick-check" htmlFor={formId + '-recurring'}>
             <input id={formId + '-recurring'} type="checkbox" checked={recurring} onChange={event => setRecurring(event.target.checked)}/>
-            <span>À renouveler chaque mois <small>(modèle de récurrence)</small></span>
+            <span>À prévoir chaque mois <small>(confirmation manuelle, sans duplication automatique)</small></span>
           </label>
           {error && <p className="bb-quick-error" role="alert">{error}</p>}
           <button className="bb-quick-submit" type="submit" disabled={busy || profiles.length === 0}>
