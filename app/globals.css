@@ -678,3 +678,58 @@ html.dark [class*="bg-[var(--france-blue)]"][class*="text-white"] { color:#122C2
   .bb-blog-prose { font-size: 14px; }
   .bb-blog-prose h2 { margin-top: 28px; }
 }
+
+
+/* Visual identity traced from the user-approved Baby Budget onesie logo. */
+.bb-brand-authentic { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; }
+.bb-brand-icons, .bb-brand-words { position: relative; display: inline-block; line-height: 0; flex: none; }
+.bb-brand-icons { width: 39px; height: 39px; }
+.bb-brand-words { width: 156px; height: 35px; }
+.bb-brand-authentic .bb-brand-symbol { width: 39px; height: 39px; object-fit: contain; filter: none; }
+.bb-brand-authentic .bb-brand-wordmark { width: 156px; height: 35px; object-fit: contain; }
+.bb-brand-authentic .bb-brand-logo-dark { display: none; }
+html.dark .bb-brand-authentic:not(.bb-brand-on-dark) .bb-brand-logo-light,
+.bb-brand-on-dark .bb-brand-logo-light { display: none; }
+html.dark .bb-brand-authentic:not(.bb-brand-on-dark) .bb-brand-logo-dark,
+.bb-brand-on-dark .bb-brand-logo-dark { display: block; }
+@media (max-width: 680px) {
+  .bb-brand-icons,.bb-brand-authentic .bb-brand-symbol { width: 35px; height: 35px; }
+  .bb-brand-words { width: 142px; height: 33px; }
+  .bb-brand-authentic .bb-brand-wordmark { width: 142px; height: 33px; }
+}
+@media (max-width: 390px) {
+  .bb-brand-icons,.bb-brand-authentic .bb-brand-symbol { width: 32px; height: 32px; }
+  .bb-brand-words { width: 130px; height: 30px; }
+  .bb-brand-authentic .bb-brand-wordmark { width: 130px; height: 30px; }
+}
+/* Ensure the journal respects application theme, including its content cards and reading controls. */
+html.dark .bb-blog-page {
+  --bg-page: #101C17; --bg-card: #1C2C24; --bg-input: #243A2E;
+  --text-main: #EFF7F0; --text-muted: #B7CDBE; --border: #3A5546;
+  --bb-green: #A2DDB4; --bb-green-soft: #254537;
+  color-scheme: dark; background: #101C17; color: #EFF7F0;
+}
+html.dark .bb-blog-hero { background: linear-gradient(130deg,#10241B,#1F3A2B); }
+html.dark .bb-blog-article-hero { background: linear-gradient(120deg,#10241B,#22402E); }
+html.dark .bb-blog-card,
+html.dark .bb-blog-side-card { color: #EFF7F0; background: #1C2C24; border-color: #3A5546; }
+html.dark .bb-blog-card:hover { border-color: #91C9A4; }
+html.dark .bb-blog-promo { background: #203B2F; border-color: #3A5546; }
+html.dark .bb-blog-card-bottom,
+html.dark .bb-blog-table-wrap,
+html.dark .bb-blog-article-sources { border-color: #3A5546; }
+html.dark .bb-blog-highlight,
+html.dark .bb-blog-prose .bb-blog-caveat,
+html.dark .bb-blog-table-wrap caption { background: #243A2E; border-color: #3A5546; }
+html.dark .bb-blog-highlight-green,
+html.dark .bb-blog-table-wrap th,
+html.dark .bb-blog-total td { background: #254537; }
+html.dark .bb-blog-table-wrap td { border-color: #3A5546; }
+html.dark .bb-blog-cta:not(.bb-blog-cta-light) { background: #A2DDB4; border-color: #A2DDB4; color: #10261B; }
+html.dark .bb-blog-cta-light { color: #123D2B; background: #F8F8F4; }
+html.dark .bb-blog-hero-visual { background: #F8F8F4; }
+/* Keep methodology unmistakable and readable in both themes. */
+.bb-comparison-method { border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; background: var(--bg-card); color: var(--text-main); }
+.bb-comparison-method summary { cursor: pointer; font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.5; }
+.bb-comparison-method p { font-size: 13px; line-height: 1.7; color: var(--text-muted); margin: 12px 0 0; }
+.bb-comparison-method a { color: var(--bb-green); font-weight: 800; text-decoration: underline; }
