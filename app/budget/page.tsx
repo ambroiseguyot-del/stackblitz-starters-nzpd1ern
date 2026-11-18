@@ -55,18 +55,11 @@ const COLORS_MODE: Record<ModeGarde, string> = {
 // Source : CAF.fr — Barème PAJE et CMG 2024
 // https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance
 
-const PAJE_BASE: Record<Tranche, number> = {
-  basse:   184.00,
-  moyenne: 92.00,
-  haute:   0,
-};
+// Les aides PAJE sont saisies par l'utilisateur après vérification officielle.
 
 // Source : service-public.fr — CMG
 // https://www.service-public.fr/particuliers/vosdroits/F345
-const CMG_PLAFOND = {
-  assistante: { basse: 1018, moyenne: 509, haute: 254 },
-  domicile:   { basse: 2085, moyenne: 1042, haute: 521 },
-};
+// Le CMG ne se déduit plus d'un plafond 2024 : voir simulateur Urssaf.
 
 // Source : CNAF — Observatoire national de la petite enfance 2023
 const TAUX_HORAIRE_ASSISTANTE = 4.5;
@@ -102,7 +95,7 @@ function getRevenuTranche(revenu: number): Tranche {
   return 'haute';
 }
 
-function calculerCoutGarde(mode: ModeGarde, revenu: number): { brut: number; aide: number; net: number } {
+function calculerCoutGarde(mode: ModeGarde, revenu: number, cmgRenseigne: number): { brut: number; aide: number; net: number } {
   const tranche = getRevenuTranche(revenu);
   switch (mode) {
     case 'creche': {
@@ -111,12 +104,12 @@ function calculerCoutGarde(mode: ModeGarde, revenu: number): { brut: number; aid
     }
     case 'assistante': {
       const brut = TAUX_HORAIRE_ASSISTANTE * HEURES_MOIS;
-      const aide = CMG_PLAFOND.assistante[tranche];
+      const aide = Math.min(brut, Math.max(0, cmgRenseigne));
       return { brut: Math.round(brut), aide: Math.round(aide), net: Math.round(Math.max(0, brut - aide)) };
     }
     case 'domicile': {
       const brut = TAUX_HORAIRE_DOMICILE * HEURES_MOIS;
-      const aide = CMG_PLAFOND.domicile[tranche];
+      const aide = Math.min(brut, Math.max(0, cmgRenseigne));
       return { brut: Math.round(brut), aide: Math.round(aide), net: Math.round(Math.max(0, brut - aide)) };
     }
     case 'parents':
@@ -211,9 +204,9 @@ function ResultCard({ mode, coutGarde, depenses, paje, selected, onClick, cv }: 
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Tag label="Garde" value={`${coutGarde.net} €`} color="#1C6856" cv={cv} />
-        {coutGarde.aide > 0 && <Tag label="CMG déduit" value={`-${coutGarde.aide} €`} color="#2F8A6B" cv={cv} />}
+        {coutGarde.aide > 0 && <Tag label="CMG saisi" value={`-${coutGarde.aide} €`} color="#2F8A6B" cv={cv} />}
         <Tag label="Dépenses" value={`${depenses} €`} color="#1C6856" cv={cv} />
-        {paje > 0 && <Tag label="PAJE déduite" value={`-${paje} €`} color="#2F8A6B" cv={cv} />}
+        {paje > 0 && <Tag label="PAJE saisie" value={`-${paje} €`} color="#2F8A6B" cv={cv} />}
       </div>
     </div>
   );
@@ -252,6 +245,8 @@ export default function BudgetPrevisionnelPage() {
   const [revenu, setRevenu] = useState(3000);
   const [allaitement, setAllaitement] = useState(false);
   const [modeSelectionne, setModeSelectionne] = useState<ModeGarde>('creche');
+  const [aideCmgRenseignee, setAideCmgRenseignee] = useState(0);
+  const [aidePajeRenseignee, setAidePajeRenseignee] = useState(0);
 
   // Palette couleurs dark/light
   const cv = useMemo(() => ({
@@ -280,20 +275,20 @@ export default function BudgetPrevisionnelPage() {
   }), [isDark]);
 
   const tranche = getRevenuTranche(revenu);
-  const paje = PAJE_BASE[tranche];
+  const paje = Math.max(0, aidePajeRenseignee);
   const depenses = useMemo(() => calculerDepensesCourantes(allaitement), [allaitement]);
 
   // MODES est défini hors composant — pas de dépendance manquante
   const resultats = useMemo(() =>
     MODES.map(mode => {
-      const coutGarde = calculerCoutGarde(mode, revenu);
+      const coutGarde = calculerCoutGarde(mode, revenu, aideCmgRenseignee);
       return {
         mode,
         coutGarde,
         total: Math.max(0, coutGarde.net + depenses.total - paje),
       };
     }),
-    [revenu, depenses.total, paje]
+    [revenu, depenses.total, paje, aideCmgRenseignee]
   );
 
   const selected = resultats.find(r => r.mode === modeSelectionne)!;
@@ -314,7 +309,7 @@ export default function BudgetPrevisionnelPage() {
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           {[
-            { label: 'Hypothèses historiques CAF 2024', href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
+            { label: 'Vérifier mes droits CAF', href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
             { label: 'Données INSEE 2023', href: 'https://www.insee.fr/fr/statistiques/8241854' },
             { label: 'Service-public.fr CMG', href: 'https://www.service-public.fr/particuliers/vosdroits/F345' },
           ].map(s => (
@@ -329,7 +324,7 @@ export default function BudgetPrevisionnelPage() {
 
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px 80px' }}>
         <aside className="bb-data-notice" role="note">
-          <strong>Simulation historique</strong> — Cet outil utilise des hypothèses et barèmes de 2024, qui ne représentent plus les aides en vigueur. En particulier, la réforme du CMG de septembre 2025 a changé les règles de calcul. <strong>Ne considérez pas le montant « après aides » comme une estimation de vos droits actuels.</strong> Vérifiez votre situation sur caf.fr ou monenfant.fr.
+          <strong>Simulation de budget, pas de droits sociaux.</strong> Les coûts affichés sont des hypothèses indicatives. Aucune aide CAF n'est calculée automatiquement : les montants déduits sont ceux que vous renseignez après vérification officielle (0 € par défaut). Depuis septembre 2025, les règles du CMG emploi direct ont changé.
         </aside>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
 
@@ -352,20 +347,40 @@ export default function BudgetPrevisionnelPage() {
                 border: `1px solid ${tranche === 'basse' ? '#BBF7D0' : tranche === 'moyenne' ? '#B9D8C3' : '#FECACA'}`,
                 borderRadius: 10, padding: '10px 14px',
               }}>
-                <p style={{ fontSize: 12, fontWeight: 600, color: tranche === 'basse' ? '#166534' : tranche === 'moyenne' ? '#1C6856' : '#991B1B', margin: 0 }}>
-                  {tranche === 'basse' && '🟢 Tranche basse — PAJE pleine + CMG maximum'}
-                  {tranche === 'moyenne' && '🔵 Tranche moyenne — PAJE réduite + CMG partiel'}
-                  {tranche === 'haute' && '🔴 Tranche haute — Pas de PAJE, CMG minimum'}
+                <p style={{ fontSize: 12, fontWeight: 700, color: '#16443D', margin: 0 }}>
+                  Tranche de revenu : {tranche === 'basse' ? 'basse' : tranche === 'moyenne' ? 'intermédiaire' : 'haute'} — uniquement pour les hypothèses de coût de garde.
                 </p>
-                <p style={{ fontSize: 11, color: cv.textMuted, margin: '4px 0 0' }}>
-                  PAJE allocation de base : <strong>{paje} €/mois</strong>
-                  {' · '}
-                  <a href="https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance/la-prestation-d-accueil-du-jeune-enfant-paje/l-allocation-de-base"
-                    target="_blank" rel="noopener noreferrer" style={{ color: '#1C6856', fontSize: 10 }}>
-                    Source CAF →
-                  </a>
+                <p style={{ fontSize: 11, color: '#657A6E', margin: '5px 0 0' }}>
+                  Vos droits réels à la PAJE et au CMG ne peuvent pas être déduits de ce seul revenu.
                 </p>
               </div>
+            </div>
+
+            {/* Aides réelles saisies par l'utilisateur, sans estimation de droit. */}
+            <div style={{ background: cv.card, borderRadius: 20, border: `1px solid ${cv.border}`, padding: '24px' }}>
+              <h2 style={{ fontSize: 14, fontWeight: 800, color: cv.text, margin: '0 0 8px' }}>Aides réellement obtenues (facultatif)</h2>
+              <p style={{ fontSize: 12, color: cv.textMuted, lineHeight: 1.6, marginBottom: 18 }}>
+                Indiquez uniquement vos montants confirmés. Laissez 0 € pour afficher un coût avant aides. Le CMG s'applique ici seulement aux modes de garde en emploi direct.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14 }}>
+                <div>
+                  <label htmlFor="budget-cmg" style={{ display: 'block', fontSize: 12, fontWeight: 700, marginBottom: 6 }}>CMG mensuel (emploi direct)</label>
+                  <input id="budget-cmg" type="number" min="0" step="1" value={aideCmgRenseignee}
+                    onChange={e => setAideCmgRenseignee(Math.max(0, Number(e.target.value) || 0))}
+                    style={{ width: '100%', border: `1px solid ${cv.border}`, borderRadius: 12, padding: '10px', background: cv.bg, color: cv.text }} />
+                </div>
+                <div>
+                  <label htmlFor="budget-paje" style={{ display: 'block', fontSize: 12, fontWeight: 700, marginBottom: 6 }}>Allocation de base PAJE mensuelle</label>
+                  <input id="budget-paje" type="number" min="0" step="1" value={aidePajeRenseignee}
+                    onChange={e => setAidePajeRenseignee(Math.max(0, Number(e.target.value) || 0))}
+                    style={{ width: '100%', border: `1px solid ${cv.border}`, borderRadius: 12, padding: '10px', background: cv.bg, color: cv.text }} />
+                </div>
+              </div>
+              <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: cv.textMuted }}>
+                <a href="https://www.urssaf.fr/accueil/actualites/evolution-cmg-ce-qui-va-changer.html" target="_blank" rel="noopener noreferrer" style={{ color: cv.accent, textDecoration: 'underline' }}>Simulateur officiel CMG Urssaf</a>
+                {' · '}
+                <a href="https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance" target="_blank" rel="noopener noreferrer" style={{ color: cv.accent, textDecoration: 'underline' }}>Vérifier mes droits CAF</a>
+              </p>
             </div>
 
             {/* Allaitement */}
@@ -440,7 +455,7 @@ export default function BudgetPrevisionnelPage() {
               <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: cv.textMuted, margin: '0 0 4px' }}>
                 📊 Comparaison des modes de garde
               </p>
-              <p style={{ fontSize: 11, color: cv.textMuted, margin: '0 0 20px' }}>Résultat indicatif avec hypothèses historiques d'aides (non opposable)</p>
+              <p style={{ fontSize: 11, color: cv.textMuted, margin: '0 0 20px' }}>Frais de garde indicatifs ; seules les aides saisies sont déduites</p>
               <BudgetBarChart data={resultats.map(r => ({ mode: r.mode, total: r.total }))} cv={cv} />
             </div>
 
@@ -476,9 +491,9 @@ export default function BudgetPrevisionnelPage() {
               <div style={{ borderTop: `1px solid ${cv.resultLine}`, paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
                   { label: 'Coût garde brut',    val: selected.coutGarde.brut,  color: cv.resultLabelC },
-                  { label: 'CMG déduit',          val: -selected.coutGarde.aide, color: cv.resultLabelG },
+                  { label: 'CMG renseigné',          val: -selected.coutGarde.aide, color: cv.resultLabelG },
                   { label: 'Dépenses courantes',  val: depenses.total,           color: cv.resultLabelP },
-                  { label: 'PAJE déduite',        val: -paje,                    color: cv.resultLabelG },
+                  { label: 'PAJE renseignée',        val: -paje,                    color: cv.resultLabelG },
                 ].map(({ label, val, color }) => val !== 0 && (
                   <div key={label} style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontSize: 13, color: cv.resultMuted }}>{label}</span>
@@ -494,11 +509,11 @@ export default function BudgetPrevisionnelPage() {
             <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 16, padding: '16px 20px' }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: '#92400E', margin: '0 0 6px' }}>⚠️ Estimation indicative</p>
               <p style={{ fontSize: 12, color: '#78350F', lineHeight: 1.6, margin: '0 0 10px' }}>
-                Ces chiffres sont des moyennes nationales. Vérifiez vos droits réels sur les simulateurs officiels.
+                Ces chiffres sont des hypothèses de dépenses, pas des moyennes nationales officielles. Les aides sont nulles par défaut et doivent être renseignées après vérification sur les simulateurs publics.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {[
-                  { label: 'Simulateur CAF — Mes droits',     href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
+                  { label: 'Vérifier mes droits CAF',     href: 'https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance' },
                   { label: 'Service-public.fr — CMG',         href: 'https://www.service-public.fr/particuliers/vosdroits/F345' },
                   { label: 'Mon-enfant.fr — Trouver une crèche', href: 'https://www.mon-enfant.fr' },
                   { label: 'FEPEM — Tarifs garde à domicile', href: 'https://www.fepem.fr' },
