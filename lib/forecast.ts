@@ -20,7 +20,7 @@ export function buildForecast(expenses: ForecastExpense[], months = 12, referenc
     !!e.date && previousMonths.includes(e.date.slice(0, 7)) && Number.isFinite(e.amount) && Number(e.amount) > 0);
   // A recurring amount appears once each month in the model, not once per past occurrence.
   const byRule = new Map<string, ForecastExpense>();
-  for (const e of [...expenses].sort((a, b) => a.date.localeCompare(b.date))) {
+  for (const e of [...expenses].sort((a, b) => (a.date || '').localeCompare(b.date || ''))) {
     if (Number(e.amount) > 0 && Number.isFinite(e.amount) && !!e.label?.trim()) {
       const key = [e.child_name, e.category, (e.label || '').toLowerCase().trim()].join('|');
       if (e.is_recurring) byRule.set(key, e);
