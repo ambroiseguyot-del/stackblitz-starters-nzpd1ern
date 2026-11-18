@@ -25,7 +25,7 @@ export function buildForecast(expenses: ForecastExpense[], months = 12, referenc
       byRule.set([e.child_name, e.category, e.label.toLowerCase().trim()].join('|'), e);
     }
   }
-  const regular = [...byRule.values()].reduce((sum, e) => sum + e.amount, 0);
+  const regular = Array.from(byRule.values()).reduce((sum, e) => sum + e.amount, 0);
   const recurringKeys = new Set(byRule.keys());
   const variableMonths = previousMonths.map(key => recent
     .filter(e => e.date.slice(0, 7) === key
