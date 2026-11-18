@@ -509,7 +509,7 @@ export default function LandingPage() {
               {
                 emoji: '📊',
                 title: 'Repères budgétaires indicatifs',
-                desc: "Comparez vos dépenses à des hypothèses fictives par catégorie et par âge — jamais à une moyenne nationale prétendue.",
+                desc: "Visualisez les écarts entre vos dépenses et des exemples de budgets fictifs par catégorie et par âge.",
                 color: '#2F8A6B',
                 preview: (
                   <div style={{ marginTop: 12 }}>
