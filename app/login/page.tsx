@@ -4,6 +4,7 @@ import { supabase } from '../../supabaseClient';
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
 import Link from 'next/link';
+import BrandLogo from '../../components/BrandLogo';
 
 const SYSTEM_FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif";
 
@@ -178,8 +179,7 @@ export default function Login() {
           <div className="lr-left-bg" />
           <div className="lr-left-grid" />
           <div className="lr-brand">
-            <div className="lr-brand-icon">👶</div>
-            <span className="lr-brand-name">BabyBudget</span>
+            <BrandLogo light />
           </div>
           <div className="lr-left-content">
             <h2 className="lr-left-title">
