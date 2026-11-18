@@ -377,9 +377,9 @@ export default function BudgetPrevisionnelPage() {
                 </div>
               </div>
               <p style={{ margin: '14px 0 0', fontSize: 12, lineHeight: 1.6, color: cv.textMuted }}>
-                <a href="https://www.urssaf.fr/accueil/actualites/evolution-cmg-ce-qui-va-changer.html" target="_blank" rel="noopener noreferrer" style={{ color: cv.accent, textDecoration: 'underline' }}>Simulateur officiel CMG Urssaf</a>
+                <a href="https://www.urssaf.fr/accueil/actualites/evolution-cmg-ce-qui-va-changer.html" target="_blank" rel="noopener noreferrer" style={{ color: '#1C6856', textDecoration: 'underline' }}>Simulateur officiel CMG Urssaf</a>
                 {' · '}
-                <a href="https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance" target="_blank" rel="noopener noreferrer" style={{ color: cv.accent, textDecoration: 'underline' }}>Vérifier mes droits CAF</a>
+                <a href="https://www.caf.fr/allocataires/aides-et-demarches/droits-et-prestations/petite-enfance" target="_blank" rel="noopener noreferrer" style={{ color: '#1C6856', textDecoration: 'underline' }}>Vérifier mes droits CAF</a>
               </p>
             </div>
 
