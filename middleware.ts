@@ -29,14 +29,15 @@ export async function middleware(req: NextRequest) {
       }
     );
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     // Protection : si on va sur /app sans session -> direction /login
-    if (!session && req.nextUrl.pathname.startsWith('/app')) {
+    if ((authError || !user) && req.nextUrl.pathname.startsWith('/app')) {
       return NextResponse.redirect(new URL('/login', req.url));
     }
   } catch (error) {
     console.error('Middleware auth error:', error);
+    if (req.nextUrl.pathname.startsWith('/app')) return NextResponse.redirect(new URL('/login', req.url));
   }
 
   return res;

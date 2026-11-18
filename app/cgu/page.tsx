@@ -14,7 +14,7 @@ export default function CGU() {
       </Link>
 
       <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#94A3B8', marginBottom: 8 }}>
-        Dernière mise à jour : avril 2025
+        Dernière mise à jour : novembre 2026
       </p>
 
       <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.03em', marginBottom: 8, lineHeight: 1.1 }}>
@@ -31,7 +31,7 @@ export default function CGU() {
 
       <Section title="2. Accès au service">
         <p>L'utilisation de BabyBudget nécessite la création d'un compte avec une adresse email valide. L'accès est gratuit et sans engagement.</p>
-        <p>Vous êtes responsable de la confidentialité de vos identifiants de connexion. En cas de compromission de votre compte, contactez-nous immédiatement à <strong>contact@babybudget.app</strong>.</p>
+        <p>Vous êtes responsable de la confidentialité de vos identifiants de connexion. En cas de compromission de votre compte, contactez-nous immédiatement à <strong>contact@babybudget.fr</strong>.</p>
       </Section>
 
       <Section title="3. Utilisation acceptable">

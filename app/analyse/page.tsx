@@ -63,12 +63,14 @@ function useAnalyse(selectedMonth: string) {
     setLoading(true);
     setError(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const uid = session?.user?.id;
-
-      // Fetch expenses avec filtre user_id
-      let query = supabase.from("expenses").select("*").order("date", { ascending: false });
-      if (uid) query = query.eq("user_id", uid);
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        setExpenses([]);
+        setProfiles([]);
+        throw new Error('Connexion requise pour consulter les analyses');
+      }
+      const uid = user.id;
+      let query = supabase.from("expenses").select("*").eq("user_id", uid).order("date", { ascending: false });
       if (selectedMonth !== "all") {
         const [year, month] = selectedMonth.split("-");
         const startDate = `${year}-${month}-01`;
@@ -82,8 +84,7 @@ function useAnalyse(selectedMonth: string) {
       setExpenses(expData || []);
 
       // Fetch profiles pour les prénoms
-      let pQuery = supabase.from("profiles").select("id, name");
-      if (uid) pQuery = pQuery.eq("user_id", uid);
+      const pQuery = supabase.from("profiles").select("id, name").eq("user_id", uid);
       const { data: profData } = await pQuery;
       setProfiles(profData || []);
 

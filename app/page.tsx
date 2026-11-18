@@ -337,7 +337,7 @@ export default function LandingPage() {
               { icon: <TrendingDown size={20} color="#1C6856" />, text: 'Anticipez les pics de dépenses mensuel' },
               { icon: <ShieldCheck size={20} color="#1C6856" />, text: 'Sécurisez votre budget familial' },
               { icon: <PieChart size={20} color="#1C6856" />, text: 'Repérez les postes de gaspillage' },
-              { icon: <BarChart2 size={20} color="#1C6856" />, text: 'Comparez-vous à la moyenne nationale (INSEE)' },
+              { icon: <BarChart2 size={20} color="#1C6856" />, text: 'Comparez vos dépenses à des repères illustratifs' },
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: i < 3 ? 20 : 0 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 10, background: '#E7F1EA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -365,7 +365,7 @@ export default function LandingPage() {
           >
             <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1C6856', marginBottom: 12 }}>Fonctionnalité unique</p>
             <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 800, fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: '-1px', lineHeight: 1.15, marginBottom: 16 }}>
-              Êtes-vous au-dessus ou en dessous<br />de la moyenne nationale ?
+              Comment se situent vos dépenses<br />face à un budget indicatif ?
             </h2>
             <p style={{ color: c.textMuted, fontSize: '1rem', maxWidth: 580, margin: '0 auto 48px', lineHeight: 1.7 }}>
               Explorez vos dépenses aux côtés de repères indicatifs par âge et par catégorie. Ces estimations sont utiles pour réfléchir à votre budget, sans constituer des statistiques officielles ni un classement.
@@ -386,7 +386,7 @@ export default function LandingPage() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
               <p style={{ fontWeight: 700, color: c.text, margin: 0, fontSize: '0.95rem' }}>Tranche 0–1 an · Comparaison nationale</p>
-              <span style={{ background: '#E7F1EA', color: '#1C6856', fontSize: 12, fontWeight: 600, padding: '4px 12px', borderRadius: 99 }}>🇫🇷 Données INSEE · CAF · DREES</span>
+              <span style={{ background: '#E7F1EA', color: '#1C6856', fontSize: 12, fontWeight: 600, padding: '4px 12px', borderRadius: 99 }}>Repères indicatifs · hypothèses explicites</span>
             </div>
             {[
               { cat: 'Couches', vous: 58, nationale: 60 },
@@ -488,7 +488,7 @@ export default function LandingPage() {
               {
                 emoji: '🧮',
                 title: 'Calculateur de budget prévisionnel',
-                desc: "Estimez votre budget mensuel réel selon vos revenus et mode de garde — aides CAF déduites.",
+                desc: "Explorez les hypothèses de coût par mode de garde. Les droits CAF réels doivent être vérifiés sur caf.fr.",
                 color: '#1C6856',
                 preview: (
                   <div style={{ marginTop: 12 }}>
@@ -508,7 +508,7 @@ export default function LandingPage() {
               {
                 emoji: '🇫🇷',
                 title: 'Comparaison nationale',
-                desc: "Comparez vos dépenses aux moyennes nationales INSEE/CAF par catégorie et tranche d'âge.",
+                desc: "Visualisez vos dépenses face à des budgets de référence illustratifs par catégorie et par âge.",
                 color: '#2F8A6B',
                 preview: (
                   <div style={{ marginTop: 12 }}>
@@ -604,8 +604,8 @@ export default function LandingPage() {
           />
           <FAQItem
             textColor={c.text} textMuted={c.textMuted} borderColor={c.border}
-            q="D'où viennent les moyennes nationales ?"
-            a="Les données de comparaison sont issues de l'INSEE (enquête budget des familles 2023), de la CAF et de la DREES. Elles sont mises à jour annuellement et représentent les moyennes françaises par tranche d'âge."
+            q="D'où viennent les repères budgétaires ?"
+            a="Les montants de comparaison actuellement présentés sont des hypothèses illustratives par âge et catégorie, et non des moyennes officielles ou une distribution statistique de familles françaises."
             delay={0.15}
           />
           <FAQItem

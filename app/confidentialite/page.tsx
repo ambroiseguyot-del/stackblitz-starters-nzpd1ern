@@ -14,7 +14,7 @@ export default function Confidentialite() {
       </Link>
 
       <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#94A3B8', marginBottom: 8 }}>
-        Dernière mise à jour : avril 2025
+        Dernière mise à jour : novembre 2026
       </p>
 
       <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '2rem', letterSpacing: '-0.03em', marginBottom: 8, lineHeight: 1.1 }}>
@@ -25,8 +25,8 @@ export default function Confidentialite() {
       </p>
 
       <Section title="1. Qui sommes-nous ?">
-        <p>BabyBudget est une application de suivi de budget familial. Pour toute question relative à vos données, vous pouvez nous contacter à l'adresse : <strong>contact@babybudget.app</strong></p>
-        <p>Hébergement : <strong>Vercel Inc.</strong> (États-Unis, certifié Privacy Shield) — <strong>Supabase Inc.</strong> (infrastructure AWS Europe)</p>
+        <p>BabyBudget est une application de suivi de budget familial. Pour toute question relative à vos données, vous pouvez nous contacter à l'adresse : <strong>contact@babybudget.fr</strong></p>
+        <p>Prestataires techniques : <strong>Vercel</strong> (hébergement de l'application) et <strong>Supabase</strong> (authentification et base de données). Les régions d'hébergement et les transferts éventuels hors EEE doivent être vérifiés auprès des prestataires et documentés selon les garanties contractuelles applicables.</p>
       </Section>
 
       <Section title="2. Données collectées">
@@ -54,12 +54,12 @@ export default function Confidentialite() {
       </Section>
 
       <Section title="4. Qui a accès à vos données ?">
-        <p>Seul vous avez accès à vos dépenses et profils. Les données sont isolées par utilisateur grâce à des règles de sécurité strictes (Row Level Security) sur notre base de données.</p>
+        <p>L'accès aux dépenses et profils est restreint par des politiques Row Level Security (RLS) sur la base de données. Cette protection est complétée par des contrôles de session dans l'application.</p>
         <p>Nos sous-traitants techniques (Supabase, Vercel) ont accès à l'infrastructure mais sont contractuellement tenus de protéger vos données et ne peuvent pas les utiliser à d'autres fins.</p>
       </Section>
 
       <Section title="5. Durée de conservation">
-        <p>Vos données sont conservées tant que votre compte est actif. Si vous supprimez votre compte, toutes vos données (dépenses, profils, paramètres) sont définitivement effacées dans un délai de 30 jours.</p>
+        <p>Vos données sont conservées tant que votre compte est actif. Après suppression du compte, les données liées au compte sont supprimées conformément à la procédure en vigueur ; les délais d'effacement des sauvegardes techniques doivent être confirmés auprès des prestataires.</p>
       </Section>
 
       <Section title="6. Vos droits (RGPD)">
@@ -69,9 +69,9 @@ export default function Confidentialite() {
           <li><strong>Droit de rectification</strong> : vous pouvez modifier vos données depuis votre profil</li>
           <li><strong>Droit à l'effacement</strong> : vous pouvez supprimer votre compte depuis les paramètres</li>
           <li><strong>Droit à la portabilité</strong> : export CSV disponible depuis la page Analyse</li>
-          <li><strong>Droit d'opposition</strong> : contactez-nous à contact@babybudget.app</li>
+          <li><strong>Droit d'opposition</strong> : contactez-nous à contact@babybudget.fr</li>
         </ul>
-        <p>Pour exercer vos droits ou pour toute réclamation, contactez-nous à <strong>contact@babybudget.app</strong>. Vous pouvez également déposer une plainte auprès de la <strong>CNIL</strong> (www.cnil.fr).</p>
+        <p>Pour exercer vos droits ou pour toute réclamation, contactez-nous à <strong>contact@babybudget.fr</strong>. Vous pouvez également déposer une plainte auprès de la <strong>CNIL</strong> (www.cnil.fr).</p>
       </Section>
 
       <Section title="7. Cookies et traceurs">
