@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { Baby, TrendingDown, ShieldCheck, Zap, PieChart, BarChart2, ArrowRight, CheckCircle } from 'lucide-react';
-import { motion, useInView } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 // ─── Hook dark mode ───────────────────────────────────────────────────────────
 function useGlobalDark(): boolean {
@@ -17,27 +17,6 @@ function useGlobalDark(): boolean {
     return () => observer.disconnect();
   }, []);
   return isDark;
-}
-
-// ─── Animated Counter ────────────────────────────────────────────────────────
-function Counter({ to, prefix = '', suffix = '', duration = 2 }: { to: number; prefix?: string; suffix?: string; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const step = to / (duration * 60);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= to) { setCount(to); clearInterval(timer); }
-      else setCount(Math.floor(start));
-    }, 1000 / 60);
-    return () => clearInterval(timer);
-  }, [inView, to, duration]);
-
-  return <span ref={ref}>{prefix}{count.toLocaleString('fr-FR')}{suffix}</span>;
 }
 
 // ─── Feature Card ────────────────────────────────────────────────────────────
@@ -243,7 +222,8 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          {/* Dashboard preview — mockup CSS au lieu d'une image qui peut manquer */}
+          {/* Démonstration avec données fictives, sans données utilisateurs */}
+          <p style={{ fontSize: 12, fontWeight: 700, color: c.textMuted, margin: '24px 0 -34px' }}>APERÇU DE L’APPLICATION · DONNÉES FICTIVES</p>
           <motion.div
             initial={{ opacity: 0, y: 32, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -262,7 +242,7 @@ export default function LandingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
               {[
                 { label: 'Total dépensé', value: '684 €', accent: true },
-                { label: 'Vs moyenne nationale', value: '-2,3%', green: true },
+                { label: 'Budget restant', value: '316 €', green: true },
                 { label: 'Opérations', value: '23' },
               ].map((card, i) => (
                 <div key={i} style={{
@@ -287,7 +267,7 @@ export default function LandingPage() {
                 <div key={i} style={{ marginBottom: 10 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                     <span style={{ fontSize: 11, color: c.textMuted }}>{bar.label}</span>
-                    <span style={{ fontSize: 11, color: '#94A3B8' }}>{bar.pct}% de la moyenne</span>
+                    <span style={{ fontSize: 11, color: '#94A3B8' }}>{bar.pct}du budget estimé</span>
                   </div>
                   <div style={{ height: 6, background: '#F0F3EE', borderRadius: 99, overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${bar.pct}%`, background: bar.color, borderRadius: 99 }} />
