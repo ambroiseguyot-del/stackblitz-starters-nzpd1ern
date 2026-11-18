@@ -40,3 +40,22 @@ jobs:
         run: npm run lint
       - name: Production build (dummy Supabase environment)
         run: npm run build
+      - name: Smoke test — routes publiques
+        run: |
+          set -euo pipefail
+          npm run start -- -p 3123 > /tmp/babybudget-next.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 40); do
+            if curl --silent --fail http://127.0.0.1:3123/ > /dev/null; then break; fi
+            sleep 1
+          done
+          for route in / /login /signup /reset-password /budget /analyse /comparaison /informations /blog /cgu /confidentialite /blog/aides-caf-bebe-2026 /blog/cout-bebe-premiere-annee; do
+            status=$(curl --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:3123$route")
+            if [ "$status" != "200" ]; then
+              echo "Route $route failed (HTTP $status)"
+              tail -n 60 /tmp/babybudget-next.log
+              exit 1
+            fi
+            echo "OK $route (HTTP $status)"
+          done
