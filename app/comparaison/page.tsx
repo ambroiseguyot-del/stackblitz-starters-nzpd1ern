@@ -96,7 +96,7 @@ function generateInsights(
   const diff = ((userTotal - nationalTotal) / nationalTotal) * 100;
   const absDiff = Math.abs(diff);
   if (diff > 15) insights.push(`Vous dépensez ${absDiff.toFixed(0)}% au-dessus du budget de référence illustratif pour cette tranche d'âge.`);
-  else if (diff < -15) insights.push(`Bravo ! Vous dépensez ${absDiff.toFixed(0)}% en dessous du budget de référence illustratif — vous faites partie des parents les plus économes.`);
+  else if (diff < -15) insights.push(`Bravo ! Vous dépensez ${absDiff.toFixed(0)}% en dessous du budget de référence illustratif — ce montant reste une hypothèse indicative.`);
   else insights.push(`Vos dépenses sont proches du budget de référence illustratif (écart de ${absDiff.toFixed(0)}%).`);
   const topUserCat = Object.entries(userByCategory).sort((a, b) => b[1] - a[1])[0];
   if (topUserCat) insights.push(`Votre poste principal est "${CATEGORY_LABELS[topUserCat[0]] || topUserCat[0]}" (${fmt(topUserCat[1])}/mois).`);
@@ -236,7 +236,7 @@ function DiffBadge({ diff }: { diff: number }) {
       color: isGood ? '#166534' : '#991B1B',
     }}>
       {isGood ? "▼" : "▲"} {fmtPct(diff)}
-      <span style={{ fontWeight: 400, opacity: 0.7 }}>vs moyenne</span>
+      <span style={{ fontWeight: 400, opacity: 0.7 }}>vs repère indicatif</span>
     </span>
   );
 }
@@ -356,7 +356,7 @@ export default function ComparaisonNationale() {
 
   const barData = useMemo(() => {
     const cats = selectedCategory === "toutes" ? Object.keys(national.categories) : [selectedCategory];
-    return cats.map(cat => ({ name: CATEGORY_LABELS[cat] || cat, Vous: userByCategory[cat] ?? 0, Nationale: national.categories[cat] ?? 0 }));
+    return cats.map(cat => ({ name: CATEGORY_LABELS[cat] || cat, Vous: userByCategory[cat] ?? 0, Repère: national.categories[cat] ?? 0 }));
   }, [national, userByCategory, selectedCategory]);
 
   const pieData = useMemo(() =>
@@ -369,7 +369,7 @@ export default function ComparaisonNationale() {
     return Object.keys(national.categories).map(cat => ({
       subject: CATEGORY_LABELS[cat] || cat,
       Vous: Math.round(((userByCategory[cat] ?? 0) / natMax) * 100),
-      Nationale: Math.round(((national.categories[cat] ?? 0) / natMax) * 100),
+      Repère: Math.round(((national.categories[cat] ?? 0) / natMax) * 100),
     }));
   }, [national, userByCategory]);
 
@@ -473,8 +473,8 @@ export default function ComparaisonNationale() {
                 <DiffBadge diff={diff} />
                 <p style={{ fontSize: 12, color: cv.textMuted, margin: 0 }}>
                   {diff <= 0
-                    ? `Vous économisez ${fmt(Math.abs(userFiltered - nationalFiltered))} vs la moyenne`
-                    : `Vous dépensez ${fmt(Math.abs(userFiltered - nationalFiltered))} de plus que la moyenne`}
+                    ? `Votre budget est inférieur de ${fmt(Math.abs(userFiltered - nationalFiltered))} vs le repère indicatif`
+                    : `Vous dépensez ${fmt(Math.abs(userFiltered - nationalFiltered))} au-dessus du repère indicatif`}
                 </p>
               </div>
             </div>
@@ -488,7 +488,7 @@ export default function ComparaisonNationale() {
                     {warning ? "Vos dépenses ne sont pas disponibles pour l'instant" : `Aucune dépense en ${MONTHS_FR[selectedDate.month]} ${selectedDate.year}`}
                   </p>
                   <p style={{ fontSize: 13, color: cv.textMuted, margin: 0 }}>
-                    {warning ? "La comparaison nationale ci-dessous reste fonctionnelle." : "Naviguez vers un autre mois ou ajoutez des dépenses depuis le dashboard."}
+                    {warning ? "Les repères illustratifs restent consultables." : "Naviguez vers un autre mois ou ajoutez des dépenses depuis le dashboard."}
                   </p>
                 </div>
               </div>
@@ -522,7 +522,7 @@ export default function ComparaisonNationale() {
                         <Tooltip content={(props: any) => <CustomTooltip {...props} cardBg={cv.card} border={cv.border} text={cv.text} />} cursor={{ fill: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }} />
                         <Legend formatter={value => <span style={{ fontSize: 12, color: cv.textSecondary }}>{value}</span>} />
                         <Bar dataKey="Vous" fill="#1C6856" radius={[6,6,0,0]} maxBarSize={40} />
-                        <Bar dataKey="Nationale" fill={cv.barNat} stroke={cv.textMuted} strokeWidth={1} radius={[6,6,0,0]} maxBarSize={40} />
+                        <Bar dataKey="Repère" fill={cv.barNat} stroke={cv.textMuted} strokeWidth={1} radius={[6,6,0,0]} maxBarSize={40} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -530,7 +530,7 @@ export default function ComparaisonNationale() {
 
                 <div style={{ background: cv.card, border: `1px solid ${cv.border}`, borderRadius: 20, padding: '20px 24px' }}>
                   <p style={{ fontSize: 13, fontWeight: 700, color: cv.text, margin: '0 0 16px' }}>
-                    Répartition nationale — {ageSlice} an{ageSlice === "0-1" ? "" : "s"}
+                    Répartition du repère — {ageSlice} an{ageSlice === "0-1" ? "" : "s"}
                   </p>
                   <div style={{ height: 240 }}>
                     <ResponsiveContainer width="100%" height="100%">
@@ -548,14 +548,14 @@ export default function ComparaisonNationale() {
                 <div style={{ background: cv.card, border: `1px solid ${cv.border}`, borderRadius: 20, padding: '20px 24px', gridColumn: '1 / -1' }}>
                   <p style={{ fontSize: 13, fontWeight: 700, color: cv.text, margin: '0 0 4px' }}>Profil de dépenses — Radar comparatif</p>
                   <p style={{ fontSize: 12, color: cv.textMuted, margin: '0 0 16px' }}>
-                    100 = équivalent à la catégorie nationale la plus élevée. Plus votre profil est proche du bord, plus vous dépensez dans cette catégorie.
+                    100 = équivalent à la catégorie du repère la plus élevée. Plus votre profil est proche du bord, plus vous dépensez dans cette catégorie.
                   </p>
                   <div style={{ height: 280 }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart data={radarData}>
                         <PolarGrid stroke={cv.border} />
                         <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: cv.textMuted }} />
-                        <Radar name="Nationale" dataKey="Nationale" stroke={cv.textMuted} fill={cv.barNat} fillOpacity={0.5} />
+                        <Radar name="Repère" dataKey="Repère" stroke={cv.textMuted} fill={cv.barNat} fillOpacity={0.5} />
                         <Radar name="Vous" dataKey="Vous" stroke="#1C6856" fill="#1C6856" fillOpacity={0.3} />
                         <Legend formatter={value => <span style={{ fontSize: 12, color: cv.textSecondary, fontWeight: 500 }}>{value}</span>} />
                         <Tooltip formatter={(value: any, name: any) => [`Score ${Number(value) || 0}/100`, String(name)]} contentStyle={{ background: cv.card, border: `1px solid ${cv.border}`, borderRadius: 12, fontFamily: FONT }} />
@@ -579,8 +579,8 @@ export default function ComparaisonNationale() {
                 <div style={{ display: 'flex', gap: 20, marginTop: 16, flexWrap: 'wrap' }}>
                   {[
                     { color: '#1C6856', label: 'Vos dépenses', opacity: 1 },
-                    { color: cv.textMuted, label: 'Moyenne nationale', opacity: 0.4 },
-                    { color: '#C85B56', label: 'Au-dessus de la moyenne', opacity: 0.85 },
+                    { color: cv.textMuted, label: 'Repère indicatif', opacity: 0.4 },
+                    { color: '#C85B56', label: 'Au-dessus du repère', opacity: 0.85 },
                   ].map(({ color, label, opacity }) => (
                     <span key={label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: cv.textMuted }}>
                       <span style={{ width: 12, height: 8, borderRadius: 99, background: color, display: 'inline-block', opacity }} />
