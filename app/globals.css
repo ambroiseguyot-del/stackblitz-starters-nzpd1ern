@@ -58,6 +58,8 @@ input, select, textarea { accent-color: var(--france-blue); }
 .bb-brand-symbol { width: 39px; height: 39px; flex: none; filter: drop-shadow(0 5px 10px rgba(22,68,61,.13)); }
 .bb-brand-word { color: var(--bb-logo-color, var(--text-main)); font-size: 21px; font-weight: 800; letter-spacing: -.055em; line-height: 1; }
 .bb-brand-word > span { color: var(--france-blue); }
+.bb-brand-symbol { object-fit: contain; filter: none; }
+.bb-brand-word { letter-spacing: -.045em; }
 .bb-header { position: sticky; top: 0; z-index: 120; background: rgba(248,248,244,.94); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 html.dark .bb-header { background: rgba(16,28,23,.94); }
 .bb-nav { max-width: 1420px; margin: auto; padding: 0 28px; min-height: 76px; display: flex; align-items: center; gap: 24px; justify-content: space-between; }
