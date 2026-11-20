@@ -19,7 +19,7 @@ export default function SignUp() {
 
   const getFriendlyError = (msg: string): string => {
     if (msg.includes('already registered') || msg.includes('already exists')) return 'Un compte existe déjà avec cet email. Connectez-vous.';
-    if (msg.includes('Password should be')) return 'Le mot de passe doit contenir au moins 6 caractères.';
+    if (msg.includes('Password should be')) return 'Le mot de passe doit contenir au moins 12 caractères.';
     if (msg.includes('valid email')) return 'Entrez une adresse email valide.';
     return 'Une erreur est survenue. Réessayez.';
   };
@@ -28,7 +28,7 @@ export default function SignUp() {
     e.preventDefault();
     setError(null);
     if (!email.includes('@')) { setError('Entrez une adresse email valide.'); return; }
-    if (password.length < 6) { setError('Le mot de passe doit contenir au moins 6 caractères.'); return; }
+    if (password.length < 12) { setError('Le mot de passe doit contenir au moins 12 caractères.'); return; }
     if (password !== confirm) { setError('Les deux mots de passe ne correspondent pas.'); return; }
     setLoading(true);
     const { error: authError } = await supabase.auth.signUp({
@@ -42,8 +42,8 @@ export default function SignUp() {
 
   const getPasswordStrength = () => {
     if (password.length === 0) return { label: '', color: '#DFE7DE', width: '0%' };
-    if (password.length < 6) return { label: 'Trop court', color: '#C85B56', width: '25%' };
-    if (password.length < 8) return { label: 'Faible', color: '#F97316', width: '40%' };
+    if (password.length < 12) return { label: 'Trop court', color: '#C85B56', width: '25%' };
+    if (password.length < 16) return { label: 'Faible', color: '#F97316', width: '40%' };
     if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) return { label: 'Moyen', color: '#EAB308', width: '65%' };
     return { label: 'Fort', color: '#22C55E', width: '100%' };
   };
@@ -104,9 +104,9 @@ export default function SignUp() {
                     <label htmlFor="password" className="sr-label">Mot de passe</label>
                     <div className="sr-input-wrap">
                       <input id="password" type={showPassword ? 'text' : 'password'} className="sr-input pw"
-                        placeholder="Min. 6 caractères" value={password}
+                        placeholder="Min. 12 caractères" value={password}
                         onChange={(e) => { setPassword(e.target.value); setError(null); }}
-                        autoComplete="new-password" required disabled={loading} />
+                        autoComplete="new-password" minLength={12} required disabled={loading} />
                       <button type="button" className="sr-eye" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Masquer' : 'Afficher'}>
                         {showPassword ? '🙈' : '👁️'}
                       </button>
@@ -125,7 +125,7 @@ export default function SignUp() {
                         className={`sr-input pw${confirm.length > 0 && confirm !== password ? ' err' : ''}`}
                         placeholder="Répétez le mot de passe" value={confirm}
                         onChange={(e) => { setConfirm(e.target.value); setError(null); }}
-                        autoComplete="new-password" required disabled={loading} />
+                        autoComplete="new-password" minLength={12} required disabled={loading} />
                       <button type="button" className="sr-eye" onClick={() => setShowConfirm(!showConfirm)} aria-label={showConfirm ? 'Masquer' : 'Afficher'}>
                         {showConfirm ? '🙈' : '👁️'}
                       </button>

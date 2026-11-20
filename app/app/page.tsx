@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { supabase } from '../../supabaseClient';
+import { formatExpenseCSV } from '../../lib/csv';
+import { loadAllExpenses } from '../../lib/expenses';
 import Onboarding from '../../components/Onboarding';
 import BrandLogo from '../../components/BrandLogo';
 import QuickAddExpense, { type QuickExpensePayload } from '../../components/QuickAddExpense';
@@ -30,6 +32,7 @@ interface Expense {
   category: string;
   is_recurring: boolean;
   recurring_day: number | null;
+  recurrence_id: string | null;
 }
 
 interface Profile {
@@ -74,16 +77,7 @@ function useGlobalDark(): boolean {
 // ─── Export CSV ───────────────────────────────────────────────────────────────
 
 function exportToCSV(expenses: Expense[], filename: string) {
-  const headers = ['Date', 'Enfant', 'Catégorie', 'Désignation', 'Montant (€)', 'Récurrente'];
-  const rows = expenses.map(e => [
-    e.date,
-    e.child_name,
-    e.category,
-    `"${e.label.replace(/"/g, '""')}"`,
-    e.amount.toFixed(2).replace('.', ','),
-    e.is_recurring ? 'Oui' : 'Non',
-  ]);
-  const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+  const csv = formatExpenseCSV(expenses);
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -319,23 +313,13 @@ export default function UltimateBabyBudget() {
       }
       const uid = user.id;
       // Defense in depth: never issue a private request without an authenticated owner.
-      const expQuery = supabase.from('expenses').select('*').eq('user_id', uid).order('date', { ascending: true });
       const profQuery = supabase.from('profiles').select('*').eq('user_id', uid).order('name', { ascending: true });
       const settQuery = supabase.from('settings').select('key,value').eq('user_id', uid);
-
-      const [expRes, profRes, settRes] = await Promise.all([expQuery, profQuery, settQuery]);
-
-      if (expRes.error) {
-        // Distingue erreur d'accès (RLS) vs vraie erreur réseau
-        const msg = expRes.error.code === '42501'
-          ? 'Accès refusé — vérifiez votre connexion'
-          : expRes.error.message;
-        setDataError(msg);
-        return;
-      }
+      const [expenseRows, profRes, settRes] = await Promise.all([
+        loadAllExpenses<Expense>(uid, { ascending: true }), profQuery, settQuery,
+      ]);
       if (profRes.error) throw new Error(profRes.error.message);
-
-      setExpenses((expRes.data as Expense[]) || []);
+      setExpenses(expenseRows);
       setProfiles((profRes.data as Profile[]) || []);
       if (settRes.error) throw new Error(settRes.error.message);
       const preferences = settRes.data || [];
@@ -350,7 +334,8 @@ export default function UltimateBabyBudget() {
       });
       setChildBudgets(byChild);
     } catch (error: any) {
-      showToastRef.current(error.message, 'error');
+      setDataError(error?.message || 'Impossible de charger les dépenses.');
+      showToastRef.current(error?.message || 'Erreur de chargement.', 'error');
     } finally {
       if (isFirst) setIsInitialLoading(false);
     }
@@ -471,9 +456,9 @@ export default function UltimateBabyBudget() {
     setIsLoading(true);
     try {
       const isRecurring = formData.get('recurring') === 'on';
-      const recurringDay = isRecurring
-        ? parseInt(formData.get('recurring_day') as string) || new Date().getDate()
-        : null;
+      const fallback = Number(String(formData.get('date') ?? '').slice(-2)) || new Date().getDate();
+      const requested = Number(formData.get('recurring_day')) || fallback;
+      const recurringDay = isRecurring ? Math.max(1, Math.min(31, requested)) : null;
 
       const { data, error } = await supabase.from('expenses').insert([{
         child_name: formData.get('child'),
@@ -483,6 +468,7 @@ export default function UltimateBabyBudget() {
         category: formData.get('category'),
         is_recurring: isRecurring,
         recurring_day: recurringDay,
+        recurrence_id: isRecurring ? crypto.randomUUID() : null,
       }]).select();
       if (error) throw error;
       if (data) setLastAddedId(data[0].id);
@@ -508,7 +494,15 @@ export default function UltimateBabyBudget() {
   const handleEditExpense = async (updated: Partial<Expense>) => {
     if (!editingExpense) return;
     try {
-      const { error } = await supabase.from('expenses').update(updated).eq('id', editingExpense.id);
+      const corrected: Partial<Expense> = { ...updated };
+      if (updated.is_recurring === false) corrected.recurring_day = null;
+      else if (updated.is_recurring === true && !editingExpense.is_recurring) {
+        corrected.recurring_day = Math.max(1, Math.min(31,
+          Number((updated.date ?? editingExpense.date).slice(-2)) || 1));
+        // Restarting a discontinued expense creates a new rule, not a historical duplicate.
+        corrected.recurrence_id = crypto.randomUUID();
+      }
+      const { error } = await supabase.from('expenses').update(corrected).eq('id', editingExpense.id);
       if (error) throw error;
       setEditingExpense(null);
       fetchData();
@@ -520,7 +514,7 @@ export default function UltimateBabyBudget() {
     try {
       const { data, error } = await supabase.from('expenses').insert([{
         child_name: exp.child_name, label: exp.label, amount: exp.amount,
-        date: getTodayISO(), category: exp.category, is_recurring: exp.is_recurring,
+        date: getTodayISO(), category: exp.category, is_recurring: false, recurring_day: null,
       }]).select();
       if (error) throw error;
       if (data) setLastAddedId(data[0].id);

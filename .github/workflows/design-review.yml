@@ -35,6 +35,8 @@ jobs:
         run: npm ci
       - name: Install browser smoke test runner (no lockfile modification)
         run: npm install --no-save --package-lock=false --ignore-scripts playwright@1.56.1
+      - name: Recurrence, CSV and worker regression
+        run: node --test scripts/recurrence-regression.cjs scripts/edge-recurring-regression.cjs
       - name: TypeScript
         run: npx tsc --noEmit
       - name: ESLint

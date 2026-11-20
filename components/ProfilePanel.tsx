@@ -163,7 +163,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
 
   // Changer mot de passe
   const handleChangePassword = async () => {
-    if (newPwd.length < 6) { showToast("6 caractères minimum", "error"); return; }
+    if (newPwd.length < 12) { showToast("12 caractères minimum", "error"); return; }
     if (newPwd !== confirmPwd) { showToast("Les mots de passe ne correspondent pas", "error"); return; }
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password: newPwd });
@@ -476,7 +476,7 @@ export default function ProfilePanel({ open, onClose }: Props) {
             <div className="pp-card">
               <p className="pp-card-title">Changer le mot de passe</p>
               <p style={{ fontSize: 13, color: "#657A6E", margin: 0, lineHeight: 1.6 }}>
-                Votre nouveau mot de passe doit contenir au moins 6 caractères.
+                Votre nouveau mot de passe doit contenir au moins 12 caractères.
               </p>
               <InputField
                 label="Nouveau mot de passe"

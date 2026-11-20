@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ForecastPanel from '../../components/ForecastPanel';
 import { supabase } from '../../supabaseClient';
+import { loadAllExpenses } from '../../lib/expenses';
 import type { ForecastExpense } from '../../lib/forecast';
 
 export default function PrevisionsPage() {
@@ -18,14 +19,14 @@ export default function PrevisionsPage() {
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) throw new Error('Connectez-vous pour consulter vos prévisions.');
         const [records, pref] = await Promise.all([
-          supabase.from('expenses').select('date,amount,category,label,child_name,is_recurring,recurring_day')
-            .eq('user_id', user.id).order('date', { ascending: false }),
+          loadAllExpenses<ForecastExpense>(user.id, {
+            select: 'date,amount,category,label,child_name,is_recurring,recurring_day,recurrence_id',
+          }),
           supabase.from('settings').select('value').eq('user_id', user.id).eq('key', 'monthly_budget').maybeSingle(),
         ]);
-        if (records.error) throw records.error;
         if (pref.error) throw pref.error;
         if (!active) return;
-        setExpenses((records.data || []) as ForecastExpense[]);
+        setExpenses(records);
         setBudget(Math.max(0, Number(pref.data?.value) || 0));
       } catch (err) {
         if (active) setError(err instanceof Error ? err.message : 'Impossible de charger les prévisions.');

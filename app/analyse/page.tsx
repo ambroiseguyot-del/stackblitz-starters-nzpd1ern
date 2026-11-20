@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "../../supabaseClient";
+import { loadAllExpenses } from '../../lib/expenses';
 import Link from "next/link";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -71,18 +72,15 @@ function useAnalyse(selectedMonth: string) {
         throw new Error('Connexion requise pour consulter les analyses');
       }
       const uid = user.id;
-      let query = supabase.from("expenses").select("*").eq("user_id", uid).order("date", { ascending: false });
-      if (selectedMonth !== "all") {
-        const [year, month] = selectedMonth.split("-");
-        const startDate = `${year}-${month}-01`;
-        const endMonth = parseInt(month) === 12 ? 1 : parseInt(month) + 1;
-        const endYear = parseInt(month) === 12 ? parseInt(year) + 1 : parseInt(year);
-        const endDate = `${endYear}-${String(endMonth).padStart(2, "0")}-01`;
-        query = query.gte("date", startDate).lt("date", endDate);
+      let fromDate: string | undefined;
+      let beforeDate: string | undefined;
+      if (selectedMonth !== 'all') {
+        const [year, month] = selectedMonth.split('-').map(Number);
+        fromDate = selectedMonth + '-01';
+        beforeDate = new Date(Date.UTC(year, month, 1)).toISOString().slice(0, 7) + '-01';
       }
-      const { data: expData, error: expErr } = await query;
-      if (expErr) throw expErr;
-      setExpenses(expData || []);
+      const expData = await loadAllExpenses<Expense>(uid, { ascending: false, fromDate, beforeDate });
+      setExpenses(expData);
 
       // Fetch profiles pour les prénoms
       const pQuery = supabase.from("profiles").select("id, name").eq("user_id", uid);
