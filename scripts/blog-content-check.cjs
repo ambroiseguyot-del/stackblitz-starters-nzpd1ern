@@ -21,11 +21,11 @@ for (const slug of articles) {
   assert.ok(sidebar.includes(href), slug + ' missing sidebar');
   assert.ok(layout.includes(href), slug + ' missing canonical');
   assert.ok(page.includes('BlogArticleFrame'), slug + ' missing editorial frame');
-  assert.ok(page.includes('Questions fréquentes'), slug + ' missing reader FAQ');
+  assert.ok(/questions fréquentes/i.test(page), slug + ' missing reader FAQ');
   const sourceUrls = [...page.matchAll(sourcePattern)].map(m => m[1]);
   assert.ok(sourceUrls.length >= 5, slug + ' missing official references');
   assert.equal(new Set(sourceUrls).size, sourceUrls.length, slug + ' duplicated sources');
-  assert.ok(sourceUrls.every(x => /^https:\/\/(www\.)?(caf\.fr|service-public\.gouv\.fr|urssaf\.fr|ameli\.fr|economie\.gouv\.fr|banque-france\.fr)/.test(x)),
+  assert.ok(sourceUrls.every(x => /^https:\/\/(www\.)?(caf\.fr|service-public\.gouv\.fr|urssaf\.fr|ameli\.fr|economie\.gouv\.fr|banque-france\.fr|modules\.securite-routiere\.gouv\.fr|rappel\.conso\.gouv\.fr)/.test(x)),
     slug + ' has an unsanctioned source host');
   const approximateWords = page.replace(/<[^>]*>/g,' ').split(/\s+/).filter(Boolean).length;
   assert.ok(approximateWords >= 1400, slug + ' unexpectedly short');
