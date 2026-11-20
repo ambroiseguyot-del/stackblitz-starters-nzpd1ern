@@ -2,6 +2,7 @@
 // DO NOT deploy until the existing Cron authorization is confirmed and tested.
 // This endpoint deliberately refuses user JWTs: only the scheduled service-role request can call it.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { isDueOnDate, lastDayOfMonth } from '../_shared/recurrenceDate.ts';
 
 const json = (payload: Record<string, unknown>, status: number) =>
   new Response(JSON.stringify(payload), {
@@ -11,8 +12,9 @@ const json = (payload: Record<string, unknown>, status: number) =>
 type Expense = {
   id: string; user_id: string; child_name: string; label: string; category: string;
   date: string; amount: number; recurring_day: number | null; is_recurring: boolean;
+  recurrence_id: string | null;
 };
-const keyOf = (e: Expense) => JSON.stringify([e.user_id, e.child_name, e.category, e.label]);
+const keyOf = (e: Expense) => e.user_id + ':' + e.recurrence_id;
 
 Deno.serve(async request => {
   if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
@@ -29,6 +31,8 @@ Deno.serve(async request => {
   const today = new Date().toISOString().slice(0, 10); // Cron runs at 00:00 UTC.
   const yearMonth = today.slice(0, 7);
   const day = Number(today.slice(8, 10));
+  const lastDay = lastDayOfMonth(Number(today.slice(0, 4)), Number(today.slice(5, 7)));
+
   const monthStart = yearMonth + '-01';
   const next = new Date(Date.UTC(Number(today.slice(0, 4)), Number(today.slice(5, 7)), 1))
     .toISOString().slice(0, 10);
@@ -39,10 +43,12 @@ Deno.serve(async request => {
   try {
     // PostgREST pages at a safe limit. Daily runs only need occurrences due today.
     for (let offset = 0; offset < 10000; offset += 500) {
-      const { data, error } = await supabase.from('expenses')
-        .select('id,user_id,child_name,label,category,date,amount,recurring_day,is_recurring')
-        .eq('is_recurring', true).eq('recurring_day', day)
-        .order('date', { ascending: false }).range(offset, offset + 499);
+      let query = supabase.from('expenses')
+        .select('id,user_id,child_name,label,category,date,amount,recurring_day,is_recurring,recurrence_id')
+        .eq('is_recurring', true).lte('date', today)
+        .order('date', { ascending: false }).order('id', { ascending: false });
+      query = day === lastDay ? query.gte('recurring_day', day) : query.eq('recurring_day', day);
+      const { data, error } = await query.range(offset, offset + 499);
       if (error) throw error;
       const batch = (data ?? []) as Expense[];
       candidates.push(...batch);
@@ -51,7 +57,8 @@ Deno.serve(async request => {
     }
 
     for (const candidate of candidates) {
-      if (!candidate.user_id || !candidate.label || !Number.isFinite(Number(candidate.amount))) {
+      if (!candidate.user_id || !candidate.recurrence_id || !candidate.label || !Number.isFinite(Number(candidate.amount))
+        || candidate.recurring_day === null || !isDueOnDate(candidate.recurring_day, today)) {
         skipped++; continue;
       }
       const group = keyOf(candidate);
@@ -62,25 +69,22 @@ Deno.serve(async request => {
       try {
         // Read the latest transaction, including entries whose recurrence was stopped.
         const latest = await supabase.from('expenses')
-          .select('id,date,is_recurring,recurring_day,amount,child_name,category,label,user_id')
+          .select('id,date,is_recurring,recurring_day,amount,child_name,category,label,user_id,recurrence_id')
           .eq('user_id', candidate.user_id)
-          .eq('child_name', candidate.child_name)
-          .eq('category', candidate.category)
-          .eq('label', candidate.label)
+          .eq('recurrence_id', candidate.recurrence_id)
+          .lte('date', today)
           .order('date', { ascending: false })
           .order('id', { ascending: false })
           .limit(1).maybeSingle();
         if (latest.error) throw latest.error;
         const template = latest.data as Expense | null;
-        if (!template || !template.is_recurring || template.recurring_day !== day) {
+        if (!template || !template.is_recurring || template.recurring_day !== candidate.recurring_day) {
           skipped++; continue;
         }
         // Include original entries in the check. Never create a second expense in the same month.
         const existing = await supabase.from('expenses').select('id')
           .eq('user_id', template.user_id)
-          .eq('child_name', template.child_name)
-          .eq('category', template.category)
-          .eq('label', template.label)
+          .eq('recurrence_id', template.recurrence_id)
           .gte('date', monthStart).lt('date', next).limit(1);
         if (existing.error) throw existing.error;
         if (existing.data?.length) { skipped++; continue; }
@@ -89,8 +93,10 @@ Deno.serve(async request => {
           user_id: template.user_id, child_name: template.child_name,
           label: template.label, category: template.category,
           amount: template.amount, date: today,
-          is_recurring: true, recurring_day: day,
+          is_recurring: true, recurring_day: template.recurring_day,
+          recurrence_id: template.recurrence_id,
         });
+        if (inserted.error?.code === '23505') { skipped++; continue; }
         if (inserted.error) throw inserted.error;
         created++;
       } catch (error) {

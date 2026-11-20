@@ -26,7 +26,7 @@ export default function Confidentialite() {
 
       <Section title="1. Qui sommes-nous ?">
         <p>BabyBudget est une application de suivi de budget familial. Pour toute question relative à vos données, vous pouvez nous contacter à l'adresse : <strong>contact@babybudget.fr</strong></p>
-        <p>Prestataires techniques : <strong>Vercel</strong> (hébergement de l'application) et <strong>Supabase</strong> (authentification et base de données). Les régions d'hébergement et les transferts éventuels hors EEE doivent être vérifiés auprès des prestataires et documentés selon les garanties contractuelles applicables.</p>
+        <p>Prestataires techniques : <strong>Vercel</strong> (hébergement et diffusion de l'application) et <strong>Supabase</strong> (authentification et base de données). La base Supabase utilise la région <strong>eu-central-2 (Zurich, Suisse)</strong>. La Suisse bénéficie d'une décision d'adéquation européenne sans appartenir à l'EEE. Les éventuels traitements et transferts internationaux des autres prestataires restent à documenter contractuellement.</p>
       </Section>
 
       <Section title="2. Données collectées">
@@ -82,9 +82,9 @@ export default function Confidentialite() {
         <p>Nous mettons en œuvre les mesures techniques suivantes pour protéger vos données :</p>
         <ul>
           <li>Chiffrement des communications (HTTPS/TLS)</li>
-          <li>Mots de passe chiffrés (bcrypt, jamais stockés en clair)</li>
+          <li>Mots de passe traités et hachés par Supabase Auth, jamais stockés en clair par BabyBudget</li>
           <li>Isolation des données par utilisateur (Row Level Security)</li>
-          <li>Hébergement sur infrastructure européenne (AWS eu-west)</li>
+          <li>Base de données hébergée en Suisse (région Supabase eu-central-2, Zurich)</li>
         </ul>
       </Section>
 

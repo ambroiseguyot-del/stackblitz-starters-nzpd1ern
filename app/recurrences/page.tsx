@@ -4,18 +4,20 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, CalendarClock, Check, PauseCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
+import { loadAllExpenses } from '../../lib/expenses';
+import { dueDateForMonth, normalizeRecurringDay } from '../../supabase/functions/_shared/recurrenceDate';
 import { formatMoney } from '../../lib/forecast';
 
 type Entry = {
   id: string; user_id: string; child_name: string; category: string;
   label: string; amount: number; date: string; is_recurring: boolean;
   recurring_day: number | null;
+  recurrence_id: string | null;
 };
 type Rule = { key: string; latest: Entry; exists: boolean; amount: number; dueDate: string };
 const monthKey = (d: Date) => [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0')].join('-');
-const safeKey = (e: Entry) => JSON.stringify([e.child_name, e.category, e.label.trim().toLocaleLowerCase('fr-FR')]);
-const cleanDay = (value: number | null, date: string) =>
-  Math.max(1, Math.min(28, value || Number(date.slice(-2)) || 1));
+const safeKey = (e: Entry) => e.recurrence_id || JSON.stringify([e.child_name, e.category, e.label.trim().toLocaleLowerCase('fr-FR')]);
+const cleanDay = (value: number | null, date: string) => normalizeRecurringDay(value, date);
 
 export default function RecurrencesPage() {
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -32,11 +34,10 @@ export default function RecurrencesPage() {
     try {
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (!user || authError) throw new Error('Votre connexion a expiré.');
-      const { data, error: queryError } = await supabase.from('expenses')
-        .select('id,user_id,child_name,category,label,amount,date,is_recurring,recurring_day')
-        .eq('user_id', user.id).order('date', { ascending: false });
-      if (queryError) throw queryError;
-      setEntries((data ?? []) as Entry[]);
+      const data = await loadAllExpenses<Entry>(user.id, {
+        select: 'id,user_id,child_name,category,label,amount,date,is_recurring,recurring_day,recurrence_id',
+      });
+      setEntries(data);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Chargement impossible.');
     } finally { setLoading(false); }
@@ -57,7 +58,7 @@ export default function RecurrencesPage() {
       const day = cleanDay(e.recurring_day, e.date);
       return {
         key, latest: e, exists, amount: Number(e.amount),
-        dueDate: selected + '-' + String(day).padStart(2, '0'),
+        dueDate: dueDateForMonth(selected, day),
       };
     }).sort((a, b) => a.dueDate.localeCompare(b.dueDate));
   }, [entries, selectedDate]);
@@ -79,11 +80,10 @@ export default function RecurrencesPage() {
       if (!user || authError) throw new Error('Votre connexion a expiré.');
       const dateStart = monthKey(selectedDate) + '-01';
       const dateEnd = monthKey(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1)) + '-01';
+      if (!rule.latest.recurrence_id) throw new Error('Règle de récurrence non migrée.');
       const existing = await supabase.from('expenses').select('id')
         .eq('user_id', user.id)
-        .eq('child_name', rule.latest.child_name)
-        .eq('category', rule.latest.category)
-        .eq('label', rule.latest.label)
+        .eq('recurrence_id', rule.latest.recurrence_id)
         .gte('date', dateStart).lt('date', dateEnd).limit(1);
       if (existing.error) throw existing.error;
       if (existing.data?.length) {
@@ -100,7 +100,13 @@ export default function RecurrencesPage() {
         date: rule.dueDate,
         is_recurring: true,
         recurring_day: cleanDay(rule.latest.recurring_day, rule.latest.date),
+        recurrence_id: rule.latest.recurrence_id,
       }]);
+      if (result.error?.code === '23505') {
+        setNotice('Cette échéance a déjà été enregistrée. Aucun doublon créé.');
+        await load();
+        return;
+      }
       if (result.error) throw result.error;
       setNotice('Échéance enregistrée. Le montant a été repris de la dernière dépense.');
       await load();
@@ -166,7 +172,7 @@ export default function RecurrencesPage() {
                     <div className="bb-recurring-icon"><RefreshCw size={20}/></div>
                     <div className="bb-recurring-details">
                       <strong>{rule.latest.label}</strong>
-                      <span>{rule.latest.child_name} · {rule.latest.category} · le {rule.dueDate.slice(-2)} du mois</span>
+                      <span>{rule.latest.child_name} · {rule.latest.category} · échéance nominale le {cleanDay(rule.latest.recurring_day, rule.latest.date)} (ce mois : {rule.dueDate.slice(-2)})</span>
                     </div>
                     <div className="bb-recurring-amount">
                       {rule.exists ? <strong>{formatMoney(rule.amount)}</strong> : <>

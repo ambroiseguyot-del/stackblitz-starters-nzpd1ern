@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "../../supabaseClient";
+import { loadAllExpenses } from '../../lib/expenses';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis,
@@ -129,22 +130,14 @@ function useExpenses() {
         return; // Public comparisons remain available; private data is not queried.
       }
       const uid = user.id;
-      const query = supabase.from("expenses").select("*").eq("user_id", uid).limit(1000);
-
-      const { data, error: err } = await query;
-
-      if (err) {
-        setWarning(`[${err.code}] ${err.message}`);
-        setExpenses([]);
-      } else {
-        const normalized: Expense[] = (data || []).map((row: any) => ({
-          amount: Number(row.amount ?? row.montant ?? row.total ?? 0),
-          category: (row.category ?? row.categorie ?? row.type ?? "autres")
-            .toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(),
-          created_at: row.date ?? row.created_at ?? row.createdAt ?? null,
-        }));
-        setExpenses(normalized);
-      }
+      const data = await loadAllExpenses<any>(uid);
+      const normalized: Expense[] = data.map((row: any) => ({
+        amount: Number(row.amount ?? row.montant ?? row.total ?? 0),
+        category: (row.category ?? row.categorie ?? row.type ?? 'autres')
+          .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(),
+        created_at: row.date ?? row.created_at ?? row.createdAt ?? null,
+      }));
+      setExpenses(normalized);
     } catch (e: any) {
       setWarning(`Erreur réseau : ${e?.message ?? String(e)}`);
       setExpenses([]);

@@ -27,8 +27,8 @@ export default function ResetPassword() {
   // Indicateur de force du mot de passe
   const getStrength = () => {
     if (password.length === 0) return null;
-    if (password.length < 6) return { label: 'Trop court', color: '#C85B56', width: '25%' };
-    if (password.length < 8) return { label: 'Faible', color: '#F97316', width: '45%' };
+    if (password.length < 12) return { label: 'Trop court', color: '#C85B56', width: '25%' };
+    if (password.length < 16) return { label: 'Faible', color: '#F97316', width: '45%' };
     if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) return { label: 'Moyen', color: '#EAB308', width: '65%' };
     return { label: 'Fort', color: '#22C55E', width: '100%' };
   };
@@ -38,8 +38,8 @@ export default function ResetPassword() {
     e.preventDefault();
     setError(null);
 
-    if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères.');
+    if (password.length < 12) {
+      setError('Le mot de passe doit contenir au moins 12 caractères.');
       return;
     }
     if (password !== confirm) {

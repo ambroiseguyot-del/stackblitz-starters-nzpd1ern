@@ -8,6 +8,7 @@ type Previous = { label: string; category: string; amount: number; child_name: s
 export type QuickExpensePayload = {
   child_name: string; category: string; label: string;
   amount: number; date: string; is_recurring: boolean; recurring_day: number | null;
+  recurrence_id: string | null;
 };
 type Props = {
   open: boolean; onClose: () => void; onSaved: (expense: QuickExpensePayload) => Promise<void>;
@@ -88,7 +89,8 @@ export default function QuickAddExpense({ open, onClose, onSaved, profiles, cate
     try {
       await onSaved({
         child_name: child, category, label: label.trim(), amount: Math.round(value * 100) / 100, date,
-        is_recurring: recurring, recurring_day: recurring ? Math.min(28, Math.max(1, Number(date.slice(-2)))) : null,
+        is_recurring: recurring, recurring_day: recurring ? Math.min(31, Math.max(1, Number(date.slice(-2)))) : null,
+        recurrence_id: recurring ? crypto.randomUUID() : null,
       });
       setAmount(''); setLabel(''); setRecurring(false);
       onClose();

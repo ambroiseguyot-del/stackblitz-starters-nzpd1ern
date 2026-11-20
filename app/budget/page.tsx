@@ -68,10 +68,12 @@ const HEURES_MOIS = 160;
 // Source : FEPEM 2024 — https://www.fepem.fr
 const TAUX_HORAIRE_DOMICILE = 13.5;
 
-// Source : CAF — Barème PSU 2024
-const TAUX_EFFORT_CRECHE: Record<Tranche, number> = { basse: 0.0219, moyenne: 0.0219, haute: 0.0219 };
-const PLANCHER_CRECHE = 160;
-const PLAFOND_CRECHE  = 900;
+// Source : CAF — PSU 2026, 1 enfant à charge en crèche collective.
+// Taux horaire 0,0619 % des ressources mensuelles retenues ; 160 h/mois hypothétiques.
+// https://www.caf.fr/sites/default/files/medias/171/Documents/Bar%C3%AAme%20PS/20260519-maj_Baremes2026.pdf
+const TAUX_EFFORT_HORAIRE_CRECHE = 0.000619;
+const RESSOURCES_PLANCHER_CRECHE = 821.13;
+const RESSOURCES_PLAFOND_CRECHE = 8500;
 
 // Source : Familles de France — Enquête 2023
 const TAUX_HORAIRE_HALTE: Record<Tranche, number> = { basse: 1.5, moyenne: 2.5, haute: 4.0 };
@@ -99,7 +101,8 @@ function calculerCoutGarde(mode: ModeGarde, revenu: number, cmgRenseigne: number
   const tranche = getRevenuTranche(revenu);
   switch (mode) {
     case 'creche': {
-      const brut = Math.max(PLANCHER_CRECHE, Math.min(PLAFOND_CRECHE, revenu * TAUX_EFFORT_CRECHE[tranche]));
+      const ressources = Math.max(RESSOURCES_PLANCHER_CRECHE, Math.min(RESSOURCES_PLAFOND_CRECHE, revenu));
+      const brut = ressources * TAUX_EFFORT_HORAIRE_CRECHE * HEURES_MOIS;
       return { brut: Math.round(brut), aide: 0, net: Math.round(brut) };
     }
     case 'assistante': {
@@ -324,7 +327,7 @@ export default function BudgetPrevisionnelPage() {
 
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px 80px' }}>
         <aside className="bb-data-notice" role="note">
-          <strong>Simulation de budget, pas de droits sociaux.</strong> Les coûts affichés sont des hypothèses indicatives. Aucune aide CAF n'est calculée automatiquement : les montants déduits sont ceux que vous renseignez après vérification officielle (0 € par défaut). Depuis septembre 2025, les règles du CMG emploi direct ont changé.
+          <strong>Simulation de budget, pas de droits sociaux.</strong> Les coûts affichés sont des hypothèses indicatives. En crèche collective PSU, le scénario suppose 1 enfant à charge, 160 heures facturées par mois et utilise le revenu saisi comme approximation des ressources CAF (année de référence potentiellement différente). Le barème appliqué est celui de 2026. Aucune aide CAF n'est calculée automatiquement : les montants déduits sont ceux que vous renseignez après vérification officielle (0 € par défaut). Depuis septembre 2025, les règles du CMG emploi direct ont changé.
         </aside>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
 
