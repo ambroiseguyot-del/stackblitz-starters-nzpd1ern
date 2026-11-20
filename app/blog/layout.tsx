@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Journal — Budget bébé, dépenses et aides CAF',
-  description: 'Guides pratiques sourcés pour anticiper le coût d’un bébé, les dépenses de la première année et les aides CAF. Méthodes transparentes et simulateur gratuit.',
+  description: 'Guides pratiques sourcés : crèche, assistante maternelle, congé parental, achats de naissance, aides CAF et épargne enfant. Chiffres 2026, exemples et outils gratuits.',
   alternates: { canonical: '/blog' },
   openGraph: {
     title: 'Le journal Baby Budget — Préparer le budget d’un enfant',

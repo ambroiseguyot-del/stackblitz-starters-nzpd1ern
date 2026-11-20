@@ -50,6 +50,10 @@ export default function BlogArticleFrame({
             <strong>À consulter également</strong>
             <Link href="/blog/cout-bebe-premiere-annee">Le coût d'un bébé la première année</Link>
             <Link href="/blog/aides-caf-bebe-2026">Les aides CAF pour bébé en 2026</Link>
+            <Link href="/blog/creche-ou-assistante-maternelle-2026">Crèche ou assistante maternelle en 2026</Link>
+            <Link href="/blog/15-achats-indispensables-avant-bebe">Les 15 achats essentiels avant la naissance</Link>
+            <Link href="/blog/conge-parental-ou-reprise-travail-2026">Congé parental ou reprise du travail</Link>
+            <Link href="/blog/livret-a-enfant-epargne-naissance">Le Livret A pour son enfant</Link>
           </div>
         </aside>
       </div>

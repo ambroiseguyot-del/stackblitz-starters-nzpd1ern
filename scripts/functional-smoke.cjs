@@ -206,7 +206,7 @@ async function main() {
     assert.equal(response.status(), 404);
   });
 
-  for (const route of ['/', '/login', '/signup', '/budget', '/comparaison', '/informations', '/blog']) {
+  for (const route of ['/', '/login', '/signup', '/budget', '/comparaison', '/informations', '/blog', '/blog/creche-ou-assistante-maternelle-2026', '/blog/15-achats-indispensables-avant-bebe', '/blog/conge-parental-ou-reprise-travail-2026', '/blog/livret-a-enfant-epargne-naissance']) {
     await check('No horizontal overflow on mobile ' + route, async page => {
       await page.goto(origin + route, { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(250);
