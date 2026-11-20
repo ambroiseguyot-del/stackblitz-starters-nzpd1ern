@@ -31,3 +31,11 @@
 - Deux nouvelles règles peuvent partager enfant/catégorie/libellé grâce à des recurrence_id distincts. Le rétro-remplissage des anciennes données doit cependant regrouper les libellés historiques: il échoue volontairement si un mois contient des collisions nécessitant un rapprochement manuel.
 - Les corrections frontend (pagination, jour 29–31, CSV) sont incluses dans le commit de revue. La recette des flux complets et des tests d'intégration est encore requise.
 - Aucun test UI ni recette SQL en base isolée exécuté, aucun déploiement réalisé.
+
+## Vérifications complémentaires de préproduction
+- Les rôles anon et authenticated ont actuellement TRUNCATE, TRIGGER, REFERENCES sur les quatre tables métier ; RLS ne s'applique pas à TRUNCATE. Révocations incluses dans le SQL.
+- Les quatre clés étrangères vers auth.users deviennent ON DELETE CASCADE afin de rendre l'effacement atomique dans PostgreSQL.
+- L'Edge Function delete-user ne procède plus à des suppressions manuelles séquentielles ; elle demande uniquement la suppression Auth du compte vérifié.
+- La migration refuse toute deuxième exécution pour éviter la réattribution accidentelle des historiques.
+- Les tests de migration tournent sur un Postgres 17 éphémère dans GitHub Actions, sans accès à une base Supabase.
+- Sauvegarde de production et test de restauration, contrôle HTTPS et recette Safari authentifiée restent obligatoires.

@@ -8,6 +8,12 @@ SET LOCAL lock_timeout = '5s';
 DO $preflight$
 BEGIN
   IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='expenses' AND column_name='recurrence_id'
+  ) THEN
+    RAISE EXCEPTION 'Audit migration already applied: do not run a second historical backfill';
+  END IF;
+  IF EXISTS (
     WITH active_keys AS (
       SELECT DISTINCT user_id, lower(btrim(child_name)) AS child_key,
         lower(btrim(coalesce(category,''))) AS category_key,
@@ -33,7 +39,7 @@ BEGIN
   END IF;
 END $preflight$;
 
-ALTER TABLE public.expenses ADD COLUMN IF NOT EXISTS recurrence_id uuid;
+ALTER TABLE public.expenses ADD COLUMN recurrence_id uuid;
 -- Backfill all historical entries of an existing recurring label group, preserving the
 -- original app's grouping semantics. The preflight fails on same-month conflicts.
 -- This is a one-time compatibility mapping; future rules use stable client-generated IDs.
@@ -87,6 +93,26 @@ DROP TRIGGER IF EXISTS expenses_set_recurrence_id ON public.expenses;
 CREATE TRIGGER expenses_set_recurrence_id BEFORE INSERT ON public.expenses
   FOR EACH ROW EXECUTE FUNCTION public.fill_expense_recurrence_id();
 REVOKE EXECUTE ON FUNCTION public.fill_expense_recurrence_id() FROM PUBLIC, anon, authenticated;
+
+-- User deletion must be atomic: auth.users removal cascades to owned records.
+ALTER TABLE public.expenses DROP CONSTRAINT expenses_user_id_fkey;
+ALTER TABLE public.expenses ADD CONSTRAINT expenses_user_id_fkey
+ FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+ALTER TABLE public.profiles DROP CONSTRAINT profiles_user_id_fkey;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_user_id_fkey
+ FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+ALTER TABLE public.settings DROP CONSTRAINT settings_user_id_fkey;
+ALTER TABLE public.settings ADD CONSTRAINT settings_user_id_fkey
+ FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+ALTER TABLE public.categories DROP CONSTRAINT categories_user_id_fkey;
+ALTER TABLE public.categories ADD CONSTRAINT categories_user_id_fkey
+ FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+
+-- The RLS mechanism does not apply to TRUNCATE. The current production ACL grants
+-- this destructive privilege to anon/authenticated; revoke it without affecting service_role.
+REVOKE TRUNCATE, TRIGGER, REFERENCES ON TABLE
+ public.expenses, public.profiles, public.settings, public.categories
+ FROM PUBLIC, anon, authenticated;
 
 -- Ensure plain one-off expenses cannot accidentally be assigned a recurrence rule.
 -- New application inserts provide a UUID only for recurring expense records.

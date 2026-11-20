@@ -13,6 +13,37 @@ permissions:
   contents: read
 
 jobs:
+  database-migration:
+    name: PostgreSQL 17 — migration, RLS, deletion cascade
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: babybudget-fixture-only
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: babybudget-fixture-only
+    steps:
+      - name: Checkout audited code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Test migration on ephemeral PostgreSQL only
+        run: bash scripts/pg/verify.sh
+
   validate:
     name: Lint, TypeScript & build
     runs-on: ubuntu-24.04
