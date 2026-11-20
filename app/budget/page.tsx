@@ -70,9 +70,9 @@ const TAUX_HORAIRE_DOMICILE = 13.5;
 
 // Source : CAF — PSU 2026, 1 enfant à charge en crèche collective.
 // Taux horaire 0,0619 % des ressources mensuelles retenues ; 160 h/mois hypothétiques.
-// https://www.caf.fr/sites/default/files/medias/171/Documents/Bar%C3%AAme%20PS/20260519-maj_Baremes2026.pdf
+// https://www.caf.fr/sites/default/files/medias/661/Espace-Partenaires/Documents-Partenaires/2026-Baremes-Participation-Famille-Eaje.pdf
 const TAUX_EFFORT_HORAIRE_CRECHE = 0.000619;
-const RESSOURCES_PLANCHER_CRECHE = 821.13;
+const RESSOURCES_PLANCHER_CRECHE = 814.62;
 const RESSOURCES_PLAFOND_CRECHE = 8500;
 
 // Source : Familles de France — Enquête 2023

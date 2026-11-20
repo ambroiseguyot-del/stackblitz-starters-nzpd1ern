@@ -10,6 +10,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/blog', priority: 0.7, changeFrequency: 'weekly' as const },
     { path: '/blog/aides-caf-bebe-2026', priority: 0.7, changeFrequency: 'monthly' as const },
     { path: '/blog/cout-bebe-premiere-annee', priority: 0.7, changeFrequency: 'monthly' as const },
+    { path: '/blog/creche-ou-assistante-maternelle-2026', priority: 0.75, changeFrequency: 'monthly' as const },
+    { path: '/blog/15-achats-indispensables-avant-bebe', priority: 0.75, changeFrequency: 'monthly' as const },
+    { path: '/blog/conge-parental-ou-reprise-travail-2026', priority: 0.75, changeFrequency: 'monthly' as const },
+    { path: '/blog/livret-a-enfant-epargne-naissance', priority: 0.75, changeFrequency: 'monthly' as const },
     { path: '/cgu', priority: 0.2, changeFrequency: 'yearly' as const },
     { path: '/confidentialite', priority: 0.2, changeFrequency: 'yearly' as const },
   ];

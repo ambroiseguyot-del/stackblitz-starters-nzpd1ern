@@ -3,6 +3,38 @@ import Link from 'next/link';
 
 const articles = [
   {
+    href: '/blog/creche-ou-assistante-maternelle-2026',
+    category: 'Modes de garde',
+    title: 'Crèche ou assistante maternelle : quel mode de garde coûte le moins cher en 2026 ?',
+    desc: 'Barème CAF 2026, réforme du CMG et crédit d’impôt : comparez les coûts nets et les dépenses réellement facturées.',
+    duration: '11 min',
+    tag: 'COMPARATIF 2026',
+  },
+  {
+    href: '/blog/15-achats-indispensables-avant-bebe',
+    category: 'Équipement & économies',
+    title: 'Les 15 achats indispensables avant l’arrivée de bébé (et ceux à éviter)',
+    desc: 'Une checklist de naissance utile et réaliste : sécurité, équipement indispensable, achats facultatifs et économies possibles.',
+    duration: '12 min',
+    tag: 'CHECKLIST',
+  },
+  {
+    href: '/blog/conge-parental-ou-reprise-travail-2026',
+    category: 'Revenus & congés',
+    title: 'Congé parental ou reprise du travail : quelle solution est la plus rentable en 2026 ?',
+    desc: 'PreParE, nouveau congé de naissance, garde et revenus : trois simulations pour comparer les choix professionnels.',
+    duration: '12 min',
+    tag: 'SIMULATIONS',
+  },
+  {
+    href: '/blog/livret-a-enfant-epargne-naissance',
+    category: 'Épargne & famille',
+    title: 'Ouvrir un Livret A à son enfant : combien épargner dès la naissance ?',
+    desc: 'Taux de 1,7 % en août 2026, plafond, propriété de l’argent et simulations de versements sur 18 ans.',
+    duration: '11 min',
+    tag: 'ÉPARGNE 2026',
+  },
+  {
     href: '/blog/cout-bebe-premiere-annee',
     category: 'Budget & dépenses',
     title: 'Combien coûte un bébé la première année ?',
@@ -39,7 +71,7 @@ export default function BlogPage() {
 
       <section className="bb-blog-container bb-blog-index-section" aria-labelledby="articles-heading">
         <div className="bb-blog-section-heading">
-          <div><span className="bb-blog-section-kicker">CONSEILS ET MÉTHODES</span><h2 id="articles-heading">Les premiers guides</h2></div>
+          <div><span className="bb-blog-section-kicker">CONSEILS ET MÉTHODES</span><h2 id="articles-heading">Tous nos guides pratiques</h2></div>
           <span className="bb-blog-count">{articles.length} articles vérifiés</span>
         </div>
         <div className="bb-blog-card-grid">
